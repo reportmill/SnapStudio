@@ -645,7 +645,7 @@ public static void setTextBorder(Editor anEditor, Border aBorder)
  */
 public static HPos getAlignmentX(Editor anEditor)
 {
-    return anEditor.getSelectedOrSuperSelectedShape().getAlignment().getHPos();
+    return anEditor.getSelectedOrSuperSelectedShape().getAlign().getHPos();
 }
 
 /**

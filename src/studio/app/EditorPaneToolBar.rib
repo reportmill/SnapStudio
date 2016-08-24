@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HBox name="Row1" Alignment="CENTER_LEFT" Padding="12,10,12,10" Spacing="1">
+  <font name="Arial" size="11" />
+  <jtogglebutton name="PreviewEditButton" width="84" height="24" text="Preview" align="center" />
+  <jseparator width="15" height="18" Vertical="true" />
+  <jtogglebutton name="RMSelectToolButton" width="24" height="24" ttip="Selection Tool" image="SelectTool.png" selected="true" bgroup="bg1" />
+  <jseparator width="16" height="18" Vertical="true" />
+  <jseparator width="14" height="18" Vertical="true" />
+  <ColorButton name="FillColorButton" width="32" height="22" ttip="Set Fill Color" title="Fill Color" />
+  <ColorButton name="StrokeColorButton" width="32" height="22" ttip="Set Stroke Color" title="Stroke Color" />
+  <ColorButton name="TextColorButton" width="32" height="22" ttip="Set Text Color" title="Text Color" />
+  <jseparator width="8" height="18" Vertical="true" />
+  <jbutton name="NewButton" width="22" height="22" ttip="New" image="File_New.png" align="center" ShowBorder="false" />
+  <jbutton name="OpenButton" width="22" height="22" ttip="Open" image="File_Open.png" align="center" ShowBorder="false" />
+  <jbutton name="SaveButton" width="22" height="22" ttip="Save" image="File_Save.png" align="center" ShowBorder="false" />
+  <jbutton name="PrintButton" width="22" height="22" ttip="Print" image="File_Print.png" align="center" ShowBorder="false" />
+  <jseparator width="8" height="18" Vertical="true" />
+  <jbutton name="CutButton" width="22" height="22" ttip="Cut" image="Edit_Cut.png" align="center" ShowBorder="false" />
+  <jbutton name="CopyButton" width="22" height="22" ttip="Copy" image="Edit_Copy.png" align="center" ShowBorder="false" />
+  <jbutton name="PasteButton" width="22" height="22" ttip="Paste" image="Edit_Paste.png" align="center" ShowBorder="false" />
+  <jbutton name="DeleteButton" width="22" height="22" ttip="Delete" image="Edit_Delete.png" align="center" ShowBorder="false" />
+  <jseparator width="8" height="18" Vertical="true" />
+  <jbutton name="UndoButton" width="22" height="22" ttip="Undo" image="Edit_Undo.png" align="center" ShowBorder="false" />
+  <jbutton name="RedoButton" width="22" height="22" ttip="Redo" image="Edit_Redo.png" align="center" ShowBorder="false" />
+  <jseparator width="8" height="18" Vertical="true" />
+  <jbutton name="PreviewHTMLButton" width="22" height="22" ttip="Preview HTML" image="Preview_HTML.png" align="center" ShowBorder="false" />
+  <jbutton name="PreviewPDFButton" width="22" height="22" ttip="Preview PDF" image="Preview_PDF.png" align="center" ShowBorder="false" />
+</HBox>

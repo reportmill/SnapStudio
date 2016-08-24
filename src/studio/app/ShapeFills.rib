@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel width="275" height="325">
+  <font name="Arial" size="11" />
+  <jtabbedpane name="TabView" width="275" height="275" selected-index="1">
+    <panel x="11" y="30" width="254" height="232" asize="-~-,-~-" title="Stroke">
+      <jcheckbox name="StrokeCheckBox" x="2" y="2" width="72" height="20" text="Stroke" />
+      <jcombobox name="StrokeComboBox" x="61" y="27" width="135" height="23" focus="false" maximum-row-count="6" />
+      <BorderView name="StrokePane" y="50" width="275" height="253" asize="-~-,-~-" />
+    </panel>
+    <panel x="11" y="30" width="254" height="232" asize="-~-,-~-" title="   Fill   ">
+      <jcheckbox name="FillCheckBox" x="2" y="2" width="54" height="20" text="Fill" />
+      <jcombobox name="FillComboBox" x="61" y="27" width="135" height="23" />
+      <BorderView name="FillPane" y="50" width="275" height="253" asize="-~-,-~-" />
+    </panel>
+    <panel x="11" y="30" width="254" height="232" asize="-~-,-~-" title="Effect">
+      <jcheckbox name="EffectCheckBox" x="2" y="2" width="70" height="20" text="Effect" align="left" />
+      <jcombobox name="EffectComboBox" x="61" y="27" width="135" height="23" focus="false" />
+      <BorderView name="EffectPane" y="50" width="254" height="182" asize="-~-,-~-" />
+    </panel>
+  </jtabbedpane>
+  <jlabel x="10" y="275" width="112" height="22" text="Transparency" align="left" />
+  <jslider name="TransparencySlider" x="10" y="296" width="180" height="25" />
+  <jtextfield name="TransparencyText" x="195" y="298" width="50" height="20" align="center" />
+</panel>

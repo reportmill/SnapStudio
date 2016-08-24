@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jtabbedpane PrefWidth="275" PrefHeight="325">
+  <font name="Arial" size="12" />
+  <VBox title="General" align="TOP_CENTER" Padding="24,8,8,8" Spacing="10">
+    <font name="Arial" size="11" />
+    <HBox PrefWidth="250" Spacing="5">
+      <jlabel text="Name:" />
+      <jtextfield name="NameText" GrowWidth="true">
+        <binding aspect="Text" key="SelectedShapes.Name" />
+      </jtextfield>
+    </HBox>
+    <jcheckbox name="LockedCheckBox" text="Locked">
+      <binding aspect="Selected" key="SelectedShapes.Locked" />
+    </jcheckbox>
+    <VBox LeanY="BOTTOM">
+      <jlabel text="URL:" />
+      <jscrollpane PrefWidth="250" PrefHeight="136">
+        <jtextarea name="UrlText" send-action-on-return="true">
+          <binding aspect="Text" key="SelectedShapes.URL" />
+        </jtextarea>
+      </jscrollpane>
+    </VBox>
+  </VBox>
+  <VBox Padding="16,8,8,8" Spacing="3" FillWidth="true" title="Bindings">
+    <font name="Arial" size="11" />
+    <HBox>
+      <jlabel text="Key Bindings" />
+      <jlabel LeanX="RIGHT" text="(enter key in text)" />
+    </HBox>
+    <jscrollpane GrowHeight="true">
+      <jtable name="BindingsTable" ShowHeader="false" GridColor="#c9c9c9" ShowHorizontalLines="true" ShowVerticalLines="true" >
+        <JTableColumn PrefWidth="80" />
+        <JTableColumn GrowWidth="true" />
+      </jtable>
+    </jscrollpane>
+    <jscrollpane PrefHeight="100">
+      <jtextarea name="BindingsText" send-action-on-return="true" />
+    </jscrollpane>
+  </VBox>
+</jtabbedpane>

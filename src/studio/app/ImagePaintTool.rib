@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel width="275" height="230">
+  <font name="Arial" size="11" />
+  <jcheckbox name="TiledCheckBox" x="100" y="26" width="150" height="23" text="Tiled" />
+  <jlabel x="43" y="55" width="50" height="18" text="Offset:" align="center" />
+  <jlabel x="22" y="76" width="20" height="22" text="X:" align="right" />
+  <jspinner name="XSpinner" x="44" y="76" width="60" height="22" step="1" value="0" />
+  <jlabel x="22" y="105" width="20" height="22" text="Y:" align="right" />
+  <jspinner name="YSpinner" x="44" y="105" width="60" height="22" step="1" value="0" />
+  <jlabel x="165" y="55" width="50" height="18" text="Scale:" align="center" />
+  <jlabel x="144" y="76" width="20" height="22" text="X:" align="right" />
+  <jspinner name="ScaleXSpinner" x="166" y="76" width="60" height="22" step="0.1" value="0.0" />
+  <jlabel x="144" y="105" width="20" height="22" text="Y:" align="right" />
+  <jspinner name="ScaleYSpinner" x="166" y="105" width="60" height="22" step="0.1" value="0.0" />
+  <jbutton name="ChooseButton" x="144" y="150" width="93" height="22" text="Choose..." align="center" />
+</panel>

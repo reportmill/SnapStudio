@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel width="275" height="220">
+  <font name="Arial" size="11" />
+  <jlabel x="92" y="2" width="91" height="22" text="Light Source" align="center">
+    <font name="Arial" size="11" />
+  </jlabel>
+  <jseparator x="179" y="13" width="95" height="2" orientation="0" />
+  <jseparator y="13" width="95" height="2" orientation="0">
+    <font name="Arial" size="11" />
+  </jseparator>
+  <jlabel x="92" y="91" width="91" height="22" text="Bevel" align="center">
+    <font name="Arial" size="11" />
+  </jlabel>
+  <jseparator x="179" y="102" width="95" height="2" orientation="0">
+    <font name="Arial" size="11" />
+  </jseparator>
+  <jseparator y="102" width="95" height="2" orientation="0">
+    <font name="Arial" size="11" />
+  </jseparator>
+  <jtextfield name="AzimuthTextField" x="32" y="42" width="67" height="19" text="120" align="center">
+    <font name="Arial" size="11" />
+  </jtextfield>
+  <jlabel x="32" y="25" width="63" height="18" text="Angle" align="center">
+    <font name="Arial" size="9" />
+  </jlabel>
+  <jtextfield name="AltitudeTextField" x="171" y="41" width="63" height="19" text="60 " align="center">
+    <font name="Arial" size="11" />
+  </jtextfield>
+  <jlabel x="171" y="24" width="63" height="18" text="Altitude" align="center">
+    <font name="Arial" size="9" />
+  </jlabel>
+  <thumbwheel name="RadiusWheel" x="106" y="159" width="63" height="16" type="linear" min="1" max="10" absmin="0" absmax="20" round="1">
+    <font name="Arial" size="11" />
+  </thumbwheel>
+  <jtextfield name="RadiusTextField" x="106" y="138" width="63" height="19" text="6" align="center">
+    <font name="Arial" size="11" />
+  </jtextfield>
+  <thumbwheel name="AzimuthWheel" x="32" y="64" width="67" height="16" max="180" absmin="-360" absmax="360" round="1" />
+  <thumbwheel name="AltitudeWheel" x="169" y="64" width="67" height="16" min="20" max="90" absmin="0" absmax="180" round="1">
+    <font name="Arial" size="11" />
+  </thumbwheel>
+  <jlabel x="106" y="122" width="63" height="18" text="Size" align="center">
+    <font name="Arial" size="9" />
+  </jlabel>
+  <jlabel x="102" y="43" width="28" height="15" text="&#176;" align="left">
+    <font name="Arial" size="9" />
+  </jlabel>
+  <jlabel x="237" y="41" width="28" height="15" text="&#176;" align="left">
+    <font name="Arial" size="9" />
+  </jlabel>
+</panel>

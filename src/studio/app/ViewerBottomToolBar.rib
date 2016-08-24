@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel width="500" height="22">
+  <font name="Arial" size="11" />
+  <jtextfield name="ZoomText" x="2" y="2" width="80" height="18" asize="--~,~--" text="100%" align="center">
+    <font name="Arial" size="11" />
+  </jtextfield>
+  <menubutton name="ZoomMenuButton" x="82" y="2" width="20" height="18" asize="--~,~--" align="center" ShowBorder="false">
+    <font name="Arial" size="11" />
+    <jmenuitem name="ZoomToActualSizeMenuItem" text="Actual Size" />
+    <jmenuitem name="ZoomToFitMenuItem" text="Zoom to Fit" />
+    <jmenuitem name="ZoomAsNeededMenuItem" text="Zoom as Needed" />
+    <jmenuitem name="ZoomMenuItem" text="25%" />
+    <jmenuitem name="ZoomMenuItem" text="50%" />
+    <jmenuitem name="ZoomMenuItem" text="75%" />
+    <jmenuitem name="ZoomMenuItem" text="100%" />
+    <jmenuitem name="ZoomMenuItem" text="125%" />
+    <jmenuitem name="ZoomMenuItem" text="150%" />
+    <jmenuitem name="ZoomMenuItem" text="200%" />
+    <jmenuitem name="ZoomMenuItem" text="300%" />
+    <jmenuitem name="ZoomMenuItem" text="400%" />
+  </menubutton>
+  <panel x="180" y="2" width="136" height="20" asize="~-~,~--">
+    <font name="Arial" size="11" />
+    <binding aspect="Visible" key="ViewerPane.Viewer.Document.PageCount>1" />
+    <jbutton name="PageBackAllButton" width="16" height="18" align="center" ShowBorder="false" />
+    <jbutton name="PageBackButton" x="16" width="18" height="18" align="center" ShowBorder="false" />
+    <jtextfield name="PageText" x="34" width="68" height="18" text="1 of 1" align="center" />
+    <jbutton name="PageForwardButton" x="102" width="18" height="18" align="center" ShowBorder="false" />
+    <jbutton name="PageForwardAllButton" x="120" width="16" height="18" align="center" ShowBorder="false" />
+  </panel>
+</panel>

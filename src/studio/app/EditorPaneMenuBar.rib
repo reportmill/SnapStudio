@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MenuBar>
+  <jmenu name="FileMenu" text="File">
+    <jmenuitem name="NewMenuItem" text="New" key="meta N" />
+    <jmenuitem name="OpenMenuItem" text="Open..." key="meta O" />
+    <jmenuitem name="OpenRecentMenuItem" text="Open Recent..." />
+    <jmenuitem />
+    <jmenuitem name="CloseMenuItem" text="Close" key="meta W" />
+    <jmenuitem name="SaveMenuItem" text="Save" key="meta S" />
+    <jmenuitem name="SaveAsMenuItem" text="Save As..." key="meta shift S" />
+    <jmenuitem name="SaveAsPDFMenuItem" text="Save as PDF..." key="meta shift D" />
+    <jmenuitem name="RevertMenuItem" text="Revert to Saved" key="meta U" />
+    <jmenuitem />
+    <jmenuitem name="PreviewMenuItem" text="Preview Report" />
+    <jmenu name="PreviewMenu" text="Preview Reports">
+      <jmenuitem name="PreviewPDFMenuItem" text="PDF" key="meta shift P" />
+      <jmenuitem name="PreviewHTMLMenuItem" text="HTML" />
+      <jmenuitem name="PreviewCSVMenuItem" text="CSV" />
+      <jmenuitem name="PreviewExcelMenuItem" text="Excel" />
+      <jmenuitem name="PreviewRTFMenuItem" text="RTF" />
+      <jmenuitem name="PreviewJPEGMenuItem" text="JPEG" />
+      <jmenuitem name="PreviewPNGMenuItem" text="PNG" />
+    </jmenu>
+    <jmenu name="SamplesMenu" text="Samples">
+      <jmenuitem name="MoviesMenuItem" text="Movies" />
+      <jmenuitem name="MoviesGraphMenuItem" text="Movies Graph" />
+      <jmenuitem name="MoviesLabelsMenuItem" text="Movies Labels" />
+      <jmenuitem name="HollywoodMenuItem" text="HollywoodDB.xml" />
+      <jmenuitem name="SalesMenuItem" text="Sales.xml" />
+    </jmenu>
+    <jmenuitem />
+    <jmenuitem name="PrintMenuItem" text="Print..." key="meta P" />
+    <jmenuitem />
+    <jmenuitem name="QuitMenuItem" text="Quit" key="meta Q" />
+  </jmenu>
+  <jmenu name="EditMenu" text="Edit">
+    <jmenuitem name="UndoMenuItem" text="Undo" key="meta Z" />
+    <jmenuitem name="RedoMenuItem" text="Redo" key="meta shift Z" />
+    <jmenuitem />
+    <jmenuitem name="CutMenuItem" text="Cut" key="meta X" />
+    <jmenuitem name="CopyMenuItem" text="Copy" key="meta C" />
+    <jmenuitem name="PasteMenuItem" text="Paste" key="meta V" />
+    <jmenuitem name="SelectAllMenuItem" text="Select All" key="meta A" />
+    <jmenuitem />
+    <jmenuitem name="CheckSpellingMenuItem" text="Check Spelling..." key="meta shift ;" />
+    <jcheckboxmenuitem name="CheckSpellingAsYouTypeMenuItem" text="Check Spelling as You Type" />
+    <jmenuitem />
+    <jcheckboxmenuitem name="HyphenateTextMenuItem" text="Hyphenate Text" />
+  </jmenu>
+  <jmenu name="FormatMenu" text="Format">
+    <jmenuitem name="FontPanelMenuItem" text="Font Panel..." key="meta T" />
+    <jmenuitem name="BoldMenuItem" text="Bold" key="meta B" />
+    <jmenuitem name="ItalicMenuItem" text="Italic" key="meta I" />
+    <jmenuitem name="UnderlineMenuItem" text="Underline" />
+    <jmenuitem name="OutlineMenuItem" text="Outline" />
+    <jmenuitem name="AlignLeftMenuItem" text="Align Left" key="meta [" />
+    <jmenuitem name="AlignCenterMenuItem" text="Align Center" key="meta \" />
+    <jmenuitem name="AlignRightMenuItem" text="Align Right" key="meta ]" />
+    <jmenuitem name="AlignFullMenuItem" text="Align Full" />
+    <jmenuitem name="SuperscriptMenuItem" text="Superscript" />
+    <jmenuitem name="SubscriptMenuItem" text="Subscript" />
+  </jmenu>
+  <jmenu name="PagesMenu" text="Pages">
+    <jmenuitem name="AddPageMenuItem" text="Add Page" />
+    <jmenuitem name="AddPagePreviousMenuItem" text="Add Page Previous" />
+    <jmenuitem name="RemovePageMenuItem" text="Remove Page" />
+    <jmenuitem name="ZoomInMenuItem" text="Zoom In" key="meta Up" />
+    <jmenuitem name="ZoomOutMenuItem" text="Zoom Out" key="meta Down" />
+    <jmenuitem name="Zoom100MenuItem" text="Zoom 100%" key="meta 1" />
+    <jmenuitem name="Zoom200MenuItem" text="Zoom 200%" key="meta 2" />
+    <jmenuitem name="ZoomToggleLastMenuItem" text="Zoom Toggle Last" key="meta Left" />
+    <jmenuitem name="ZoomToMenuItem" text="Zoom..." key="meta Right" />
+  </jmenu>
+  <jmenu name="ShapesMenu" text="Shapes">
+    <jmenuitem name="GroupMenuItem" text="Group" key="meta G" />
+    <jmenuitem name="UngroupMenuItem" text="Ungroup" key="meta shift G" />
+    <jmenuitem name="BringToFrontMenuItem" text="Bring to Front" key="meta shift F" />
+    <jmenuitem name="SendToBackMenuItem" text="Send to Back" key="meta shift B" />
+    <jmenu name="GroupSpecialMenu" text="Group Special">
+      <jmenuitem name="GroupInSwitchShapeMenuItem" text="Group in Switch Shape" />
+      <jmenuitem name="GroupInScene3DMenuItem" text="Group in 3D Shape" />
+      <jmenuitem name="GroupInScrollPaneMenuItem" text="Group in ScrollView" />
+    </jmenu>
+    <jmenu name="MakeRowColumnMenu" text="Make Row/Column">
+      <jmenuitem name="MakeRowTopMenuItem" text="Make Row Top" />
+      <jmenuitem name="MakeRowCenterMenuItem" text="Make Row Center" />
+      <jmenuitem name="MakeRowBottomMenuItem" text="Make Row Bottom" />
+      <jmenuitem name="MakeColumnLeftMenuItem" text="Make Column Left" />
+      <jmenuitem name="MakeColumnCenterMenuItem" text="Make Column Center" />
+      <jmenuitem name="MakeColumnRightMenuItem" text="Make Column Right" />
+      <jmenuitem name="EquallySpaceRowMenuItem" text="Equally Space Row" />
+      <jmenuitem name="EquallySpaceColumnMenuItem" text="Equally Space Column" />
+    </jmenu>
+    <jmenu name="MakeSameSizeMenu" text="Make Same Size">
+      <jmenuitem name="MakeSameWidthMenuItem" text="Make Same Width" />
+      <jmenuitem name="MakeSameHeightMenuItem" text="Make Same Height" />
+      <jmenuitem name="MakeSameSizeMenuItem" text="Make Same Size" />
+    </jmenu>
+    <jmenuitem name="SizeToFitMenuItem" text="Size to Fit" />
+    <jmenuitem name="MoveToNewLayerMenuItem" text="Move to New Layer" />
+    <jmenuitem name="CombinePathsMenuItem" text="Combine Paths" />
+    <jmenuitem name="SubtractPathsMenuItem" text="Subtract Paths" />
+    <jmenuitem name="ConvertToImageMenuItem" text="Convert to Image" />
+  </jmenu>
+  <jmenu name="ToolsMenu" text="Tools">
+    <jmenuitem name="InspectorMenuItem" text="Inspector..." />
+    <jmenuitem name="ColorPanelMenuItem" text="Color Panel..." key="meta shift C" />
+    <jmenuitem name="FontPanelMenuItem" text="Font Panel..." />
+    <jmenuitem name="FormatPanelMenuItem" text="Format Panel..." key="meta F" />
+    <jmenuitem name="KeysPanelMenuItem" text="Keys Panel..." key="meta K" />
+    <jmenuitem />
+    <jcheckboxmenuitem name="ShowRulersMenuItem" text="Show Rulers" key="meta R" />
+    <jmenuitem />
+    <jmenuitem name="FeedbackMenuItem" text="Send Feedback..." />
+    <jmenuitem />
+    <jmenuitem name="PrefsMenuItem" text="Preferences..." />
+  </jmenu>
+  <jmenu name="HelpMenu" text="Help">
+    <jmenuitem name="SupportPageMenuItem" text="Support Page" />
+    <jmenuitem name="TutorialMenuItem" text="Tutorial" />
+    <jmenuitem name="BasicAPIMenuItem" text="Basic API" />
+    <jmenuitem name="TablesMenuItem" text="Tables" />
+  </jmenu>
+</MenuBar>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VBox PrefWidth="275" PrefHeight="260" Padding="4,4,8,4" Spacing="4" FillWidth="true">
+  <font name="Arial" size="11" />
+  <HBox align="CENTER" Padding="4,4,2,4" Spacing="5">
+    <jbutton name="FontSizeUpButton" PrefWidth="24" PrefHeight="24" ttip="Increase Font Size" image="Format_IncreaseFont.png" />
+    <jbutton name="FontSizeDownButton" PrefWidth="24" PrefHeight="24" ttip="Decrease Font Size" image="Format_DecreaseFont.png" />
+    <jseparator PrefWidth="24" PrefHeight="22" Vertical="true" visible="false" />
+    <jtogglebutton name="BoldButton" PrefWidth="24" PrefHeight="24" ttip="Make Bold" image="Format_Bold.png" />
+    <jtogglebutton name="ItalicButton" PrefWidth="24" PrefHeight="24" ttip="Make Italic" image="Format_Italic.png" />
+    <jtogglebutton name="UnderlineButton" PrefWidth="24" PrefHeight="24" ttip="Make Underline" image="Format_Underline.png" />
+    <jtogglebutton name="OutlineButton" PrefWidth="24" PrefHeight="24" ttip="Make Outline" text="O">
+      <font name="Arial-Bold" size="16" />
+    </jtogglebutton>
+  </HBox>
+  <HBox GrowHeight="true" Spacing="4" FillHeight="true">
+    <VBox GrowWidth="true" Spacing="4" FillWidth="true">
+      <jlabel value=" Family" />
+      <jscrollpane GrowHeight="true">
+        <jlist name="FamilyList" />
+      </jscrollpane>
+      <jtextfield name="FamilyText" />
+    </VBox>
+    <VBox PrefWidth="60" Spacing="4" FillWidth="true">
+      <jlabel text=" Sizes" />
+      <jscrollpane GrowHeight="true">
+        <jlist name="SizesList" />
+      </jscrollpane>
+      <jtextfield name="SizeText" />
+    </VBox>
+  </HBox>
+  <jcombobox PrefHeight="23" name="FontNameComboBox" />
+</VBox>

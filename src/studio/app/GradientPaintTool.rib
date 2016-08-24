@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel width="275" height="325">
+  <font name="Arial" size="11" />
+  <customview name="ColorStopPicker" y="17" width="254" height="63" class="com.reportmill.apptools.GradientStopPicker" />
+  <jcombobox name="TypeComboBox" x="16" y="87" width="95" height="22">
+    <item text="Linear" />
+    <item text="Radial" />
+  </jcombobox>
+  <customview name="RadialPicker" x="133" y="87" width="94" height="94" class="com.reportmill.apptools.GradientAxisPicker" />
+  <panel name="LinearControls" x="133" y="86" width="94" height="94">
+    <thumbwheel name="AngleThumb" y="56" width="94" height="17" asize="~~~,~~~" />
+    <jlabel x="2" y="33" width="30" height="17" asize="---,---" text="Angle" align="right" />
+    <jtextfield name="AngleText" x="33" y="32" width="41" height="20" asize="~~~,~~~" text="300" />
+    <jlabel x="76" y="31" width="11" height="17" asize="~~~,~~~" text="&#176;" align="left" />
+  </panel>
+  <jbutton name="ReverseStopsButton" x="45" y="127" width="31" height="35" ttip="reverse colors" image="Reverse.png" align="center" ShowBorder="false" />
+</panel>

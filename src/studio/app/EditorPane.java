@@ -271,7 +271,8 @@ public EditorPane open(Object aSource)
     }
     
     // Load document
-    ParentView shape = null; try { shape = (ParentView)new ViewArchiver().getParentView(aSource); }
+    ViewArchiver archiver = new ViewArchiver(); ViewArchiver.setUseRealClass(false);
+    ParentView view = null; try { view = archiver.getParentView(aSource); }
     
     // If there was an XML parse error loading aSource, show error dialog
     catch(Exception e) {
@@ -281,9 +282,10 @@ public EditorPane open(Object aSource)
             DialogBox dbox = new DialogBox("Error Reading File"); dbox.setErrorMessage(msg);
             dbox.showMessageDialog(getUI()); });
     }
+    ViewArchiver.setUseRealClass(true);
     
     // If no document, just return null
-    if(shape==null) return null;
+    if(view==null) return null;
 
     // If old version, warn user that saving document will make it unreadable by RM7
     /*if(shape instanceof RMDocument && ((RMDocument)shape).getVersion()<7.0) {
@@ -294,7 +296,8 @@ public EditorPane open(Object aSource)
     }*/
     
     // Set document
-    getViewer().setContent(shape);
+    getViewer().setContent(view);
+    getViewer()._url = url;
     
     // If source is string, add to recent files menu
     //if(url!=null) RecentFilesPanel.addRecentFile(url.getString());

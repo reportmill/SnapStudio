@@ -7,10 +7,10 @@
     </jlabel>
     <jscrollpane GrowHeight="true">
       <jtable name="SitesTable">
-          <binding aspect="Items" key="Sites" />
+          <binding aspect="Items" key="RecentFiles" />
           <binding aspect="SelectedItem" key="SelectedSite" />
-          <JTableColumn Header="Name" ItemKey="Name" width="120" PrefWidth="120" />
-          <JTableColumn Header="URL" ItemKey="RemoteURLString" width="240" GrowWidth="true" />
+          <JTableColumn Header="Name" ItemKey="Name" PrefWidth="120" />
+          <JTableColumn Header="URL" ItemKey="Parent.Path" GrowWidth="true" />
       </jtable>
     </jscrollpane>
     <HBox align="CENTER" Spacing="10">

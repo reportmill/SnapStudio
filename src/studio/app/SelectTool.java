@@ -273,7 +273,7 @@ public void mouseDragged(ViewEvent anEvent)
 
             // Set newly selected shapes and new selection rect to be redrawn
             for(int i=0, iMax=_whileSelectingSelectedShapes.size(); i<iMax; i++)
-                ((View)_whileSelectingSelectedShapes.get(i)).repaint();
+                _whileSelectingSelectedShapes.get(i).repaint();
             editor.repaint(editor.getContent().localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
 
             // break

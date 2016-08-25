@@ -1,5 +1,6 @@
 package studio.app;
 import java.util.*;
+import java.util.prefs.*;
 import snap.util.*;
 import snap.view.*;
 import snap.web.*;
@@ -125,7 +126,7 @@ protected void initUI()
  */
 public void resetUI()
 {
-    setViewEnabled("OpenButton", getSelectedFile()!=null);
+    //setViewEnabled("OpenButton", getSelectedFile()!=null);
 }
 
 /**
@@ -134,11 +135,10 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Handle SitesTable double-click
-    if(anEvent.equals("SitesTable") && anEvent.getClickCount()>1)
-        if(getView("OpenButton", Button.class).isEnabled()) {
-            hide();
-            openFile();
-        }
+    if(anEvent.equals("SitesTable") && anEvent.getClickCount()>1) {
+        WebFile file = (WebFile)getViewSelectedItem("SitesTable");
+        openFile(file);
+    }
     
     // Handle NewButton
     if(anEvent.equals("NewButton")) {
@@ -146,10 +146,8 @@ public void respondUI(ViewEvent anEvent)
     }
     
     // Handle OpenButton
-    if(anEvent.equals("OpenButton")) {
-        hide();
-        openFile();
-    }
+    if(anEvent.equals("OpenButton"))
+        openFile(null);
     
     // Handle QuitButton
     if(anEvent.equals("QuitButton")) {
@@ -172,11 +170,73 @@ protected void newFile()
 /**
  * Opens selected file.
  */
-public void openFile()
+public void openFile(Object aSource)
 {
-    WebFile file = getSelectedFile();
-    //Editor ed = new Editor(file);
-    //ed.show();
+    // Have editor run open panel (if no document opened, just return)
+    EditorPane epane = new EditorPane();
+    if(aSource!=null) epane = epane.open(aSource);
+    else epane = epane.open(getUI());
+    if(epane==null) return;
+    
+    // Make editor window visible, show doc inspector, and order front after delay to get focus back from inspector
+    epane.setWindowVisible(true);
+    hide();
+    addRecentFile(epane.getSourceURL().getPath());
+}
+
+/**
+ * Returns the list of the recent documents as a list of strings.
+ */
+public static List <WebFile> getRecentFiles()
+{
+    // Get prefs for RecentDocuments (just return if missing)
+    Preferences prefs = PrefsUtils.prefs();
+    try { if(!prefs.nodeExists("RecentDocuments")) return new ArrayList(); }
+    catch(BackingStoreException bse) { return new ArrayList(); }
+    prefs = prefs.node("RecentDocuments");
+    
+    // Add to the list only if the file is around and readable
+    List list = new ArrayList();
+    for(int i=0; ; i++) {
+        String fname = prefs.get("index"+i, null); if(fname==null) break;
+        WebURL url = WebURL.getURL(fname);
+        WebFile file = url.getFile();
+        if(file!=null)
+            list.add(file);
+    }
+    
+    // Return list
+    return list;
+}
+
+/**
+ * Adds a new file to the list and updates the users preferences.
+ */
+public static void addRecentFile(String aPath)
+{
+    // Get the doc list from the preferences
+    WebURL url = WebURL.getURL(aPath);
+    WebFile file = url.getFile(); if(file==null) return;
+    List <WebFile> docs = getRecentFiles();
+    
+    // Remove the path (if it was there) and add to front of list
+    docs.remove(file); docs.add(0, file);
+    
+    // Add at most 10 files to the preferences list
+    Preferences prefs = PrefsUtils.prefs().node("RecentDocuments");
+    for(int i=0; i<docs.size() && i<10; i++) 
+        prefs.put("index"+i, docs.get(i).getPath());
+    try { prefs.flush(); } catch(Exception e)  { System.err.println(e); }
+}
+
+/**
+ * Clears recent documents from preferences.
+ */
+public void clearRecentFiles()
+{
+    Preferences p = PrefsUtils.prefs();
+    try { if(p.nodeExists("RecentDocuments")) p.node("RecentDocuments").removeNode(); }
+    catch(BackingStoreException e) { }
 }
 
 /**

@@ -1,5 +1,5 @@
 <panel width="275" height="425" >
-  <HBox name="SelectionPathPanel" x="3" y="3" width="269" height="42" Alignment="CENTER_LEFT">
+  <HBox name="SelectionPathPanel" x="3" y="3" width="269" height="42" Align="CENTER_LEFT">
     <border type="bevel" />
   </HBox>
   <jtogglebutton name="ShapeSpecificButton" x="7" y="50" width="44" height="44" selected="true"

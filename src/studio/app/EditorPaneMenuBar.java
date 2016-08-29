@@ -27,9 +27,6 @@ protected void initUI()
     //setViewValue("HyphenateTextMenuItem", RMTextEditor.isHyphenating());
 }
 
-/** Override to make available to package. */
-protected void initUI(Object anObj)  { super.initUI(anObj); }
-
 /**
  * Updates the editor's UI.
  */

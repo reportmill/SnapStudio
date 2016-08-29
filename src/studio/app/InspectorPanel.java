@@ -212,7 +212,7 @@ public void resetSelectionPathMatrix()
         if(shp==selectedShape) button.setSelected(true);  // Whether selected
         
         // Add button to selection path panel and button group
-        _selectionPathPane.addChild(button, 0); initUI(button);
+        _selectionPathPane.addChild(button, 0); button.setOwner(this);
         getToggleGroup("SelectionPath").add(button);
         if(shp!=_deepestShape) _selectionPathPane.addChild(new Sep(), 1);
     }

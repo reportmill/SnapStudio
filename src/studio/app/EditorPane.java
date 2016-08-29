@@ -468,7 +468,7 @@ public void runPopupMenu(ViewEvent anEvent)
     for(MenuItem m : shapesMenuCopy.getItems()) pmenu.addItem(m);
     
     // Initialize popup menu items to send Events to menu bar
-    getMenuBar().initUI(pmenu);
+    pmenu.setOwner(getMenuBar());
     pmenu.getPopup().show(getEditor(), anEvent.getX(), anEvent.getY());
     anEvent.consume();
 }

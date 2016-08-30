@@ -208,12 +208,12 @@ protected AttributesPanel createAttributesPanel()  { return new AttributesPanel(
 /**
  * Returns extension for editor document.
  */
-public String[] getFileExtensions()  { return new String[] { ".rpt", ".rib", ".jfx", ".pdf"}; }
+public String[] getFileExtensions()  { return new String[] { ".snp", ".rpt", ".rib" }; }
 
 /**
  * Returns the description for the editor document for use in open/save panels.
  */
-public String getFileDescription()  { return "ReportMill files (.rpt, .pdf, .rib, .jfx)"; }
+public String getFileDescription()  { return "SnapStudio files (.snp)"; }
 
 /**
  * Returns the window title.
@@ -245,7 +245,7 @@ public EditorPane newDocument()  { return open("/Temp/RM14/src/com/reportmill/ap
  */
 public EditorPane open(View aView)
 {
-    // Get path from open panel for supported file extensions (.rpt, .pdf, .rib)
+    // Get path from open panel for supported file extensions
     FileChooser fc = getEnv().getFileChooser(); fc.setDesc(getFileDescription()); fc.setExts(getFileExtensions());
     String path = fc.showOpenPanel(aView);
     return open(path);

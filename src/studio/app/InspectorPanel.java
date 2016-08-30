@@ -66,11 +66,11 @@ public void resetUI()
     Editor editor = getEditor(); if(editor==null) return;
     ViewTool tool = editor.getTool(editor.getSelectedOrSuperSelectedShapes());
     
-    // If ShapeSpecific inspector is selected, make sure we've installed inspector for the current selection
+    // If ShapeSpecificButton is selected, instal inspector for current selection
     if(getViewBoolValue("ShapeSpecificButton"))
         setInspector(tool);
     
-    // If fills inspector is showing, check to see if we need to install RibsGeneral (or re-install normal ShapeFills)
+    // If FillsButton is selected, install fill inspector
     if(getViewBoolValue("ShapeFillsButton"))
         setInspector(_shapeFills);
 

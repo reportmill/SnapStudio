@@ -3,7 +3,7 @@ import snap.gfx.Font;
 import snap.view.*;
 
 /**
- * This class is a Swing/Ribs Font panel for selecting fonts. It lets the user easily select a font family,
+ * This class is a Font panel for selecting fonts. It lets the user easily select a font family,
  * font size and font style (bold, italic, underline, outline). It also has a convenient slider for interactively
  * changing the size and a text field for specifically setting a size. In addition, there is a pick list that
  * shows all the individual fonts available for a given family.

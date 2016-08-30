@@ -7,7 +7,7 @@ import snap.web.*;
 /**
  * Provides a WebPage version of EditorPane.
  */
-public class EditorPage extends WebPage {
+public class EditorPage extends SnapPage {
 
     // The editor pane
     EditorPane         _epane;

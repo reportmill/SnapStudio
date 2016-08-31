@@ -25,7 +25,7 @@ protected View createUI()
         _epane = _epaneX; _epaneX = null; //return epaneUI;
         ViewOwner mbarOwnr = _epane.getMenuBar();
         MenuBar mbar = mbarOwnr.getUI(MenuBar.class);
-        mbarOwnr.getView("QuitMenuItem").setEnabled(false);
+        mbarOwnr.getView("QuitMenuItem").setDisabled(true);
         BorderView bpane = new BorderView(); bpane.setTop(mbar); bpane.setCenter(_epane.getUI());
         bpane.addEventHandler(e -> handleKeyEvent(e), KeyPressed);
         return bpane;

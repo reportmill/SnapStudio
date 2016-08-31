@@ -56,9 +56,9 @@ public void resetUI()
     setViewValue("SizesList", (int)size);
     setViewValue("SizeText", "" + size + " pt"); //setNodeValue("SizeThumb", size);
     setViewValue("BoldButton", font.isBold());
-    setViewEnabled("BoldButton", font.getBold()!=null);
+    setViewDisabled("BoldButton", font.getBold()==null);
     setViewValue("ItalicButton", font.isItalic());
-    setViewEnabled("ItalicButton", font.getItalic()!=null);
+    setViewDisabled("ItalicButton", font.getItalic()==null);
     setViewValue("UnderlineButton", EditorShapes.isUnderlined(editor));
     setViewValue("OutlineButton", EditorShapes.getTextBorder(editor)!=null);
     
@@ -68,7 +68,7 @@ public void resetUI()
     // Reset FontNameComboBox Items, SelectedItem and Enabled
     setViewItems("FontNameComboBox", familyNames);
     String fn = font.getFontFile().getNativeName(); setViewSelectedItem("FontNameComboBox", fn);
-    setViewEnabled("FontNameComboBox", familyNames.length>1);
+    setViewDisabled("FontNameComboBox", familyNames.length<=1);
 }
 
 /**

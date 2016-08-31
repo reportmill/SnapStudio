@@ -47,26 +47,6 @@ protected void initUI()
     // Modify items in Row1
     HBox hbox = getUI(HBox.class); 
     for(View child : hbox.getChildren()) child.setPrefSize(child.getSize());
-        
-    // Modify items in Row2, Row3
-    //hbox = getView("Row2", HBox.class); for(Node child : hbox.getChildren()) child.setPrefSize(child.getSize());
-    //hbox = getView("Row3", HBox.class); for(Node child : hbox.getChildren()) child.setPrefSize(child.getSize());
-        
-    // Get FontFaceComboBox, FontFaceText and FontFaceComboBox
-    //_fontComboBox = getView("FontFaceComboBox", ComboBox.class);
-    //_fontComboBox.setCellConfigure(c -> configureFontComboBox((ListCell)c));
-    //setNodeItems(_fontComboBox, RMFont.getFamilyNames());
-    //TextField fontText = _fontComboBox.getTextField();
-    //enableEvents(fontText, KeyPressed, KeyReleased);
-    //fontText.setName("FontFaceComboBoxText");
-    //fontText.addPropChangeListener(e -> selectAllOnFocus(fontText), Node.Focused_Prop);
-    
-    // Configure FontSizeComboBox
-    //_fontSizeComboBox = getView("FontSizeComboBox", ComboBox.class);
-    //Object sizes[] = { 6, 8, 9, 10, 11, 12, 14, 16, 18, 22, 24, 36, 48, 64, 72, 96, 128, 144 };
-    //setNodeItems(_fontSizeComboBox, sizes);
-    //TextField fontSizeText = _fontSizeComboBox.getTextField();
-    //fontSizeText.addPropChangeListener(e -> selectAllOnFocus(fontSizeText), Node.Focused_Prop);
 }
 
 /**
@@ -79,26 +59,9 @@ protected void resetUI()
     
     // Update UndoButton, RedoButton
     Undoer undoer = editor.getUndoer();
-    setViewEnabled("UndoButton", undoer!=null && undoer.getUndoSetLast()!=null);
-    setViewEnabled("RedoButton", undoer!=null && undoer.getRedoSetLast()!=null);
+    setViewDisabled("UndoButton", undoer==null || undoer.getUndoSetLast()==null);
+    setViewEnabled("RedoButton", undoer==null || undoer.getRedoSetLast()==null);
     
-    // Update BoldButton, PercentButton, CommaButton, DecimalAddButton, DecimalRemoveButton
-    //RMFormat format = EditorShapes.getFormat(editor);
-    //setNodeValue("MoneyButton", format instanceof RMNumberFormat && ((RMNumberFormat)format).isLocalCurrencySymbolUsed());
-    //setNodeValue("PercentButton", format instanceof RMNumberFormat && ((RMNumberFormat)format).isPercentSymbolUsed());
-    //setNodeValue("CommaButton", format instanceof RMNumberFormat && ((RMNumberFormat)format).isGroupingUsed());
-    //setNodeEnabled("DecimalAddButton", format instanceof RMNumberFormat);
-    //setNodeEnabled("DecimalRemoveButton", format instanceof RMNumberFormat);    
-
-    // Update FontFaceComboBox, FontSizeComboBox, BoldButton, ItalicButton, UnderlineButton, FontSizeDownButton.Enabled
-    //RMFont font = EditorShapes.getFont(editor); double size = font.getSize(); Number snum = size;
-    //setNodeValue("FontFaceComboBox", font.getFamily()); if(size==(int)size) snum = snum.intValue();
-    //setNodeValue("FontSizeComboBox", snum); // if is whole number, reset to integer
-    //setNodeValue("BoldButton", font.isBold());
-    //setNodeValue("ItalicButton", font.isItalic());
-    //setNodeValue("UnderlineButton", EditorShapes.isUnderlined(editor));
-    //setNodeEnabled("FontSizeDownButton", font.getSize()>6);
-
     // Reset PreviewEditButton state if out of sync
     //if(getViewBoolValue("PreviewEditButton")==getEditorPane().isEditing())
     //    setViewValue("PreviewEditButton", !getEditorPane().isEditing());
@@ -172,12 +135,6 @@ protected void respondUI(ViewEvent anEvent)
             if(anEvent.getName().startsWith(tool.getClass().getSimpleName())) {
                 getEditor().setCurrentTool(tool); break; }
     }
-    
-    // Handle AddTableButton, AddGraphButton, AddLabelsButton, AddCrossTabFrameButton
-    //if(anEvent.equals("AddTableButton")) RMTableTool.addTable(getEditor(), null);
-    //if(anEvent.equals("AddGraphButton")) RMGraphTool.addGraph(getEditor(), null);
-    //if(anEvent.equals("AddLabelsButton")) RMLabelsTool.addLabels(getEditor(), null);
-    //if(anEvent.equals("AddCrossTabFrameButton")) RMCrossTabTool.addCrossTab(getEditor(), null);
 }
 
 /**

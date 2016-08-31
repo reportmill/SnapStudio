@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel width="275" height="325">
   <font name="Arial" size="11" />
-  <jtabbedpane name="TabView" width="275" height="275" selected-index="1">
+  <jtabbedpane name="TabView" width="275" height="275" SelectedIndex="1">
     <panel x="11" y="30" width="254" height="232" asize="-~-,-~-" title="Stroke">
       <jcheckbox name="StrokeCheckBox" x="2" y="2" width="72" height="20" text="Stroke" />
       <jcombobox name="StrokeComboBox" x="61" y="27" width="135" height="23" focus="false" maximum-row-count="6" />

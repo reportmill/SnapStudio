@@ -38,12 +38,12 @@ protected void resetUI()
     // Update UndoMenuItem
     String uTitle = undoer==null || undoer.getUndoSetLast()==null? "Undo" : undoer.getUndoSetLast().getFullUndoTitle();
     setViewValue("UndoMenuItem", uTitle);
-    setViewEnabled("UndoMenuItem", undoer!=null && undoer.getUndoSetLast()!=null);
+    setViewDisabled("UndoMenuItem", undoer==null || undoer.getUndoSetLast()==null);
 
     // Update RedoMenuItem
     String rTitle = undoer==null || undoer.getRedoSetLast()==null? "Redo" : undoer.getRedoSetLast().getFullRedoTitle();
     setViewValue("RedoMenuItem", rTitle);
-    setViewEnabled("RedoMenuItem", undoer!=null && undoer.getRedoSetLast()!=null);
+    setViewDisabled("RedoMenuItem", undoer==null || undoer.getRedoSetLast()==null);
     
     // Update ShowRulersMenuItem
     setViewValue("ShowRulersMenuItem", getEditorPane().getShowRulers());

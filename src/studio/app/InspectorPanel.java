@@ -208,7 +208,7 @@ public void resetSelectionPathMatrix()
         // Set button images
         Image img2 = getImage(shp, 40, 40, Color.CLEAR); button.setImage(img2);
         //Image img3 = getImage(img, 40, 40, Color.WHITE); button.setSelImage(img3);
-        button.setToolTipText(shp.getClass().getSimpleName()); // Tooltip
+        button.setToolTip(shp.getClass().getSimpleName()); // Tooltip
         if(shp==selectedShape) button.setSelected(true);  // Whether selected
         
         // Add button to selection path panel and button group

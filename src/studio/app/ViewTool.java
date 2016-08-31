@@ -119,8 +119,13 @@ public List <PropItem> getSelNodeItems()
     props.add(new PropItem(selNode, View.Height_Prop));
     props.add(new PropItem(selNode, View.PrefWidth_Prop));
     props.add(new PropItem(selNode, View.PrefHeight_Prop));
+    props.add(new PropItem(selNode, View.MinWidth_Prop));
+    props.add(new PropItem(selNode, View.MinHeight_Prop));
+    props.add(new PropItem(selNode, View.GrowWidth_Prop));
+    props.add(new PropItem(selNode, View.GrowHeight_Prop));
+    props.add(new PropItem(selNode, View.LeanX_Prop));
+    props.add(new PropItem(selNode, View.LeanY_Prop));
     props.add(new PropItem(selNode, View.Fill_Prop));
-    if(selNode.getParent() instanceof SpringView) props.add(new PropItem(selNode, View.Autosizing_Prop));
     
     if(selNode instanceof ButtonBase) props.add(new PropItem(selNode, ButtonBase.Text_Prop));
     

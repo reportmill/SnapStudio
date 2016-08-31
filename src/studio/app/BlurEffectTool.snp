@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<panel width="275" height="220">
-  <font name="Arial" size="11" />
-  <jlabel x="57" y="56" width="71" height="22" text="Blur Radius:" align="left" />
-  <jspinner name="BlurRadiusSpinner" x="128" y="56" width="64" height="22" min="0" step="1" value="0" />
-  <jslider name="BlurRadiusSlider" x="35" y="92" width="189" height="29" asize="-~-,--~" min="1" max="20" value="4" />
-</panel>
+<SpringView width="275" height="220" PrefWidth="275" PrefHeight="220">
+  <Label x="57" y="56" width="71" height="22" text="Blur Radius:" />
+  <Spinner Name="BlurRadiusSpinner" x="128" y="56" width="64" height="22" Min="0" Value="0" />
+  <Slider Name="BlurRadiusSlider" x="35" y="92" width="189" height="29" GrowWidth="true" Min="1" Max="20" Value="4" />
+</SpringView>

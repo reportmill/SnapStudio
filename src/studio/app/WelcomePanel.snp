@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VBox PrefWidth="400" PrefHeight="480" FillWidth="true" Spacing="5">
-  <font name="Arial" size="11" />
-  <VBox Padding="2,8,8,8" Spacing="5" GrowHeight="true" FillWidth="true">
-    <jlabel x="9" y="220" width="300" height="27" text="Select or Create Project:" align="left">
+<VBox PrefWidth="400" PrefHeight="480" Spacing="5" FillWidth="true">
+  <VBox Padding="2,8,8,8" GrowHeight="true" Spacing="5" FillWidth="true">
+    <Label text="Select or Create Project:">
       <font name="Arial Bold" size="14" />
-    </jlabel>
-    <jscrollpane GrowHeight="true">
-      <jtable name="SitesTable">
-          <binding aspect="Items" key="RecentFiles" />
-          <binding aspect="SelectedItem" key="SelectedSite" />
-          <JTableColumn Header="Name" ItemKey="Name" PrefWidth="120" />
-          <JTableColumn Header="URL" ItemKey="Parent.Path" GrowWidth="true" />
-      </jtable>
-    </jscrollpane>
-    <HBox align="CENTER" Spacing="10">
-      <jbutton name="NewButton" PrefWidth="80" PrefHeight="22" text="New..." />
-      <jbutton name="OpenButton" PrefWidth="80" PrefHeight="22" text="Open" />
-      <jbutton name="QuitButton" PrefWidth="80" PrefHeight="22" text="Quit" />
+    </Label>
+    <ScrollView GrowHeight="true">
+      <TableView Name="SitesTable">
+        <binding aspect="Items" key="RecentFiles" />
+        <binding aspect="SelectedItem" key="SelectedSite" />
+        <TableCol PrefWidth="120" ItemKey="Name" Header="Name" />
+        <TableCol GrowWidth="true" ItemKey="Parent.Path" Header="URL" />
+      </TableView>
+    </ScrollView>
+    <HBox Align="CENTER" Spacing="10">
+      <Button Name="NewButton" PrefWidth="80" PrefHeight="22" text="New..." />
+      <Button Name="OpenButton" PrefWidth="80" PrefHeight="22" text="Open" />
+      <Button Name="QuitButton" PrefWidth="80" PrefHeight="22" text="Quit" />
     </HBox>
   </VBox>
 </VBox>

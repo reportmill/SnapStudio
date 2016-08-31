@@ -1,17 +1,13 @@
-<panel width="275" height="425" >
-  <HBox name="SelectionPathPanel" x="3" y="3" width="269" height="42" Align="CENTER_LEFT">
-    <border type="bevel" />
+<?xml version="1.0" encoding="UTF-8"?>
+<SpringView width="275" height="425" PrefWidth="275" PrefHeight="425">
+  <HBox Name="SelectionPathPanel" x="3" y="3" width="269" height="42">
+    <BevelBorder />
   </HBox>
-  <jtogglebutton name="ShapeSpecificButton" x="7" y="50" width="44" height="44" selected="true"
-    ttip="Shape-Specific Attributes Inspector" bgroup="InspGroup" />
-  <jtogglebutton name="ShapeFillsButton" x="61" y="50" width="44" height="44" image="ShapeFills.png"
-    ttip="Fill &amp; Stroke Inspector" bgroup="InspGroup" />
-  <jtogglebutton name="ShapePlacementButton" x="116" y="50" width="44" height="44" image="ShapePlacement.png"
-    ttip="Placement Inspector" bgroup="InspGroup" />
-  <jtogglebutton name="ShapeGeneralButton" x="170" y="50" width="44" height="44" image="ShapeGeneral.png"
-    ttip="General Attributes Inspector" bgroup="InspGroup" />
-  <jtogglebutton name="AnimationButton" x="224" y="50" width="44" height="44" image="Animation.png"
-    ttip="Animation Inspector" bgroup="InspGroup" />
-  <jtogglebutton name="OffscreenButton" x="270" y="50" width="4" height="4" visible="false" bgroup="InspGroup" />
-  <BorderView name="InspectorPanel" x="0" y="100" width="275" height="325" />
-</panel>
+  <ToggleButton Name="ShapeSpecificButton" x="7" y="50" width="44" height="44" ToolTip="Shape-Specific Attributes Inspector" Selected="true" ToggleGroup="InspGroup" />
+  <ToggleButton Name="ShapeFillsButton" x="61" y="50" width="44" height="44" ToolTip="Fill &amp; Stroke Inspector" image="ShapeFills.png" ToggleGroup="InspGroup" />
+  <ToggleButton Name="ShapePlacementButton" x="116" y="50" width="44" height="44" ToolTip="Placement Inspector" image="ShapePlacement.png" ToggleGroup="InspGroup" />
+  <ToggleButton Name="ShapeGeneralButton" x="170" y="50" width="44" height="44" ToolTip="General Attributes Inspector" image="ShapeGeneral.png" ToggleGroup="InspGroup" />
+  <ToggleButton Name="AnimationButton" x="224" y="50" width="44" height="44" ToolTip="Animation Inspector" image="Animation.png" ToggleGroup="InspGroup" />
+  <ToggleButton Name="OffscreenButton" x="270" y="50" width="4" height="4" Visible="false" ToggleGroup="InspGroup" />
+  <BorderView Name="InspectorPanel" y="100" width="275" height="325" />
+</SpringView>

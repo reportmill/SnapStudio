@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jtabbedpane PrefWidth="275" PrefHeight="325">
+<TabView PrefWidth="275" PrefHeight="325">
   <font name="Arial" size="12" />
-  <VBox title="General" align="TOP_CENTER" Padding="24,8,8,8" Spacing="10">
+  <VBox Align="TOP_CENTER" Padding="24,8,8,8" Spacing="10" title="General">
     <font name="Arial" size="11" />
     <HBox PrefWidth="250" Spacing="5">
-      <jlabel text="Name:" />
-      <jtextfield name="NameText" GrowWidth="true">
+      <Label text="Name:" />
+      <TextField Name="NameText" GrowWidth="true">
         <binding aspect="Text" key="SelectedShapes.Name" />
-      </jtextfield>
+      </TextField>
     </HBox>
-    <jcheckbox name="LockedCheckBox" text="Locked">
+    <CheckBox Name="LockedCheckBox" text="Locked">
       <binding aspect="Selected" key="SelectedShapes.Locked" />
-    </jcheckbox>
+    </CheckBox>
     <VBox LeanY="BOTTOM">
-      <jlabel text="URL:" />
-      <jscrollpane PrefWidth="250" PrefHeight="136">
-        <jtextarea name="UrlText" send-action-on-return="true">
+      <Label text="URL:" />
+      <ScrollView PrefWidth="250" PrefHeight="136">
+        <TextView Name="UrlText" SendActionOnReturn="true">
           <binding aspect="Text" key="SelectedShapes.URL" />
-        </jtextarea>
-      </jscrollpane>
+        </TextView>
+      </ScrollView>
     </VBox>
   </VBox>
   <VBox Padding="16,8,8,8" Spacing="3" FillWidth="true" title="Bindings">
     <font name="Arial" size="11" />
     <HBox>
-      <jlabel text="Key Bindings" />
-      <jlabel LeanX="RIGHT" text="(enter key in text)" />
+      <Label text="Key Bindings" />
+      <Label LeanX="RIGHT" text="(enter key in text)" />
     </HBox>
-    <jscrollpane GrowHeight="true">
-      <jtable name="BindingsTable" ShowHeader="false" GridColor="#c9c9c9" ShowHorizontalLines="true" ShowVerticalLines="true" >
-        <JTableColumn PrefWidth="80" />
-        <JTableColumn GrowWidth="true" />
-      </jtable>
-    </jscrollpane>
-    <jscrollpane PrefHeight="100">
-      <jtextarea name="BindingsText" send-action-on-return="true" />
-    </jscrollpane>
+    <ScrollView GrowHeight="true">
+      <TableView Name="BindingsTable" ShowHeader="false" GridColor="#c9c9c9">
+        <TableCol PrefWidth="80" />
+        <TableCol GrowWidth="true" />
+      </TableView>
+    </ScrollView>
+    <ScrollView PrefHeight="100">
+      <TextView Name="BindingsText" SendActionOnReturn="true" />
+    </ScrollView>
   </VBox>
-</jtabbedpane>
+</TabView>

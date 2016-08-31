@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<panel width="275" height="220">
-  <font name="Arial" size="11" />
-  <ColorWell name="FillColorWell" x="90" y="31" width="60" height="30" />
-</panel>
+<SpringView width="275" height="220" PrefWidth="275" PrefHeight="220">
+  <ColorWell Name="FillColorWell" x="90" y="31" width="60" height="30" />
+</SpringView>

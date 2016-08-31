@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel width="275" height="325">
   <font name="Arial" size="11" />
-  <TitlePane x="7" y="9" width="260" height="48" asize="-~-,--~" title="Rotation">
+  <TitlePane x="7" y="9" width="260" height="48" title="Rotation">
     <panel width="260" height="48">
-      <thumbwheel name="RotationThumb" x="14" y="7" width="180" height="16" asize="-~-,--~" min="-90" max="90" round="1" />
-      <jtextfield name="RotationText" x="199" y="5" width="50" height="20" asize="~--,--~" align="center" />
+      <thumbwheel name="RotationThumb" x="14" y="7" width="180" height="16" min="-90" max="90" round="1" />
+      <jtextfield name="RotationText" x="199" y="5" width="50" height="20" align="center" />
     </panel>
   </TitlePane>
-  <TitlePane x="7" y="64" width="260" height="94" asize="-~-,--~" title="Scale">
+  <TitlePane x="7" y="64" width="260" height="94" title="Scale">
     <panel width="260" height="94">
-      <thumbwheel name="ScaleXThumb" x="16" y="7" width="180" height="16" asize="-~-,--~" type="linear" min="-5" max="5" round="0.05" />
-      <jtextfield name="ScaleXText" x="199" y="5" width="50" height="20" asize="~--,--~" align="center" />
-      <thumbwheel name="ScaleYThumb" x="16" y="33" width="180" height="16" asize="-~-,--~" type="linear" min="-5" max="5" round="0.05" />
-      <jtextfield name="ScaleYText" x="199" y="31" width="50" height="20" asize="~--,--~" align="center" />
+      <thumbwheel name="ScaleXThumb" x="16" y="7" width="180" height="16" type="linear" min="-5" max="5" round="0.05" />
+      <jtextfield name="ScaleXText" x="199" y="5" width="50" height="20" align="center" />
+      <thumbwheel name="ScaleYThumb" x="16" y="33" width="180" height="16" type="linear" min="-5" max="5" round="0.05" />
+      <jtextfield name="ScaleYText" x="199" y="31" width="50" height="20" align="center" />
       <jcheckbox name="ScaleSymetricCheckBox" x="12" y="53" width="206" height="20" text="Scale Symetrically" selected="true" />
       <jlabel x="3" y="5" width="16" height="20" text="X:" />
       <jlabel x="3" y="30" width="16" height="20" text="Y:" />
     </panel>
   </TitlePane>
-  <TitlePane x="7" y="165" width="260" height="76" asize="-~-,--~" title="Skew">
+  <TitlePane x="7" y="165" width="260" height="76" title="Skew">
     <panel width="260" height="76">
-      <thumbwheel name="SkewXThumb" x="16" y="7" width="180" height="16" asize="-~-,--~" min="-90" max="90" round="1" />
-      <jtextfield name="SkewXText" x="199" y="5" width="50" height="20" asize="~--,--~" align="center" />
-      <thumbwheel name="SkewYThumb" x="16" y="33" width="180" height="16" asize="-~-,--~" min="-90" max="90" round="1" />
-      <jtextfield name="SkewYText" x="199" y="31" width="50" height="20" asize="~--,--~" align="center" />
+      <thumbwheel name="SkewXThumb" x="16" y="7" width="180" height="16" min="-90" max="90" round="1" />
+      <jtextfield name="SkewXText" x="199" y="5" width="50" height="20" align="center" />
+      <thumbwheel name="SkewYThumb" x="16" y="33" width="180" height="16" min="-90" max="90" round="1" />
+      <jtextfield name="SkewYText" x="199" y="31" width="50" height="20" align="center" />
       <jlabel x="3" y="5" width="16" height="20" text="X:" />
       <jlabel x="3" y="30" width="16" height="20" text="Y:" />
     </panel>

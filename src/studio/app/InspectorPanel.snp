@@ -3,15 +3,15 @@
     <border type="bevel" />
   </HBox>
   <jtogglebutton name="ShapeSpecificButton" x="7" y="50" width="44" height="44" selected="true"
-    ttip="Shape-Specific Attributes Inspector" bgroup="InspectorButtonGroup" />
+    ttip="Shape-Specific Attributes Inspector" bgroup="InspGroup" />
   <jtogglebutton name="ShapeFillsButton" x="61" y="50" width="44" height="44" image="ShapeFills.png"
-    ttip="Fill &amp; Stroke Inspector" bgroup="InspectorButtonGroup" />
+    ttip="Fill &amp; Stroke Inspector" bgroup="InspGroup" />
   <jtogglebutton name="ShapePlacementButton" x="116" y="50" width="44" height="44" image="ShapePlacement.png"
-    ttip="Placement Inspector" bgroup="InspectorButtonGroup" />
+    ttip="Placement Inspector" bgroup="InspGroup" />
   <jtogglebutton name="ShapeGeneralButton" x="170" y="50" width="44" height="44" image="ShapeGeneral.png"
-    ttip="General Attributes Inspector" bgroup="InspectorButtonGroup" />
+    ttip="General Attributes Inspector" bgroup="InspGroup" />
   <jtogglebutton name="AnimationButton" x="224" y="50" width="44" height="44" image="Animation.png"
-    ttip="Animation Inspector" bgroup="InspectorButtonGroup" />
-  <jtogglebutton name="OffscreenButton" x="270" y="50" width="4" height="4" visible="false" bgroup="InspectorButtonGroup" />
+    ttip="Animation Inspector" bgroup="InspGroup" />
+  <jtogglebutton name="OffscreenButton" x="270" y="50" width="4" height="4" visible="false" bgroup="InspGroup" />
   <BorderView name="InspectorPanel" x="0" y="100" width="275" height="325" />
 </panel>

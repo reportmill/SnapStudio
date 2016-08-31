@@ -4,18 +4,18 @@
   <jlabel x="5" y="4" width="56" height="20" text="Bounds:">
     <font name="Arial Bold" size="12" />
   </jlabel>
-  <jlabel x="64" y="18" width="17" height="20" asize="~-~,--~" text="X:" align="center" />
-  <jlabel x="198" y="18" width="17" height="20" asize="~-~,--~" text="Y:" align="center" />
-  <jlabel x="63" y="79" width="22" height="20" asize="~-~,--~" text="W:" align="center" />
-  <jlabel x="199" y="79" width="17" height="20" asize="~-~,--~" text="H:" align="center" />
-  <jtextfield name="XText" x="5" y="36" width="128" height="22" asize="-~~,--~" align="center" />
-  <thumbwheel name="XThumb" x="5" y="62" width="128" height="16" asize="-~~,--~" type="linear" min="-50" max="50" round="1" />
-  <jtextfield name="YText" x="140" y="36" width="128" height="22" asize="~~-,--~" align="center" />
-  <thumbwheel name="YThumb" x="140" y="62" width="128" height="16" asize="~~-,--~" type="linear" min="-50" max="50" round="1" />
-  <jtextfield name="WText" x="4" y="97" width="128" height="22" asize="-~~,--~" align="center" />
-  <thumbwheel name="WThumb" x="4" y="123" width="128" height="16" asize="-~~,--~" type="linear" min="-50" max="50" round="1" />
-  <jtextfield name="HText" x="139" y="97" width="128" height="22" asize="~~-,--~" align="center" />
-  <thumbwheel name="HThumb" x="139" y="123" width="128" height="16" asize="~~-,--~" type="linear" min="-50" max="50" round="1" />
+  <jlabel x="64" y="18" width="17" height="20" text="X:" align="center" />
+  <jlabel x="198" y="18" width="17" height="20" text="Y:" align="center" />
+  <jlabel x="63" y="79" width="22" height="20" text="W:" align="center" />
+  <jlabel x="199" y="79" width="17" height="20" text="H:" align="center" />
+  <jtextfield name="XText" x="5" y="36" width="128" height="22" align="center" />
+  <thumbwheel name="XThumb" x="5" y="62" width="128" height="16" type="linear" min="-50" max="50" round="1" />
+  <jtextfield name="YText" x="140" y="36" width="128" height="22" align="center" />
+  <thumbwheel name="YThumb" x="140" y="62" width="128" height="16" type="linear" min="-50" max="50" round="1" />
+  <jtextfield name="WText" x="4" y="97" width="128" height="22" align="center" />
+  <thumbwheel name="WThumb" x="4" y="123" width="128" height="16" type="linear" min="-50" max="50" round="1" />
+  <jtextfield name="HText" x="139" y="97" width="128" height="22" align="center" />
+  <thumbwheel name="HThumb" x="139" y="123" width="128" height="16" type="linear" min="-50" max="50" round="1" />
   <jlabel x="5" y="147" width="93" height="20" text="Minimum Size:" align="left" />
   <jlabel x="12" y="171" width="25" height="22" text="W:" align="right" />
   <jtextfield name="MinWText" x="38" y="171" width="50" height="22" align="center" />

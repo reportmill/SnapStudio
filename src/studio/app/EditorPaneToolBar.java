@@ -40,16 +40,6 @@ public EditorPane getEditorPane()  { return _editorPane; }
 public Editor getEditor()  { return getEditorPane().getEditor(); }
 
 /**
- * Initializes UI panel.
- */
-protected void initUI()
-{
-    // Modify items in Row1
-    HBox hbox = getUI(HBox.class); 
-    for(View child : hbox.getChildren()) child.setPrefSize(child.getSize());
-}
-
-/**
  * Updates the UI panel controls.
  */
 protected void resetUI()

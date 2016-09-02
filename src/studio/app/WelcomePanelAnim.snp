@@ -26,8 +26,8 @@
         <string>Studio</string>
       </RichText>
     </TextViewBase>
-    <polygon x="333" y="147" width="45" height="66" roll="40">
-      <stroke />
+    <PathView x="333" y="147" width="45" height="66" roll="40">
+      <LineBorder />
       <fill color="#e0e0f5" />
       <effect type="emboss" radius="5" />
       <KeyFrame time="1000">
@@ -88,7 +88,7 @@
         <cv cp1x="15" cp1y="-6.075" cp2x="10.075" cp2y="-11" x="4" y="-11" />
         <cl />
       </path>
-    </polygon>
+    </PathView>
     <TextViewBase x="73" y="145" width="264" height="38" WrapText="true">
       <effect type="blur" radius="5" />
       <RichText>
@@ -121,8 +121,8 @@
         <string>Build: XXX</string>
       </RichText>
     </TextViewBase>
-    <polygon x="36" y="130" width="19" height="82" roll="-35">
-      <stroke />
+    <PathView x="36" y="130" width="19" height="82" roll="-35">
+      <LineBorder />
       <fill color="#e0e0f5" />
       <effect type="emboss" radius="5" />
       <KeyFrame time="1760">
@@ -179,7 +179,7 @@
         <ln x="43" y="0" />
         <cl />
       </path>
-    </polygon>
+    </PathView>
   </PageView>
   <resource name="1902610833" rm-byte-encoding="Ascii85">
     <![CDATA[

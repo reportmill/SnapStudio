@@ -14,7 +14,7 @@ public static EditorPane openSample(String aTitle)
 {
     // If file is xml resource, get temp file, get XML bytes, write to file, open file and return null
     if(aTitle.endsWith(".xml")) {
-        File file = FileUtils.getTempFile(StringUtils.getPathFileName(aTitle));
+        File file = FileUtils.getTempFile(FilePathUtils.getFileName(aTitle));
         byte bytes[] = SnapUtils.getBytes(aTitle);
         SnapUtils.writeBytes(bytes, file);
         FileUtils.openFile(file);

@@ -316,9 +316,9 @@ public void saveAs()
     
     // Get extensions - if there is an existing extension, make sure it's first in the exts array
     String exts[] = getFileExtensions();
-    if(getSourceURL()!=null && StringUtils.getPathExtension(getSourceURL().getPath())!=null) {
+    if(getSourceURL()!=null && FilePathUtils.getExtension(getSourceURL().getPath())!=null) {
         List ex = new ArrayList(Arrays.asList(exts));
-        ex.add(0, "." + StringUtils.getPathExtension(getSourceURL().getPath()));
+        ex.add(0, "." + FilePathUtils.getExtension(getSourceURL().getPath()));
         exts = (String[])ex.toArray(new String[ex.size()]);
     }
     

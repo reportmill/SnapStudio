@@ -875,7 +875,7 @@ private Point dropFile(T aShape, File aFile, Point aPoint)
     
     // Get path and extension (set to empty string if null)
     String path = aFile.getPath();
-    String ext = StringUtils.getPathExtension(path); if(ext==null) ext = "";
+    String ext = FilePathUtils.getExtension(path); if(ext==null) ext = "";
 
     // If xml file, pass it to setDataSource()
     //if(ext.equalsIgnoreCase("xml") || ext.equalsIgnoreCase("json"))

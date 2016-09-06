@@ -68,7 +68,7 @@ private static void quitAppImpl()
  */
 private static class AppleAppHandler implements PreferencesHandler, QuitHandler {
 
-    /** Initializes Apple Application handling. */
+    // Initializes Apple Application handling.
     public void init()
     {
         //System.setProperty("apple.laf.useScreenMenuBar", "true"); // 1.4
@@ -78,14 +78,14 @@ private static class AppleAppHandler implements PreferencesHandler, QuitHandler 
         _appHand = this;
     }
 
-    /** Handle Preferences. */
+    // Handle Preferences.
     public void handlePreferences(PreferencesEvent arg0)
     {
         //AppPane appPane = AppPane.getOpenAppPane(); if(appPane==null) return;
         //appPane.getBrowser().setFile(appPane.getSelectedSite().getRootDir());
     }
 
-    /** Handle QuitRequest. */
+    // Handle QuitRequest.
     public void handleQuitRequestWith(QuitEvent arg0, QuitResponse arg1)  { App.quitApp(); }
 } static AppleAppHandler _appHand;
 

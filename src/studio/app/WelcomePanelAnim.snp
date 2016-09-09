@@ -31,14 +31,15 @@
       <fill color="#e0e0f5" />
       <effect type="emboss" radius="5" />
       <KeyFrame time="1000">
-        <KeyValue key="Roll" value="40" />
+        <KeyValue key="Rotate" value="40" />
       </KeyFrame>
       <KeyFrame time="1320">
-        <KeyValue key="Roll" value="-6" />
+        <KeyValue key="Rotate" value="-6" />
       </KeyFrame>
       <KeyFrame time="1640">
-        <KeyValue key="Roll" value="40" />
+        <KeyValue key="Rotate" value="40" />
       </KeyFrame>
+      <KeyFrame time="5000" Loops="true" />
       <path>
         <mv x="49" y="0.361" />
         <ln x="49" y="0.361" />
@@ -126,12 +127,12 @@
       <fill color="#e0e0f5" />
       <effect type="emboss" radius="5" />
       <KeyFrame time="1760">
-        <KeyValue key="Roll" value="-35" />
+        <KeyValue key="Rotate" value="-35" />
         <KeyValue key="X" value="36" />
         <KeyValue key="Y" value="130" />
       </KeyFrame>
       <KeyFrame time="2080">
-        <KeyValue key="Roll" value="0" />
+        <KeyValue key="Rotate" value="0" />
         <KeyValue key="X" value="27" />
         <KeyValue key="Y" value="116" />
       </KeyFrame>
@@ -143,15 +144,16 @@
         <KeyValue key="Y" value="146" />
       </KeyFrame>
       <KeyFrame time="2960">
-        <KeyValue key="Roll" value="0" />
+        <KeyValue key="Rotate" value="0" />
         <KeyValue key="X" value="27" />
         <KeyValue key="Y" value="129" />
       </KeyFrame>
       <KeyFrame time="3280">
-        <KeyValue key="Roll" value="-35" />
+        <KeyValue key="Rotate" value="-35" />
         <KeyValue key="X" value="36" />
         <KeyValue key="Y" value="130" />
       </KeyFrame>
+      <KeyFrame time="5000" Loops="true" />
       <path>
         <mv x="0" y="0" />
         <ln x="0" y="140.996" />

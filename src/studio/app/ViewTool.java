@@ -534,7 +534,7 @@ public boolean mousePressedSelection(ViewEvent anEvent)  { return false; }
 /**
  * Returns a tool tip string for given shape and event.
  */
-public String getToolTipText(T aShape, ViewEvent anEvent)  { return null; }
+public String getToolTip(T aShape, ViewEvent anEvent)  { return null; }
 
 /**
  * Editor method.

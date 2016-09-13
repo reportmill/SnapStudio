@@ -61,7 +61,7 @@ public Editor()
     // Enable Drag events
     enableEvents(DragEvents);
     
-    // Enable ToolTips so getToolTipText gets called and disable FocusKeys so tab doesn't leave editor
+    // Enable ToolTips so getToolTip gets called and disable FocusKeys so tab doesn't leave editor
     setToolTipEnabled(true);
     setFocusKeysEnabled(false);
 }

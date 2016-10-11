@@ -113,14 +113,6 @@ public List <PropItem> getSelNodeItems()
     List props = new ArrayList();
     View selNode = getEditor().getSelectedOrSuperSelectedShape();
     props.add(new PropItem(selNode, View.Name_Prop));
-    props.add(new PropItem(selNode, View.X_Prop));
-    props.add(new PropItem(selNode, View.Y_Prop));
-    props.add(new PropItem(selNode, View.Width_Prop));
-    props.add(new PropItem(selNode, View.Height_Prop));
-    props.add(new PropItem(selNode, View.PrefWidth_Prop));
-    props.add(new PropItem(selNode, View.PrefHeight_Prop));
-    props.add(new PropItem(selNode, View.MinWidth_Prop));
-    props.add(new PropItem(selNode, View.MinHeight_Prop));
     props.add(new PropItem(selNode, View.GrowWidth_Prop));
     props.add(new PropItem(selNode, View.GrowHeight_Prop));
     props.add(new PropItem(selNode, View.LeanX_Prop));
@@ -852,6 +844,8 @@ public void dropString(T aView, ViewEvent anEvent)
     double w = img.getWidth(), h = img.getHeight();
     double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
     view.setBounds(x, y, w, h);
+    if(view instanceof ButtonBase)
+        view.setText(view.getClass().getSimpleName());
     ((ChildView)aView).addChild(view);
 }
 

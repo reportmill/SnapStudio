@@ -24,6 +24,9 @@ public class Editor extends Viewer implements DeepChangeListener {
     // The last shape that was pasted from the clipboard (used for smart paste)
     View             _lastPasteShape;
     
+    // An object to handle events
+    EditorEvents     _eventHndlr = new EditorEvents(this);
+    
     // A helper class providing utilities for shape
     //EditorShapes      _shapesHelper = createShapesHelper();
     
@@ -150,37 +153,37 @@ public List <View> getSelectedShapes()  { return _selectedShapes; }
 /**
  * Selects the shapes in the given list.
  */
-public void setSelectedShapes(List <View> theShapes)
+public void setSelectedShapes(List <View> theViews)
 {
     // If shapes already set, just return
-    if(ListUtils.equalsId(theShapes, _selectedShapes)) return;
+    if(ListUtils.equalsId(theViews, _selectedShapes)) return;
     
     // If shapes is null or empty super-select the selected page and return
-    if(theShapes==null || theShapes.size()==0) {
+    if(theViews==null || theViews.size()==0) {
         setSuperSelectedShape(getContent()); return; }
     
-    // Get the first shape in given shapes list
-    View shape = theShapes.get(0);
+    // Get the first view in given shapes list
+    View view = theViews.get(0);
     
     // If shapes contains superSelectedShapes, superSelect last and return (hidden trick for undoSelectedObjects)
-    if(theShapes.size()>1 && shape==getContent()) {
-        setSuperSelectedShape(theShapes.get(theShapes.size()-1)); return; }
+    if(theViews.size()>1 && view==getContent()) {
+        setSuperSelectedShape(theViews.get(theViews.size()-1)); return; }
     
-    // Get the shape's parent
-    View shapesParent = shape.getParent();
+    // Get the view parent
+    View parent = view.getParent();
     
-    // If shapes parent is the document, super select shape instead
-    //if(shapesParent==getDocument()) {
-    //    setSuperSelectedShape(shape); return; }
+    // If parent is the content, super select view instead
+    if(view==getContent()) {
+        setSuperSelectedShape(view); return; }
     
-    // Super select shapes parent
-    setSuperSelectedShape(shapesParent);
+    // Super select parent
+    setSuperSelectedShape(parent);
     
     // Add shapes to selected list
-    _selectedShapes.addAll(theShapes);
+    _selectedShapes.addAll(theViews);
     
     // Fire PropertyChange
-    firePropChange(SelectedShapes_Prop, null, theShapes);
+    firePropChange(SelectedShapes_Prop, null, theViews);
 }
 
 /**
@@ -754,6 +757,8 @@ protected void processEvent(ViewEvent anEvent)
 {
     // Do normal version
     super.processEvent(anEvent);
+    
+    _eventHndlr.processEvent(anEvent);
     
     getSelectTool().processEvent(anEvent);
     

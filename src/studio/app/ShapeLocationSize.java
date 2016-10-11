@@ -56,20 +56,21 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get currently selected editor, document and shapes
     Editor editor = getEditor();
-    List <View> shapes = editor.getSelectedOrSuperSelectedShapes();
+    View view = editor.getSelectedOrSuperSelectedShape();
+    List <View> views = editor.getSelectedOrSuperSelectedShapes();
     
     // Handle X ThumbWheel and Text
     if(anEvent.equals("XThumb") || anEvent.equals("XText")) {
         editor.undoerSetUndoTitle("Location Change");
         double value = anEvent.getFloatValue(); value = getPointsFromUnits(value);
-        for(View shape : shapes) shape.setX(value);
+        for(View v : views) v.setX(value);
     }
     
     // Handle Y ThumbWheel and Text
     if(anEvent.equals("YThumb") || anEvent.equals("YText")) {
         editor.undoerSetUndoTitle("Location Change");
         double value = anEvent.getFloatValue(); value = getPointsFromUnits(value);
-        for(View shape : shapes) shape.setY(value);
+        for(View v : views) v.setY(value);
     }
     
     // Handle Width ThumbWheel and Text
@@ -77,7 +78,8 @@ public void respondUI(ViewEvent anEvent)
         editor.undoerSetUndoTitle("Size Change");
         double value = anEvent.getFloatValue(); value = getPointsFromUnits(value);
         if(Math.abs(value)<.1) value = MathUtils.sign(value)*.1f;
-        for(View shape : shapes) shape.setWidth(value);
+        for(View v : views) v.setWidth(value);
+        if(view==editor.getContent()) view.setPrefWidth(value);
     }
     
     // Handle Height ThumbWheel and Text
@@ -85,32 +87,33 @@ public void respondUI(ViewEvent anEvent)
         editor.undoerSetUndoTitle("Size Change");
         double value = anEvent.getFloatValue(); value = getPointsFromUnits(value);
         if(Math.abs(value)<.1) value = MathUtils.sign(value)*.1f;
-        for(View shape : shapes) shape.setHeight(value);
+        for(View v : views) v.setHeight(value);
+        if(view==editor.getContent()) view.setPrefHeight(value);
     }
     
     // Handle MinWText & MinHText
     if(anEvent.equals("MinWText"))
-        for(View shape : shapes) shape.setMinWidth(anEvent.getFloatValue());
+        for(View v : views) v.setMinWidth(anEvent.getFloatValue());
     if(anEvent.equals("MinHText"))
-        for(View shape : shapes) shape.setMinHeight(anEvent.getFloatValue());
+        for(View v : views) v.setMinHeight(anEvent.getFloatValue());
     
     // Handle MinWSyncButton & MinHSyncButton
     if(anEvent.equals("MinWSyncButton"))
-        for(View shape : shapes) shape.setMinWidth(shape.getWidth());
+        for(View v : views) v.setMinWidth(v.getWidth());
     if(anEvent.equals("MinHSyncButton"))
-        for(View shape : shapes) shape.setMinHeight(shape.getHeight());
+        for(View v : views) v.setMinHeight(v.getHeight());
 
     // Handle PrefWText & PrefHText
     if(anEvent.equals("PrefWText"))
-        for(View shape : shapes) shape.setPrefWidth(anEvent.getFloatValue());
+        for(View v : views) v.setPrefWidth(anEvent.getFloatValue());
     if(anEvent.equals("PrefHText"))
-        for(View shape : shapes) shape.setPrefHeight(anEvent.getFloatValue());
+        for(View v : views) v.setPrefHeight(anEvent.getFloatValue());
     
     // Handle PrefWSyncButton & PrefHSyncButton
     if(anEvent.equals("PrefWSyncButton"))
-        for(View shape : shapes) shape.setPrefWidth(shape.getWidth());
+        for(View v : views) v.setPrefWidth(v.getWidth());
     if(anEvent.equals("PrefHSyncButton"))
-        for(View shape : shapes) shape.setPrefHeight(shape.getHeight());
+        for(View v : views) v.setPrefHeight(v.getHeight());
 }
 
 /**

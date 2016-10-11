@@ -123,12 +123,10 @@ public void setVisibleName(String aName, boolean doToggle)
  */
 protected View createUI()
 {
-    _tabView = new TabView();
+    _tabView = new TabView(); _tabView.setPrefSize(275, 300); _tabView.setGrowHeight(true);
     _tabView.setFont(Font.Arial12.deriveFont(11d));
     String names[] = getInspectorNames(); ViewOwner inspectors[] = getInspectors();
-    for(int i=0;i<names.length;i++)
-        _tabView.addTab(names[i], new Label());
-    _tabView.setPrefSize(275, 290);
+    for(int i=0;i<names.length;i++) _tabView.addTab(names[i], new Label());
     return _tabView;
 }
 

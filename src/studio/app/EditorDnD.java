@@ -54,9 +54,9 @@ public void dragOver(ViewEvent anEvent)
     anEvent.acceptDrag(); //DnDConstants.ACTION_COPY);
     
     // Get shape at drag point (or the page, if none there)
-    View overShape = null;//_editor.getShapeAtPoint(anEvent.getPoint(), true);
-    //if(overShape==null)
-    //    overShape = _editor.getSelectedPage();
+    View overShape = _editor.getShapeAtPoint(anEvent.getPoint()); //true
+    if(overShape==null)
+        overShape = _editor.getContent();
     
     // Go up chain until we find a shape that accepts drag
     while(!_editor.getTool(overShape).acceptsDrag(overShape, anEvent))

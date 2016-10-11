@@ -15,7 +15,7 @@ public class GalleryPane extends ViewOwner {
  */
 protected View createUI()
 {
-    _ui = new VBox(); _ui.setSpacing(6); _ui.setGrowWidth(true);
+    _ui = new VBox(); _ui.setSpacing(6); _ui.setGrowWidth(true); _ui.setPickable(false);
     
     // Create Label, Buttons, Separator
     Label lbl = new Label("Label");
@@ -62,9 +62,28 @@ protected View createUI()
     //_ui.setFill(ViewUtils.getBackFill()); _ui.setEffect(new ShadowEffect());
     _ui.setBorder(Border.createCompoundBorder(Border.createLoweredBevelBorder(), Border.createEmptyBorder(8,8,8,12)));
     Box box = new Box(); box.setPadding(3,3,3,3); box.setContent(_ui); box.setFillWidth(true);
+    box.setAlign(Pos.TOP_CENTER); enableEvents(box, DragGesture);
     ScrollView sview = new ScrollView(box); sview.setFill(ViewUtils.getBackFill());
     sview.setGrowWidth(true); sview.setGrowHeight(true);
     return sview;
+}
+
+/**
+ * Respond to UI.
+ */
+public void respondUI(ViewEvent anEvent)
+{
+    // Handle DragGesture
+    if(anEvent.isDragGesture()) {
+        ParentView view = anEvent.getView(ParentView.class); _ui.setPickable(true);
+        View view2 = ViewUtils.getDeepestChildAt(view, anEvent.getX(), anEvent.getY()); _ui.setPickable(false);
+        while(!(view2.getParent() instanceof ChildView))
+            view2 = view2.getParent();
+        Dragboard dboard = anEvent.getDragboard();
+        dboard.setContent("GalleryPane: " + view2.getClass().getName());
+        Image img = ViewUtils.getImage(view2); dboard.setDragImage(img);
+        dboard.startDrag();
+    }
 }
 
 /**
@@ -72,7 +91,7 @@ protected View createUI()
  */
 public void addItem(VBox aVBox, View aView)
 {
-    HBox hbox = new HBox(); hbox.setSpacing(3); aView.setPickable(false); aView.setLeanX(HPos.CENTER);
+    HBox hbox = new HBox(); hbox.setSpacing(3); aView.setLeanX(HPos.CENTER);
     Label label = new Label(aView.getClass().getSimpleName()); label.setPrefWidth(80);
     hbox.setChildren(label, aView);
     aVBox.addChild(hbox);

@@ -44,6 +44,9 @@ public class Editor extends Viewer implements DeepChangeListener {
     
     // The current editor tool
     ViewTool              _currentTool = getSelectTool();
+    
+    // The undoer
+    Undoer                _undoer = new Undoer();
 
     // Constants for PropertyChanges
     public static final String CurrentTool_Prop = "CurrentTool";
@@ -79,6 +82,15 @@ public void setContent(View aView)
     // If already set, just return
     if(aView==getContent()) return; super.setContent(aView);
     setSuperSelectedShape(aView);
+}
+
+/**
+ * Returns the content XML.
+ */
+public XMLElement getContentXML()
+{
+    ViewArchiver varch = new ViewArchiver();
+    return varch.writeObject(getContent());
 }
 
 /**
@@ -708,6 +720,11 @@ public Rect getZoomFocusRect()
     sbounds.inset((sbounds.getWidth() - vrect.getWidth())/2, (sbounds.getHeight() - vrect.getHeight())/2);
     return sbounds;
 }
+
+/**
+ * Override to return Undoer.
+ */
+public Undoer getUndoer()  { return _undoer; }
 
 /**
  * Override to paint handles, margin, grid, etc.

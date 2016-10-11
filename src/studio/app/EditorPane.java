@@ -364,7 +364,9 @@ protected void saveImpl() throws Exception
     WebURL url = getSourceURL();
     WebFile file = url.getFile();
     if(file==null) file = url.createFile(false);
-    //file.setBytes(getViewer().getViewerShape().getContentXML().getBytes());
+    XMLElement xml = getEditor().getContentXML();
+    byte bytes[] = xml.getBytes();
+    file.setBytes(bytes);
     file.save();
 }
 

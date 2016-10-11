@@ -839,7 +839,21 @@ public void drop(T aShape, ViewEvent anEvent)
 /**
  * Called to handle dropping a string.
  */
-public void dropString(T aShape, ViewEvent anEvent)  { }
+public void dropString(T aView, ViewEvent anEvent)
+{
+    String str = anEvent.getDropString();
+    System.out.println("DropString: " + str);
+    if(!str.startsWith("GalleryPane: ")) return;
+    String cname = str.substring("GalleryPane: ".length());
+    Class cls = ClassUtils.getClass(cname);
+    View view = (View)ClassUtils.newInstance(cls);
+    Image img = Dragboard.get().getDragImage();
+    Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
+    double w = img.getWidth(), h = img.getHeight();
+    double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
+    view.setBounds(x, y, w, h);
+    ((ChildView)aView).addChild(view);
+}
 
 /**
  * Called to handle dropping a color.

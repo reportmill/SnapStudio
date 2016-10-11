@@ -17,6 +17,11 @@ protected View createUI()
 {
     _ui = new VBox(); _ui.setSpacing(6); _ui.setGrowWidth(true); _ui.setPickable(false);
     
+    // Rect, RoundRect, Ellipse
+    RectView rview = new RectView(0,0,80,20); rview.setFill(Color.PINK);
+    ShapeView rrview = new ShapeView(new RoundRect(0,0,80,20,4)); rrview.setFill(Color.PINK);
+    ShapeView eview = new ShapeView(new Ellipse(0,0,80,20)); eview.setFill(Color.PINK);
+    
     // Create Label, Buttons, Separator
     Label lbl = new Label("Label");
     Button btn = new Button("Button"); btn.setPrefSize(100,20);
@@ -54,7 +59,7 @@ protected View createUI()
     // Create DocView, PageView
     
     // Add nodes
-    View nodes[] = { lbl, btn, tbtn, cbtn, rbtn, sep, tfd, spnr, cbox, mbtn, sldr, twh, pbar };
+    View nodes[] = { rview, rrview, eview, lbl, btn, tbtn, cbtn, rbtn, sep, tfd, spnr, cbox, mbtn, sldr, twh, pbar };
     for(View n : nodes) addItem(_ui, n);
     View nodes2[] = { tab, ttlp , txtv };
     for(View n : nodes2) addItem(_ui, n);

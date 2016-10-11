@@ -5,6 +5,7 @@ import java.util.*;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
+import snap.web.*;
 
 /**
  * This is the base class for tools in RM - the objects that provide GUI editing for RM shapes.
@@ -846,6 +847,8 @@ public void dropString(T aView, ViewEvent anEvent)
     view.setBounds(x, y, w, h);
     if(view instanceof ButtonBase)
         view.setText(view.getClass().getSimpleName());
+    if(view instanceof RectView) {
+       view.setPrefSize(w,h); view.setFill(Color.PINK); }
     ((ChildView)aView).addChild(view);
 }
 
@@ -883,7 +886,24 @@ private Point dropFile(T aShape, File aFile, Point aPoint)
     
     // Get path and extension (set to empty string if null)
     String path = aFile.getPath();
-    String ext = FilePathUtils.getExtension(path); if(ext==null) ext = "";
+    String fname = FilePathUtils.getFileName(path);
+    String ext = FilePathUtils.getExtension(path); if(ext==null) ext = ""; ext = ext.toLowerCase();
+    
+    // If image, add image to project
+    if(ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("gif")) {
+        WebFile file = getEditor().getSourceURL().getFile();
+        WebFile dir = file.getParent(); if(dir.getFile("pkg.images")!=null) dir = dir.getFile("pkg.images");
+        WebFile ifile1 = WebURL.getURL(path).getFile();
+        WebFile ifile2 = dir.getSite().createFile(dir.getDirPath() + fname, false);
+        ifile2.setBytes(ifile1.getBytes());
+        ifile2.save();
+        
+        ImageView iview = new ImageView(ifile2); iview.setImageName(fname); iview.setSize(iview.getPrefSize());
+        double w = iview.getWidth(), h = iview.getHeight();
+        double x = Math.round(aPoint.getX() - w/2), y = Math.round(aPoint.getY() - h/2);
+        iview.setBounds(x,y,w,h);
+        ((ChildView)aShape).addChild(iview);
+    }
 
     // If xml file, pass it to setDataSource()
     //if(ext.equalsIgnoreCase("xml") || ext.equalsIgnoreCase("json"))

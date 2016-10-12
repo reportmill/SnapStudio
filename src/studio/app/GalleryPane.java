@@ -18,12 +18,13 @@ protected View createUI()
     _ui = new VBox(); _ui.setSpacing(6); _ui.setGrowWidth(true); _ui.setPickable(false);
     
     // Rect, RoundRect, Ellipse
-    RectView rview = new RectView(0,0,80,20); rview.setFill(Color.PINK);
+    RectView rview = new RectView(0,0,80,20); rview.setFill(Color.PINK); rview.setBorder(Color.BLACK,1);
     ShapeView rrview = new ShapeView(new RoundRect(0,0,80,20,4)); rrview.setFill(Color.PINK);
-    ShapeView eview = new ShapeView(new Ellipse(0,0,80,20)); eview.setFill(Color.PINK);
+    rrview.setBorder(Color.BLACK,1);
+    ShapeView eview = new ShapeView(new Ellipse(0,0,80,20)); eview.setFill(Color.PINK); eview.setBorder(Color.BLACK,1);
     
     // Create Label, Buttons, Separator
-    Label lbl = new Label("Label");
+    Label lbl = new Label("Label"); lbl.setPrefWidth(80);
     Button btn = new Button("Button"); btn.setPrefSize(100,20);
     ToggleButton tbtn = new ToggleButton("ToggleButton"); tbtn.setPrefSize(100,20);
     CheckBox cbtn = new CheckBox("CheckBox");

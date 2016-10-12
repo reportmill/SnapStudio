@@ -254,7 +254,7 @@ public TreeView <View> getViewTree()
 public BorderView getViewTreeBox()
 {
     if(_viewTreeBox!=null) return _viewTreeBox;
-    BorderView bview = new BorderView(); bview.setPadding(3,3,3,3); bview.setGrowHeight(true); bview.setPrefHeight(300);
+    BorderView bview = new BorderView(); bview.setPadding(3,3,3,3); bview.setGrowHeight(true); bview.setPrefHeight(240);
     Label label = new Label("View Hierarchy"); label.setPadding(4,4,4,5); label.setFill(new Color("#E1E1E1"));
     label.setBorder(Border.createLoweredBevelBorder());
     bview.setTop(label); bview.setCenter(new ScrollView(getViewTree()));

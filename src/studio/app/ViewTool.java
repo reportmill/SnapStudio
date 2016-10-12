@@ -75,7 +75,7 @@ protected void initUI()
 {
     // Get/configure PropTable
     TableView propTable = getView("PropTable", TableView.class);
-    enableEvents(propTable, MouseClicked);
+    enableEvents(propTable, MouseReleased);
 }
 
 /**
@@ -95,7 +95,7 @@ protected void resetUI()
 protected void respondUI(ViewEvent anEvent)
 {
     // Handle NodeTable double click
-    if(anEvent.equals("PropTable") && anEvent.isMouseClicked() && anEvent.getClickCount()==2) {
+    if(anEvent.equals("PropTable") && anEvent.isMouseReleased() && anEvent.getClickCount()==2) {
         TableView <PropItem> propTable = getView("PropTable", TableView.class);
         PropItem prop = propTable.getSelectedItem(); View pview = prop._view; String pkey = prop._key;
         DialogBox dbox = new DialogBox("Set Property Panel"); dbox.setQuestionMessage("Enter " + pkey + " value:");
@@ -848,8 +848,11 @@ public void dropString(T aView, ViewEvent anEvent)
     if(view instanceof ButtonBase)
         view.setText(view.getClass().getSimpleName());
     if(view instanceof RectView) {
-       view.setPrefSize(w,h); view.setFill(Color.PINK); }
+       view.setPrefSize(w,h); view.setFill(Color.PINK); view.setBorder(Color.BLACK,1); }
+   if(view instanceof Label)
+       view.setText("Label");
     ((ChildView)aView).addChild(view);
+    getEditor().setSelectedShape(view);
 }
 
 /**
@@ -869,19 +872,19 @@ public void dropFiles(T aShape, ViewEvent anEvent)
 {
     List <File> filesList = anEvent.getDropFiles(); Point point = anEvent.getPoint();
     for(File file : filesList)
-        point = dropFile(aShape, file, anEvent.getPoint());
+        point = dropFile(aShape, file, anEvent);
 }
 
 /**
  * Called to handle a file drop on the editor.
  */
-private Point dropFile(T aShape, File aFile, Point aPoint)
+private Point dropFile(T aShape, File aFile, ViewEvent anEvent)
 {
     // If directory, recurse and return
-    if(aFile.isDirectory()) { Point point = aPoint;
+    if(aFile.isDirectory()) {
         for(File file : aFile.listFiles())
-            point = dropFile(aShape, file, point);
-        return point;
+            dropFile(aShape, file, anEvent);
+        return null;
     }
     
     // Get path and extension (set to empty string if null)
@@ -898,11 +901,13 @@ private Point dropFile(T aShape, File aFile, Point aPoint)
         ifile2.setBytes(ifile1.getBytes());
         ifile2.save();
         
+        Point pnt = aShape.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
         ImageView iview = new ImageView(ifile2); iview.setImageName(fname); iview.setSize(iview.getPrefSize());
         double w = iview.getWidth(), h = iview.getHeight();
-        double x = Math.round(aPoint.getX() - w/2), y = Math.round(aPoint.getY() - h/2);
+        double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
         iview.setBounds(x,y,w,h);
         ((ChildView)aShape).addChild(iview);
+        getEditor().setSelectedShape(iview);
     }
 
     // If xml file, pass it to setDataSource()
@@ -918,7 +923,7 @@ private Point dropFile(T aShape, File aFile, Point aPoint)
     //    dropReportFile(aShape, path, aPoint);
     
     // Return point offset by 10
-    aPoint.offset(10, 10); return aPoint;
+    return null;//aPoint.offset(10, 10); return aPoint;
 }
 
 /**

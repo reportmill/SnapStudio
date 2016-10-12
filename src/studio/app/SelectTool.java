@@ -242,6 +242,8 @@ public void mouseDragged(ViewEvent anEvent)
             
             // Move handle to current point and break
             _shapeHandle.getTool().moveShapeHandle(_shapeHandle.getShape(), _shapeHandle.getHandle(), resizePoint);
+            if(_shapeHandle.getShape().getParent() instanceof SpringView)
+                ((SpringView)_shapeHandle.getShape().getParent()).resetSpringInfo();
             break;
 
         // Handle DragModeSelect
@@ -395,6 +397,9 @@ private void moveShapes(Point fromPoint, Point toPoint)
         double fx = fromPoint.getX(), fy = fromPoint.getY(), tx = toPoint.getX(), ty = toPoint.getY();
         shape.setXY(shape.getX() + tx - fx, shape.getY() + ty - fy); // Was setFrameXY, getFrameX/Y
     }
+    View par = getEditor().getSuperSelectedShape();
+    if(par instanceof SpringView)
+        ((SpringView)par).resetSpringInfo();
 }
 
 /**

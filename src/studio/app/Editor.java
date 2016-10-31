@@ -767,7 +767,7 @@ protected void processEvent(ViewEvent anEvent)
         _dragHelper.processEvent(anEvent);
         
     // See if zoom needs to be reset for any input events
-    else if(anEvent.isMouseDragged() || anEvent.isMouseReleased() || anEvent.isKeyReleased()) {
+    else if(anEvent.isMouseDrag() || anEvent.isMouseRelease() || anEvent.isKeyRelease()) {
         
         // If zoom to factor, revalidate when preferred size changes
         if(isZoomToFactor()) {

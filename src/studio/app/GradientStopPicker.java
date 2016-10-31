@@ -52,7 +52,7 @@ public class GradientStopPicker extends ParentView {
 public GradientStopPicker()
 {
     // Enable events
-    enableEvents(MousePressed, MouseDragged, MouseMoved, Action); enableEvents(DragEvents);
+    enableEvents(MousePress, MouseDrag, MouseMove, Action); enableEvents(DragEvents);
     repaint();
 }
 
@@ -283,7 +283,7 @@ protected void paintFront(Painter aPntr)
 protected void processEvent(ViewEvent anEvent)
 {
     // Handle MousePressed
-    if(anEvent.isMousePressed()) {    if(_stops==null) return;
+    if(anEvent.isMousePress()) {    if(_stops==null) return;
         
         // find the part clicked in
         Point pt = anEvent.getPoint();
@@ -310,7 +310,7 @@ protected void processEvent(ViewEvent anEvent)
     }
     
     // Handle MouseDragged
-    else if(anEvent.isMouseDragged()) {
+    else if(anEvent.isMouseDrag()) {
         if(_selectedKnob>=0) {
             adjustColorStop(_selectedKnob, anEvent.getPoint());
             fireActionEvent();
@@ -318,7 +318,7 @@ protected void processEvent(ViewEvent anEvent)
     }
     
     // Handle MouseMoved: cursor (if the gradient were its own component, it could do this automatically
-    else if(anEvent.isMouseMoved()) {
+    else if(anEvent.isMouseMove()) {
         boolean in = _gradientRect.contains(anEvent.getPoint()) && (getKnobIndex(anEvent.getPoint())==-1);
         setCursor(in? _addStopCursor : null);
     }

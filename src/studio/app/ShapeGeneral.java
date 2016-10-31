@@ -23,7 +23,7 @@ protected void initUI()
     // Get bindings table
     _bindingsTable = getView("BindingsTable", TableView.class); _bindingsTable.setRowHeight(18);
     _bindingsTable.setCellConfigure(this :: configureBindingsTable);
-    enableEvents(_bindingsTable, MouseReleased, DragDrop);
+    enableEvents(_bindingsTable, MouseRelease, DragDrop);
 }
 
 /**

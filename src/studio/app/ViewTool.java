@@ -75,7 +75,7 @@ protected void initUI()
 {
     // Get/configure PropTable
     TableView propTable = getView("PropTable", TableView.class);
-    enableEvents(propTable, MouseReleased);
+    enableEvents(propTable, MouseRelease);
 }
 
 /**
@@ -95,7 +95,7 @@ protected void resetUI()
 protected void respondUI(ViewEvent anEvent)
 {
     // Handle NodeTable double click
-    if(anEvent.equals("PropTable") && anEvent.isMouseReleased() && anEvent.getClickCount()==2) {
+    if(anEvent.equals("PropTable") && anEvent.isMouseRelease() && anEvent.getClickCount()==2) {
         TableView <PropItem> propTable = getView("PropTable", TableView.class);
         PropItem prop = propTable.getSelectedItem(); View pview = prop._view; String pkey = prop._key;
         DialogBox dbox = new DialogBox("Set Property Panel"); dbox.setQuestionMessage("Enter " + pkey + " value:");
@@ -459,10 +459,10 @@ public void mouseReleased(ViewEvent anEvent)  { getEditor().setCurrentToolToSele
 public void processEvent(T aShape, ViewEvent anEvent)
 {
     switch(anEvent.getType()) {
-        case MousePressed: mousePressed(aShape, anEvent); break;
-        case MouseDragged: mouseDragged(aShape, anEvent); break;
-        case MouseReleased: mouseReleased(aShape, anEvent); break;
-        case MouseMoved: mouseMoved(aShape, anEvent); break;
+        case MousePress: mousePressed(aShape, anEvent); break;
+        case MouseDrag: mouseDragged(aShape, anEvent); break;
+        case MouseRelease: mouseReleased(aShape, anEvent); break;
+        case MouseMove: mouseMoved(aShape, anEvent); break;
         default: if(anEvent.isKeyEvent()) processKeyEvent(aShape, anEvent);
     }
 }

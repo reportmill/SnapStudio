@@ -131,14 +131,14 @@ protected void initUI()
     super.initUI();
     
     // Enable Mouse Events for editor
-    enableEvents(getEditor(), MousePressed, MouseReleased);
+    enableEvents(getEditor(), MousePress, MouseRelease);
     
     // Configure Window ClassName, MenuBar, Image and enable window events
     WindowView win = getWindow();
     win.setType(WindowView.TYPE_MAIN);
     win.setMenuBar(getMenuBar().getUI());
     win.setImage(getFrameIcon());
-    enableEvents(win, WinClosing);
+    enableEvents(win, WinClose);
 }
 
 /**
@@ -192,7 +192,7 @@ protected void respondUI(ViewEvent anEvent)
         runPopupMenu(anEvent);
     
     // Handle WinClosing
-    if(anEvent.isWinClosing()) {
+    if(anEvent.isWinClose()) {
         close(); anEvent.consume(); }
     //else if(anEvent.isWinResized()) { //Dimension wsize=getWindow().getSize(), psize=getWindow().getPreferredSize();
         //if(Math.abs(wsize.width-psize.width)<=10) wsize.width = psize.width;

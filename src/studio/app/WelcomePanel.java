@@ -110,14 +110,14 @@ protected void initUI()
     // Enable SitesTable MouseReleased
     TableView sitesTable = getView("SitesTable", TableView.class);
     sitesTable.setRowHeight(24); //sitesTable.setStyle(new Style().setFontSize(10).toString());
-    enableEvents(sitesTable, MouseReleased);
+    enableEvents(sitesTable, MouseRelease);
     
     // Set preferred size
     getUI().setPrefSize(400,480);
     
     // Configure Window: Add WindowListener to indicate app should exit when close button clicked
     WindowView win = getWindow(); win.setTitle("Welcome"); win.setResizable(false);
-    enableEvents(win, WinClosing);
+    enableEvents(win, WinClose);
     getView("OpenButton", Button.class).setDefaultButton(true);
 }
 
@@ -154,7 +154,7 @@ public void respondUI(ViewEvent anEvent)
         _exit = true; hide(); }
         
     // Handle WinClosing
-    if(anEvent.isWinClosing()) {
+    if(anEvent.isWinClose()) {
         _exit = true; hide(); }
 }
 

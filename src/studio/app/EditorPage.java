@@ -27,7 +27,7 @@ protected View createUI()
         MenuBar mbar = mbarOwnr.getUI(MenuBar.class);
         mbarOwnr.getView("QuitMenuItem").setDisabled(true);
         BorderView bpane = new BorderView(); bpane.setTop(mbar); bpane.setCenter(_epane.getUI());
-        bpane.addEventHandler(e -> handleKeyEvent(e), KeyPressed);
+        bpane.addEventHandler(e -> handleKeyEvent(e), KeyPress);
         return bpane;
     }
     
@@ -66,7 +66,7 @@ protected void respondUI(ViewEvent anEvent)
  */
 private void handleKeyEvent(ViewEvent anEvent)
 {
-    if(anEvent.isKeyPressed() && anEvent.isShortcutDown()) {
+    if(anEvent.isKeyPress() && anEvent.isShortcutDown()) {
         EditorPaneMenuBar mbar = _epane.getMenuBar();
         mbar.getUI().fireEvent(anEvent);
     }

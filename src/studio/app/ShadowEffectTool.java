@@ -76,17 +76,17 @@ public static class OffsetPanel extends View {
     int       _x2, _y2;
     
     /** Creates offset panel. */
-    public OffsetPanel()  { enableEvents(MousePressed, MouseDragged, MouseReleased, Action); }
+    public OffsetPanel()  { enableEvents(MousePress, MouseDrag, MouseRelease, Action); }
     
     /** Handle Events. */
     protected void processEvent(ViewEvent e)
     {
         // Handle MousePressed
-        if(e.isMousePressed())  {
+        if(e.isMousePress())  {
             _x1 = _x2 = (int)e.getX(); _y1 = _y2 = (int)e.getY(); }
         
         // Handle MouseDragged, MouseReleased
-        else if(e.isMouseDragged() || e.isMouseReleased()) {
+        else if(e.isMouseDrag() || e.isMouseRelease()) {
             if(!isEnabled()) return;
             _x1 = _x2; _y1 = _y2;
             _x2 = (int)e.getX(); _y2 = (int)e.getY();

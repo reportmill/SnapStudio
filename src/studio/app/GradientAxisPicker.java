@@ -20,7 +20,7 @@ public class GradientAxisPicker extends View {
  */
 public GradientAxisPicker()
 {
-    enableEvents(MousePressed, MouseDragged, MouseReleased, Action);
+    enableEvents(MousePress, MouseDrag, MouseRelease, Action);
     setBorder(Border.createLoweredBevelBorder());
 }
 
@@ -89,7 +89,7 @@ protected void paintFront(Painter aPntr)
 protected void processEvent(ViewEvent anEvent)
 {
     // Handle MousePressed
-    if(anEvent.isMousePressed()) {
+    if(anEvent.isMousePress()) {
         Point pt = anEvent.getPoint();
         _startPoint = convertToProportional(pt);
         _endPoint = convertToProportional(pt);
@@ -98,13 +98,13 @@ protected void processEvent(ViewEvent anEvent)
     }
     
     // Handle MouseDragged
-    else if(anEvent.isMouseDragged()) {
+    else if(anEvent.isMouseDrag()) {
         _endPoint = convertToProportional(anEvent.getPoint());
         repaint();
     }
     
     // Handle MouseReleased: Reset dragging flag, send node event and repaint
-    else if(anEvent.isMouseReleased()) {
+    else if(anEvent.isMouseRelease()) {
         _dragging = false;
         fireActionEvent();
         repaint();

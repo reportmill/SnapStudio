@@ -41,13 +41,13 @@ public void processEvent(ViewEvent anEvent)
 {
     // Forward mouse pressed and released to official methods
     switch(anEvent.getType()) {
-        case MouseMoved: mouseMoved(anEvent); break;
-        case MousePressed: mousePressed(anEvent); break;
-        case MouseDragged: mouseDragged(anEvent); break;
-        case MouseReleased: mouseReleased(anEvent); break;
-        case KeyPressed: keyPressed(anEvent);
-        case KeyReleased: keyReleased(anEvent);
-        case KeyTyped: keyTyped(anEvent);
+        case MouseMove: mouseMoved(anEvent); break;
+        case MousePress: mousePressed(anEvent); break;
+        case MouseDrag: mouseDragged(anEvent); break;
+        case MouseRelease: mouseReleased(anEvent); break;
+        case KeyPress: keyPressed(anEvent);
+        case KeyRelease: keyReleased(anEvent);
+        case KeyType: keyTyped(anEvent);
     }
 }
 

@@ -48,9 +48,9 @@ public void processEvent(ViewEvent anEvent)
 {
     _event = anEvent;
     switch(anEvent.getType()) {
-        case MousePressed: mousePressed(anEvent); break;
-        case MouseDragged: mouseDragged(anEvent); break;
-        case MouseReleased: mouseReleased(anEvent); break;
+        case MousePress: mousePressed(anEvent); break;
+        case MouseDrag: mouseDragged(anEvent); break;
+        case MouseRelease: mouseReleased(anEvent); break;
         default: break;
     }
 }

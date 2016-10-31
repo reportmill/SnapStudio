@@ -107,10 +107,10 @@ protected void initUI()
     WelcomePanelAnim anim = new WelcomePanelAnim();
     getUI(ChildView.class).addChild(anim.getUI(), 0); anim.getUI().playAnimDeep();
     
-    // Enable SitesTable MouseClicked
+    // Enable SitesTable MouseReleased
     TableView sitesTable = getView("SitesTable", TableView.class);
     sitesTable.setRowHeight(24); //sitesTable.setStyle(new Style().setFontSize(10).toString());
-    enableEvents(sitesTable, MouseClicked);
+    enableEvents(sitesTable, MouseReleased);
     
     // Set preferred size
     getUI().setPrefSize(400,480);

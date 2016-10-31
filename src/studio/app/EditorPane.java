@@ -130,8 +130,8 @@ protected void initUI()
     // Do normal version
     super.initUI();
     
-    // Enable MouseClicked Event for editor
-    enableEvents(getEditor(), MousePressed, MouseReleased, MouseClicked);
+    // Enable Mouse Events for editor
+    enableEvents(getEditor(), MousePressed, MouseReleased);
     
     // Configure Window ClassName, MenuBar, Image and enable window events
     WindowView win = getWindow();

@@ -45,7 +45,6 @@ public void processEvent(ViewEvent anEvent)
         case MousePressed: mousePressed(anEvent); break;
         case MouseDragged: mouseDragged(anEvent); break;
         case MouseReleased: mouseReleased(anEvent); break;
-        //case MouseClicked: mouseClicked(anEvent); break;
         case KeyPressed: keyPressed(anEvent);
         case KeyReleased: keyReleased(anEvent);
         case KeyTyped: keyTyped(anEvent);

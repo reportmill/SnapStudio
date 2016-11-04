@@ -555,7 +555,7 @@ public class ViewTreeResolver extends TreeResolver <View> {
         ParentView par = (ParentView)aParent;
         if(par instanceof ScrollView) { ScrollView sp = (ScrollView)par;
             return sp.getContent()!=null? new View[] { sp.getContent() } : new View[0]; }
-        return par.getChildren().toArray(new View[0]);
+        return par.getChildren();
     }
 
     /** Returns the text to be used for given item. */

@@ -95,7 +95,7 @@ public static List <View> getCandidateShapes(Editor anEditor)
         return Collections.emptyList();
     
     // Get all peers of selected shapes
-    List candidateShapes = new ArrayList(parent.getChildren());
+    List candidateShapes = ArrayUtils.asArrayList(parent.getChildren());
     for(int i=0, iMax=anEditor.getSelectedShapeCount(); i<iMax; i++)
         ListUtils.removeId(candidateShapes, anEditor.getSelectedShape(i));
     

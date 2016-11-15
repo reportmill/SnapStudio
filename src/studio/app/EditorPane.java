@@ -114,7 +114,7 @@ public void setShowRulers(boolean aValue)
 protected View createUI()
 {
     BorderView bpane = (BorderView)super.createUI(); //bpane.setGrowWidth(true);
-    VBox vbox = new VBox(); vbox.setFillWidth(true);
+    VBox vbox = new VBox(); vbox.setFillWidth(true); vbox.setPrefWidth(275);
     vbox.setChildren(getAttributesPanel().getUI(), getInspectorBox(), getViewTreeBox());
     vbox.setBorder(Border.createLineBorder(Color.LIGHTGRAY, 1));
     //HBox hbox = new HBox(); hbox.setAlignment(Pos.TOP_LEFT); hbox.setFillHeight(true); hbox.setChildren(bpane, vbox);

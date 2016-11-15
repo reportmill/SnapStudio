@@ -50,7 +50,7 @@ public Viewer()
     setFocusable(true); setFocusWhenPressed(true);
     setFill(Color.LIGHTGRAY);
     super.setContent(_cbox);
-    _cbox.setFill(ViewUtils.getBackFill());
+    _cbox.setFill(ViewUtils.getBackFill()); _cbox.setFillWidth(true); _cbox.setFillHeight(true);
     _cbox.setEffect(new ShadowEffect());
     _cbox.setPickable(false);
 }
@@ -73,15 +73,13 @@ public void setContent(View aView)
     // If already set, just return
     if(aView==getContent()) return;
     
-    // If old shape, stop animation
-    //if(getContent()!=null) stop();
-    
     // Set new document and fire property change
     ParentView pview = getContent(); _cbox.setContent(aView);
     firePropChange(Content_Prop, pview, aView);
     
-    // If Showing, start playing
-    //if(isShowing()) play();
+    // If content not DocView or SpringView, set min size
+    if(aView instanceof DocView || aView instanceof SpringView) _cbox.setMinSize(-1,-1);
+    else _cbox.setMinSize(500,500);
     
     // Set ZoomToFitFactor and relayout/repaint (for possible size change)
     setZoomToFitFactor();

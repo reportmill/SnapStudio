@@ -546,7 +546,7 @@ public class ViewTreeResolver extends TreeResolver <View> {
         if(!(anItem instanceof ParentView)) return false;
         if(anItem instanceof Label || anItem instanceof ButtonBase || anItem instanceof Spinner) return false;
         if(anItem instanceof ComboBox || anItem instanceof ListView) return false;
-        return anItem instanceof ParentView && ((ParentView)anItem).getChildCount()>0;
+        return ((ParentView)anItem).getChildCount()>0;
     }
 
     /** Returns the children. */
@@ -561,9 +561,9 @@ public class ViewTreeResolver extends TreeResolver <View> {
     /** Returns the text to be used for given item. */
     public String getText(View anItem)
     {
-        String name = anItem.getName(); if(name!=null) return name;
         String str = anItem.getClass().getSimpleName();
-        String text = anItem.getText(); if(text!=null) str = "\"" + text + "\" " + str;
+        String name = anItem.getName(); if(name!=null) str += " - " + name;
+        String text = anItem.getText(); if(text!=null) str += " \"" + text + "\" ";
         return str;
     }
 

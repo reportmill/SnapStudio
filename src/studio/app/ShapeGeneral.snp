@@ -34,7 +34,7 @@
       </TableView>
     </ScrollView>
     <ScrollView PrefHeight="100">
-      <TextView Name="BindingsText" SendActionOnReturn="true" />
+      <TextView Name="BindingsText" FireActionOnReturn="true" />
     </ScrollView>
   </VBox>
 </TabView>

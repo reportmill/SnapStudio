@@ -691,18 +691,4 @@ public static void setFormat(Editor anEditor, TextFormat aFormat)
     //for(RMShape shape : anEditor.getSelectedOrSuperSelectedShapes()) shape.setFormat(aFormat);
 }
 
-/**
- * Splits the selected shape in half on the horizontal axis.
- */
-public static void splitHorizontal(Editor editor)
-{
-    editor.undoerSetUndoTitle("Split Column");
-    /*RMShape shape = editor.getSuperSelectedShape();
-    RMParentShape parent = shape.getParent();
-    shape.repaint();
-    shape = shape.divideShapeFromEdge(shape.getWidth()/2, RMRect.MinXEdge, null);
-    parent.addChild(shape);
-    editor.setSuperSelectedShape(shape);*/
-}
-
 }

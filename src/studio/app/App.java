@@ -33,8 +33,7 @@ public static void main(final String args[])
  */
 public App(String args[])
 {
-    // Set App and App Prefs class
-    SnapUtils.isApp = true;
+    // Set App Prefs class
     PrefsUtils.setPrefsClass(App.class);
     
     // Install Exception reporter

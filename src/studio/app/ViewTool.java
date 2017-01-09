@@ -840,7 +840,7 @@ public void dropString(T aView, ViewEvent anEvent)
     String cname = str.substring("GalleryPane: ".length());
     Class cls = ClassUtils.getClass(cname);
     View view = (View)ClassUtils.newInstance(cls);
-    Image img = Dragboard.get().getDragImage();
+    Image img = Clipboard.getDrag().getDragImage();
     Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
     double w = img.getWidth(), h = img.getHeight();
     double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);

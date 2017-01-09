@@ -85,7 +85,7 @@ public void respondUI(ViewEvent anEvent)
         View view2 = ViewUtils.getDeepestChildAt(view, anEvent.getX(), anEvent.getY()); _ui.setPickable(false);
         while(!(view2.getParent() instanceof ChildView))
             view2 = view2.getParent();
-        Dragboard dboard = anEvent.getDragboard();
+        Clipboard dboard = anEvent.getDragboard();
         dboard.setContent("GalleryPane: " + view2.getClass().getName());
         Image img = ViewUtils.getImage(view2); dboard.setDragImage(img);
         dboard.startDrag();

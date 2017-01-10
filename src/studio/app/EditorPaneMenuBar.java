@@ -122,9 +122,7 @@ protected void respondUI(ViewEvent anEvent)
     
     // Edit -> HyphenateTextMenuItem
     /*if(anEvent.equals("HyphenateTextMenuItem")) {
-        RMTextEditor.setHyphenating(anEvent.getBooleanValue());
-        editor.repaint();
-    }*/
+        RMTextEditor.setHyphenating(anEvent.getBooleanValue()); editor.repaint(); }*/
         
     // Handle Format menu items (use name because anObj may come from popup menu)
     if(anEvent.equals("FontPanelMenuItem")) epane.getAttributesPanel().setVisibleName(AttributesPanel.FONT);
@@ -175,9 +173,6 @@ protected void respondUI(ViewEvent anEvent)
     if(name.equals("SizeToFitMenuItem")) EditorShapes.setSizeToFit(editor);
     if(name.equals("EquallySpaceRowMenuItem")) EditorShapes.equallySpaceRow(editor);
     if(name.equals("EquallySpaceColumnMenuItem")) EditorShapes.equallySpaceColumn(editor);
-    //if(name.equals("GroupInSwitchShapeMenuItem")) EditorShapes.groupInSwitchShape(editor);
-    //if(name.equals("GroupInScene3DMenuItem")) EditorShapes.groupInScene3D(editor);
-    //if(name.equals("MoveToNewLayerMenuItem")) EditorShapes.moveToNewLayer(editor);
     if(name.equals("CombinePathsMenuItem")) EditorShapes.combinePaths(editor);
     if(name.equals("SubtractPathsMenuItem")) EditorShapes.subtractPaths(editor);
     if(name.equals("ConvertToImageMenuItem")) EditorShapes.convertToImage(editor);

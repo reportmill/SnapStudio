@@ -37,8 +37,7 @@ public App(String args[])
     PrefsUtils.setPrefsClass(App.class);
     
     // Install Exception reporter
-    ExceptionReporter er = new ExceptionReporter();
-    er.setURL("http://www.reportmill.com/cgi-bin/cgiemail/email/snap-exception.txt");
+    ExceptionReporter er = new ExceptionReporter("SnapStudio"); er.setToAddress("support@reportmill.com");
     er.setInfo("SnapCode Version 1, Build Date: " + SnapUtils.getBuildInfo());
     Thread.setDefaultUncaughtExceptionHandler(er);
 

@@ -9,7 +9,7 @@ import snap.view.*;
 public class InspectorPanel extends EditorPane.SupportPane {
     
     // The selection path panel
-    ChildView                 _selectionPathPane;
+    ChildView            _selectionPathPane;
     
     // The child inspector current installed in inspector panel
     ViewOwner            _childInspector;
@@ -50,7 +50,7 @@ public void initUI()
     
     // Create the Action that redispatches the event and add the action to the action map
     addKeyActionEvent("UndoAction", "meta Z");
-    getView("OffscreenButton").setPickable(false);
+    //getView("OffscreenButton").setPickable(false);
     
     // Configure Window
     //getWindow().setType(WindowView.TYPE_UTILITY); getWindow().setAlwaysOnTop(true);

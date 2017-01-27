@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DocView version="14">
-  <PageView width="400" height="220">
+  <PageView PrefWidth="400" PrefHeight="220">
     <animator max-time="5000" loop="true" />
     <ImageView width="400" height="220" resource="1902610833" PreserveRatio="false">
       <effect type="emboss" altitude="90" />

@@ -17,9 +17,6 @@ public class EditorPane extends ViewerPane {
     // The editor ruler nodes
     EditorRuler          _hruler, _vruler;
     
-    // The original editor, if in preview mode
-    Editor               _realEditor;
-    
     // The shared editor inspector
     InspectorPanel         _inspPanel = createInspectorPanel();
     
@@ -37,11 +34,6 @@ public class EditorPane extends ViewerPane {
     
     // The image for a window frame icon
     static Image           _frameIcon = Image.get(EditorPane.class, "ReportMill16x16.png");
-
-/**
- * Creates a new EditorPane.
- */
-public EditorPane()  { }
 
 /**
  * Returns the viewer as an editor.
@@ -115,7 +107,7 @@ protected View createUI()
 {
     BorderView bpane = (BorderView)super.createUI(); //bpane.setGrowWidth(true);
     VBox vbox = new VBox(); vbox.setFillWidth(true); vbox.setPrefWidth(275);
-    vbox.setChildren(getAttributesPanel().getUI(), getInspectorBox(), getViewTreeBox());
+    vbox.setChildren(getAttributesPanel().getUI(), getInspectorPanel().getUI()); //, getViewTreeBox());
     vbox.setBorder(Border.createLineBorder(Color.LIGHTGRAY, 1));
     //HBox hbox = new HBox(); hbox.setAlignment(Pos.TOP_LEFT); hbox.setFillHeight(true); hbox.setChildren(bpane, vbox);
     bpane.setRight(vbox);
@@ -170,10 +162,10 @@ protected void resetUI()
     if(getAttributesPanel().isVisible()) getAttributesPanel().resetLater();
     
     // ResetViewTree
-    View content = getContent();
-    _viewTree.setItems(content);
-    _viewTree.expandItem(content);
-    _viewTree.setSelectedItem(getEditor().getSelectedOrSuperSelectedShape());
+    //View content = getContent();
+    //_viewTree.setItems(content);
+    //_viewTree.expandItem(content);
+    //_viewTree.setSelectedItem(getEditor().getSelectedOrSuperSelectedShape());
 }
 
 /**
@@ -200,8 +192,7 @@ protected void respondUI(ViewEvent anEvent)
         //if(getWindow().getWidth()!=wsize.width || getWindow().getHeight()!=wsize.height) getWindow().setSize(wsize);
         
     // Handle ViewTree
-    if(anEvent.equals("ViewTree"))
-        getEditor().setSelectedShape(_viewTree.getSelectedItem());
+    //if(anEvent.equals("ViewTree")) getEditor().setSelectedShape(_viewTree.getSelectedItem());
 }
 
 /**
@@ -315,7 +306,7 @@ public EditorPane newDocument()
     ParentView pview = null;
     if(desc.equals(options[0])) {
         DocView doc = new DocView(); pview = doc;
-        PageView page = new PageView(); page.setPrefSize(792,612);
+        PageView page = new PageView(); page.setPrefSize(612,792);
         doc.setPage(page);
     }
     else if(desc.equals(options[1])) pview = new HBox();

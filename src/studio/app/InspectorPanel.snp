@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SpringView width="275" height="425" PrefWidth="275" PrefHeight="425">
-  <HBox Name="SelectionPathPanel" x="3" y="3" width="269" height="42">
-    <BevelBorder />
+  <HBox Name="SelectionPathPanel" x="4" y="4" width="267" height="42">
+     <BevelBorder />
   </HBox>
-  <ToggleButton Name="ShapeSpecificButton" x="7" y="50" width="44" height="44" ToolTip="Shape-Specific Attributes Inspector" Selected="true" ToggleGroup="InspGroup" />
-  <ToggleButton Name="ShapeFillsButton" x="61" y="50" width="44" height="44" ToolTip="Fill &amp; Stroke Inspector" image="ShapeFills.png" ToggleGroup="InspGroup" />
-  <ToggleButton Name="ShapePlacementButton" x="116" y="50" width="44" height="44" ToolTip="Placement Inspector" image="ShapePlacement.png" ToggleGroup="InspGroup" />
-  <ToggleButton Name="ShapeGeneralButton" x="170" y="50" width="44" height="44" ToolTip="General Attributes Inspector" image="ShapeGeneral.png" ToggleGroup="InspGroup" />
-  <ToggleButton Name="AnimationButton" x="224" y="50" width="44" height="44" ToolTip="Animation Inspector" image="Animation.png" ToggleGroup="InspGroup" />
-  <ToggleButton Name="OffscreenButton" x="270" y="50" width="4" height="4" Visible="false" ToggleGroup="InspGroup" />
+  <HBox x="2" y="48" width="269" height="48" Align="CENTER">
+    <ToggleButton Name="ShapeSpecificButton" PrefWidth="52" PrefHeight="42" ToolTip="Shape-Specific Attributes Inspector" Selected="true" ToggleGroup="InspGroup" Position="CENTER_LEFT" />
+    <ToggleButton Name="ShapeFillsButton" PrefWidth="52" PrefHeight="42" ToolTip="Fill &amp; Stroke Inspector" image="ShapeFills.png" ToggleGroup="InspGroup" Position="CENTER" />
+    <ToggleButton Name="ShapePlacementButton" PrefWidth="52" PrefHeight="42" ToolTip="Placement Inspector" image="ShapePlacement.png" ToggleGroup="InspGroup" Position="CENTER" />
+    <ToggleButton Name="ShapeGeneralButton" PrefWidth="52" PrefHeight="42" ToolTip="General Attributes Inspector" image="ShapeGeneral.png" ToggleGroup="InspGroup" Position="CENTER" />
+    <ToggleButton Name="AnimationButton" PrefWidth="52" PrefHeight="42" ToolTip="Animation Inspector" image="Animation.png" ToggleGroup="InspGroup" Position="CENTER_RIGHT" />
+  </HBox>
   <BorderView Name="InspectorPanel" y="100" width="275" height="325" />
 </SpringView>

@@ -294,8 +294,36 @@ public static Image getFrameIcon()  { return _frameIcon; }
 /**
  * Creates a new default editor pane.
  */
-public EditorPane newDocument()  { return open("/Temp/RM14/src/com/reportmill/app/FontPanel.rib"); }
-//return open(new RMDocument(612, 792)); }
+public EditorPane newDocument()
+{
+    // Get new FormBuilder and configure
+    FormBuilder form = new FormBuilder(); form.setPadding(20, 5, 15, 5);
+    form.addLabel("Select file type:           ").setFont(new snap.gfx.Font("Arial", 24));
+    form.setSpacing(15);
+    
+    // Define options
+    String options[] = { "DocView", "HBox", "VBox", "BorderView" };
+
+    // Add and configure radio buttons
+    for(int i=0; i<options.length; i++) { String option = options[i];
+        form.addRadioButton("EntryType", option, i==0); }
+
+    // Run dialog panel (just return if null), select type and extension
+    if(!form.showPanel(null, "New Project File", DialogBox.infoImage)) return null;
+    String desc = form.getStringValue("EntryType");
+    
+    ParentView pview = null;
+    if(desc.equals(options[0])) {
+        DocView doc = new DocView(); pview = doc;
+        PageView page = new PageView(); page.setPrefSize(792,612);
+        doc.setPage(page);
+    }
+    else if(desc.equals(options[1])) pview = new HBox();
+    else if(desc.equals(options[2])) pview = new VBox();
+    else if(desc.equals(options[3])) pview = new BorderView();
+    
+    return open((Object)pview);
+}
 
 /**
  * Creates a new editor window from an open panel.
@@ -313,19 +341,36 @@ public EditorPane open(View aView)
  */
 public EditorPane open(Object aSource)
 {
-    // If document source is null, just return null
-    if(aSource==null) return null;
-    
-    // Get Source URL
-    WebURL url = null; try { url = WebURL.getURL(aSource); } catch(Exception e) { }
-    
     // If source is already opened, return editor pane
+    WebURL url = null; try { url = WebURL.getURL(aSource); } catch(Exception e) { }
     if(!SnapUtils.equals(url, getSourceURL())) {
         EditorPane epanes[] = WindowView.getOpenWindowOwners(EditorPane.class);
         for(EditorPane epane : epanes)
             if(SnapUtils.equals(url, epane.getSourceURL()))
                 return epane;
     }
+    
+    // Load document (if not found, just return)
+    ParentView view = getParentView(aSource); if(view==null) return null;
+
+    // Set document
+    getViewer().setContent(view);
+    getViewer()._url = url;
+    
+    // If source is string, add to recent files menu
+    //if(url!=null) RecentFilesPanel.addRecentFile(url.getString());
+    
+    // Return the editor
+    return this;
+}
+
+/**
+ * Creates a ParentView from given source.
+ */
+protected ParentView getParentView(Object aSource)
+{
+    // If document source is null, just return null
+    if(aSource==null || aSource instanceof ParentView) return (ParentView)aSource;
     
     // Load document
     ViewArchiver archiver = new ViewArchiver(); ViewArchiver.setUseRealClass(false);
@@ -340,27 +385,7 @@ public EditorPane open(Object aSource)
             dbox.showMessageDialog(getUI()); });
     }
     ViewArchiver.setUseRealClass(true);
-    
-    // If no document, just return null
-    if(view==null) return null;
-
-    // If old version, warn user that saving document will make it unreadable by RM7
-    /*if(shape instanceof RMDocument && ((RMDocument)shape).getVersion()<7.0) {
-        String msg = "This document has been upgraded from an older version.\n" +
-            "If saved, it will not open in earlier versions.";
-        DialogBox dbox = new DialogBox("Warning: Document Upgrade"); dbox.setWarningMessage(msg);
-        dbox.showMessageDialog(getUI());
-    }*/
-    
-    // Set document
-    getViewer().setContent(view);
-    getViewer()._url = url;
-    
-    // If source is string, add to recent files menu
-    //if(url!=null) RecentFilesPanel.addRecentFile(url.getString());
-    
-    // Return the editor
-    return this;
+    return view;
 }
 
 /**

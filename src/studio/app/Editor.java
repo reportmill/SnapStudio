@@ -78,6 +78,11 @@ public Editor()
 public EditorPane getEditorPane()  { return _ep!=null? _ep : (_ep=getOwner(EditorPane.class)); } EditorPane _ep;
 
 /**
+ * Returns the Editor events helper.
+ */
+public EditorEvents getEvents()  { return _eventHndlr; }
+
+/**
  * Sets the root shape that is the content of this viewer.
  */
 public void setContent(View aView)

@@ -39,6 +39,9 @@ public Editor getEditor()  { return _editor; }
  */
 public void processEvent(ViewEvent anEvent)
 {
+    // Cache current event
+    _currentEvent = anEvent;
+    
     // Forward mouse pressed and released to official methods
     switch(anEvent.getType()) {
         case MouseMove: mouseMoved(anEvent); break;
@@ -59,9 +62,6 @@ public void mousePressed(ViewEvent anEvent)
     // Set Editor.MouseDown attribute
     _editor._isMouseDown = true;
     
-    // Cache current event
-    _currentEvent = anEvent;
-    
     // Set downpoint and last point to current event point in document coords
     _downPoint = _editor.convertToShape(null, anEvent.getX(), anEvent.getY());
 
@@ -81,9 +81,6 @@ public void mousePressed(ViewEvent anEvent)
  */
 public void mouseDragged(ViewEvent anEvent)
 {
-    // Cache current event
-    _currentEvent = anEvent;
-    
     // Forward mouse dragged to current tool
     _editor.getCurrentTool().mouseDragged(anEvent);
     
@@ -104,8 +101,7 @@ public void mouseReleased(ViewEvent anEvent)
     // Clear Editor.MouseDown attribute
     _editor._isMouseDown = false;
     
-    // Cache current event, forward mouse released to current tool, clear current event
-    _currentEvent = anEvent;
+    // Forward mouse released to current tool, clear current event
     _editor.getCurrentTool().mouseReleased(anEvent); _currentEvent = null;
 }
 
@@ -175,9 +171,36 @@ public void keyTyped(ViewEvent anEvent)  { }
 public ViewEvent getCurrentEvent()  { return _currentEvent; }
 
 /**
+ * Returns the event point in editor conent coords.
+ */
+public Point getEventPointInDoc()
+{
+    Editor ed = getEditor(); View cont = ed.getContent();
+    return cont.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
+}
+
+/**
+ * Returns the event point editor super selected view coords.
+ */
+public Point getEventPointInShape(boolean shouldSnap)
+{
+    Editor ed = getEditor(); View view = ed.getSuperSelectedShape();
+    return view.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
+}
+
+/**
+ * Returns the event point editor super selected view coords.
+ */
+public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
+{
+    Editor ed = getEditor(); View view = ed.getSuperSelectedShape();
+    return view.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
+}
+
+/**
  * Returns the current event point in document coords.
  */
-public Point getEventPointInDoc()  { return getEventPointInDoc(false); }
+//public Point getEventPointInDoc()  { return getEventPointInDoc(false); }
 
 /**
  * Returns the current event point in document coords with an option to adjust to conform to grid.

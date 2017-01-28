@@ -19,10 +19,10 @@ public class ViewTool <T extends View> extends ViewOwner {
     EditorPane            _editorPane;
 
     // The newly created shape instance
-    View                 _shape;
+    protected View                 _shape;
     
     // The mouse down point that initiated last tool mouse loop
-    Point                   _downPoint;
+    protected Point                   _downPoint;
     
     // The image for a shape handle
     static Image            _handle = Image.get(Editor.class, "Handle8x8.png");
@@ -175,6 +175,11 @@ public EditorPane getEditorPane()
     if(_editorPane!=null) return _editorPane;
     return _editorPane = _editor.getEditorPane();
 }
+
+/**
+ * Returns the EditorEvents.
+ */
+public EditorEvents getEditorEvents()  { return _editor.getEvents(); }
 
 /**
  * Returns the current selected shape for the current editor.

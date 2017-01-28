@@ -2,6 +2,7 @@ package studio.app;
 import java.util.*;
 import snap.util.*;
 import snap.view.*;
+import studio.apptools.LineViewTool;
 
 /**
  * Tool bar for EditorPane.
@@ -135,6 +136,7 @@ protected ViewTool[] createToolBarTools()
     List <ViewTool> tools = new ArrayList();
     Editor editor = getEditor();
     tools.add(editor.getSelectTool());
+    tools.add(new LineViewTool());
     //tools.add(editor.getTool(RMLineShape.class));
     //tools.add(editor.getTool(RMRectShape.class));
     //tools.add(editor.getTool(RMOvalShape.class));

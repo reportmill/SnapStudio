@@ -14,9 +14,6 @@ import snap.view.*;
  */
 public class SelectTool extends ViewTool {
 
-    // The last event
-    ViewEvent     _event;
-    
     // The mode of current even loop (Move, Resize, etc.)
     DragMode      _dragMode = DragMode.None;
     
@@ -46,7 +43,6 @@ public class SelectTool extends ViewTool {
  */
 public void processEvent(ViewEvent anEvent)
 {
-    _event = anEvent;
     switch(anEvent.getType()) {
         case MousePress: mousePressed(anEvent); break;
         case MouseDrag: mouseDragged(anEvent); break;
@@ -347,33 +343,6 @@ public void mouseReleased(ViewEvent anEvent)
 }
 
 /**
- * Returns the event point in editor conent coords.
- */
-public Point getEventPointInDoc()
-{
-    Editor ed = getEditor(); View cont = ed.getContent();
-    return cont.parentToLocal(ed, _event.getX(), _event.getY());
-}
-
-/**
- * Returns the event point editor super selected view coords.
- */
-public Point getEventPointInShape(boolean shouldSnap)
-{
-    Editor ed = getEditor(); View view = ed.getSuperSelectedShape();
-    return view.parentToLocal(ed, _event.getX(), _event.getY());
-}
-
-/**
- * Returns the event point editor super selected view coords.
- */
-public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
-{
-    Editor ed = getEditor(); View view = ed.getSuperSelectedShape();
-    return view.parentToLocal(ed, _event.getX(), _event.getY());
-}
-
-/**
  * Handles mouse moved - forward on to super selected shape tool.
  */
 public void mouseMoved(ViewEvent anEvent)
@@ -384,6 +353,24 @@ public void mouseMoved(ViewEvent anEvent)
         View shape = editor.getSuperSelectedShape(i);
         editor.getTool(shape).mouseMoved(shape, anEvent);
     }
+}
+
+/**
+ * Returns the event point in editor conent coords.
+ */
+public Point getEventPointInDoc()  { return getEditorEvents().getEventPointInDoc(); }
+
+/**
+ * Returns the event point editor super selected view coords.
+ */
+public Point getEventPointInShape(boolean shouldSnap)  { return getEditorEvents().getEventPointInShape(shouldSnap); }
+
+/**
+ * Returns the event point editor super selected view coords.
+ */
+public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
+{
+    return getEditorEvents().getEventPointInShape(snapToGrid, snapEdges);
 }
 
 /**

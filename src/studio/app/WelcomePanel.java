@@ -250,7 +250,7 @@ private static class WelcomePanelAnim extends ViewOwner {
         setViewText("BuildText", "Build: " + SnapUtils.getBuildInfo());
         setViewText("JVMText", "JVM: " + System.getProperty("java.runtime.version"));
         DocView doc = getUI(DocView.class);
-        PageView page = (PageView)doc.getPage();
+        PageView page = doc.getPage();
         page.setEffect(null); page.setBorder(null);
     }
 }

@@ -31,12 +31,12 @@
   <Separator PrefWidth="15" PrefHeight="18" Vertical="true" />
   <HBox Spacing="-1">
     <ToggleButton Name="SelectToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Selection Tool" image="SelectTool.png" Position="CENTER_LEFT" Selected="true" ToggleGroup="bg1" />
-    <ToggleButton Name="LineToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Line Tool" image="/com/reportmill/apptools/RMLineShape.png" Position="CENTER" ToggleGroup="bg1" />
-    <ToggleButton Name="RectToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Rectangle Tool" image="/com/reportmill/apptools/RMRectShape.png" Position="CENTER" ToggleGroup="bg1" />
-    <ToggleButton Name="OvalToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Oval Tool" image="/com/reportmill/apptools/RMOvalShape.png" Position="CENTER" ToggleGroup="bg1" />
-    <ToggleButton Name="TextToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Text Tool" image="/com/reportmill/apptools/RMText.png" Position="CENTER" ToggleGroup="bg1" />
-    <ToggleButton Name="PolygonToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Polygon Tool" image="/com/reportmill/apptools/RMPolygonShape.png" Position="CENTER" ToggleGroup="bg1" />
-    <ToggleButton Name="PencilToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Pencil Tool" image="/com/reportmill/apptools/RMPencilShape.png" Position="CENTER_RIGHT" ToggleGroup="bg1" />
+    <ToggleButton Name="LineViewToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Line Tool" image="/studio/apptools/pkg.images/LineView.png" Position="CENTER" ToggleGroup="bg1" />
+    <ToggleButton Name="RectToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Rectangle Tool" image="/studio/apptools/pkg.images/RectView.png" Position="CENTER" ToggleGroup="bg1" />
+    <ToggleButton Name="OvalToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Oval Tool" image="/studio/apptools/pkg.images/OvalView.png" Position="CENTER" ToggleGroup="bg1" />
+    <ToggleButton Name="TextToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Text Tool" image="/studio/apptools/pkg.images/TextView.png" Position="CENTER" ToggleGroup="bg1" />
+    <ToggleButton Name="PolygonToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Polygon Tool" image="/studio/apptools/pkg.images/PolygonView.png" Position="CENTER" ToggleGroup="bg1" />
+    <ToggleButton Name="PencilToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Pencil Tool" image="/studio/apptools/pkg.images/PencilView.png" Position="CENTER_RIGHT" ToggleGroup="bg1" />
   </HBox>
   <Separator PrefWidth="16" PrefHeight="18" Vertical="true" />
   <ComboBox name="FontFaceComboBox" MinWidth="80" PrefHeight="22" ShowTextField="true" ShowButton="false" FilterList="true" />

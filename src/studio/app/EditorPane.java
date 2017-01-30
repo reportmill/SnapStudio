@@ -12,25 +12,16 @@ import snap.util.*;
 public class EditorPane extends ViewerPane {
 
     // The menu bar owner
-    EditorPaneMenuBar    _menuBar;
+    EditorPaneMenuBar      _menuBar;
 
     // The editor ruler nodes
-    EditorRuler          _hruler, _vruler;
+    EditorRuler            _hruler, _vruler;
     
     // The shared editor inspector
     InspectorPanel         _inspPanel = createInspectorPanel();
     
     // The shared attributes inspector (go ahead and create to get RMColorPanel created)
     AttributesPanel        _attrsPanel = createAttributesPanel();
-    
-    // The ViewTree
-    TreeView <View>        _viewTree;
-    
-    // The ViewTree box
-    BorderView             _inspBox;
-    
-    // The ViewTree box
-    BorderView             _viewTreeBox;
     
     // The image for a window frame icon
     static Image           _frameIcon = Image.get(EditorPane.class, "ReportMill16x16.png");
@@ -107,7 +98,7 @@ protected View createUI()
 {
     BorderView bpane = (BorderView)super.createUI(); //bpane.setGrowWidth(true);
     VBox vbox = new VBox(); vbox.setFillWidth(true); vbox.setPrefWidth(275);
-    vbox.setChildren(getAttributesPanel().getUI(), getInspectorPanel().getUI()); //, getViewTreeBox());
+    vbox.setChildren(getAttributesPanel().getUI(), getInspectorPanel().getUI());
     vbox.setBorder(Border.createLineBorder(Color.LIGHTGRAY, 1));
     //HBox hbox = new HBox(); hbox.setAlignment(Pos.TOP_LEFT); hbox.setFillHeight(true); hbox.setChildren(bpane, vbox);
     bpane.setRight(vbox);
@@ -160,12 +151,6 @@ protected void resetUI()
     getMenuBar().resetLater();
     if(getInspectorPanel().isVisible()) getInspectorPanel().resetLater();
     if(getAttributesPanel().isVisible()) getAttributesPanel().resetLater();
-    
-    // ResetViewTree
-    //View content = getContent();
-    //_viewTree.setItems(content);
-    //_viewTree.expandItem(content);
-    //_viewTree.setSelectedItem(getEditor().getSelectedOrSuperSelectedShape());
 }
 
 /**
@@ -190,28 +175,12 @@ protected void respondUI(ViewEvent anEvent)
         //if(Math.abs(wsize.width-psize.width)<=10) wsize.width = psize.width;
         //if(Math.abs(wsize.height-psize.height)<=10) wsize.height = psize.height;
         //if(getWindow().getWidth()!=wsize.width || getWindow().getHeight()!=wsize.height) getWindow().setSize(wsize);
-        
-    // Handle ViewTree
-    //if(anEvent.equals("ViewTree")) getEditor().setSelectedShape(_viewTree.getSelectedItem());
 }
 
 /**
  * Returns the inspector panel (shared).
  */
 public InspectorPanel getInspectorPanel()  { return _inspPanel; }
-
-/**
- * Returns the Inspector box.
- */
-public BorderView getInspectorBox()
-{
-    if(_inspBox!=null) return _inspBox;
-    BorderView bview = new BorderView();
-    Label label = new Label("View Attributes"); label.setPadding(4,4,4,5); label.setFill(new Color("#E1E1E1"));
-    label.setBorder(Border.createCompoundBorder(Border.createEmptyBorder(3,3,0,3),Border.createLoweredBevelBorder()));
-    bview.setTop(label); bview.setCenter(getInspectorPanel().getUI());
-    return _inspBox = bview;
-}
 
 /**
  * Creates the InspectorPanel.
@@ -227,30 +196,6 @@ public AttributesPanel getAttributesPanel()  { return _attrsPanel; }
  * Creates the AttributesPanel.
  */
 protected AttributesPanel createAttributesPanel()  { return new AttributesPanel(this); }
-
-/**
- * Returns the ViewTree.
- */
-public TreeView <View> getViewTree()
-{
-    if(_viewTree!=null) return _viewTree;
-    TreeView tview = new TreeView(); tview.setName("ViewTree"); tview.setGrowHeight(true);
-    tview.setResolver(new ViewTreeResolver()); tview.setBorder(Color.GRAY, 1);
-    return _viewTree = tview;
-}
-
-/**
- * Returns the ViewTree box.
- */
-public BorderView getViewTreeBox()
-{
-    if(_viewTreeBox!=null) return _viewTreeBox;
-    BorderView bview = new BorderView(); bview.setPadding(3,3,3,3); bview.setGrowHeight(true); bview.setPrefHeight(240);
-    Label label = new Label("View Hierarchy"); label.setPadding(4,4,4,5); label.setFill(new Color("#E1E1E1"));
-    label.setBorder(Border.createLoweredBevelBorder());
-    bview.setTop(label); bview.setCenter(new ScrollView(getViewTree()));
-    return _viewTreeBox = bview;
-}
 
 /**
  * Returns extension for editor document.
@@ -546,45 +491,6 @@ public void runPopupMenu(ViewEvent anEvent)
     pmenu.setOwner(getMenuBar());
     pmenu.getPopup().show(getEditor(), anEvent.getX(), anEvent.getY());
     anEvent.consume();
-}
-
-/**
- * A resolver for Views.
- */
-public class ViewTreeResolver extends TreeResolver <View> {
-    
-    /** Returns the parent of given item. */
-    public View getParent(View anItem)  { return anItem!=getEditor().getContent()? anItem.getParent() : null; }
-
-    /** Whether given object is a parent (has children). */
-    public boolean isParent(View anItem)
-    {
-        if(!(anItem instanceof ParentView)) return false;
-        if(anItem instanceof Label || anItem instanceof ButtonBase || anItem instanceof Spinner) return false;
-        if(anItem instanceof ComboBox || anItem instanceof ListView) return false;
-        return ((ParentView)anItem).getChildCount()>0;
-    }
-
-    /** Returns the children. */
-    public View[] getChildren(View aParent)
-    {
-        ParentView par = (ParentView)aParent;
-        if(par instanceof ScrollView) { ScrollView sp = (ScrollView)par;
-            return sp.getContent()!=null? new View[] { sp.getContent() } : new View[0]; }
-        return par.getChildren();
-    }
-
-    /** Returns the text to be used for given item. */
-    public String getText(View anItem)
-    {
-        String str = anItem.getClass().getSimpleName();
-        String name = anItem.getName(); if(name!=null) str += " - " + name;
-        String text = anItem.getText(); if(text!=null) str += " \"" + text + "\" ";
-        return str;
-    }
-
-    /** Return the image to be used for given item. */
-    public View getGraphic(View anItem)  { return null; }
 }
 
 /**

@@ -2,7 +2,6 @@ package studio.app;
 import java.util.*;
 import snap.util.*;
 import snap.view.*;
-import studio.apptools.LineViewTool;
 
 /**
  * Tool bar for EditorPane.

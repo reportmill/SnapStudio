@@ -26,6 +26,9 @@ public class InspectorPanel extends EditorPane.SupportPane {
     // The inspector for shape animation
     //Animation            _animation = new Animation(getEditorPane());
     
+    // The inspector to show view hierarchy
+    ViewTree             _viewTree = new ViewTree(getEditorPane());
+    
     // The inspector for Undo
     //UndoInspector        _undoInspector;
     
@@ -47,6 +50,7 @@ public void initUI()
 {
     // Get SelectionPathPanel and InspectorPanel
     _selectionPathPane = getView("SelectionPathPanel", ChildView.class);
+    enableEvents(_selectionPathPane, MouseRelease);
     
     // Create the Action that redispatches the event and add the action to the action map
     addKeyActionEvent("UndoAction", "meta Z");
@@ -116,6 +120,10 @@ public void respondUI(ViewEvent anEvent)
     if(anEvent.getName().startsWith("SelPath"))
         popSelection(SnapUtils.intValue(anEvent.getName()));
     
+    // Handle SelectionPathPanel
+    if(anEvent.equals("SelectionPathPanel") && anEvent.isMouseRelease())
+        setVisible(9);
+    
     // Reset ui
     resetUI();
 }
@@ -153,6 +161,12 @@ public void setVisible(int anIndex)
         setInspector(_undoInspector!=null? _undoInspector : (_undoInspector = new UndoInspector(getEditorPane())));
         setViewValue("OffscreenButton", true);
     }*/
+    
+    // If index is 9, show ShapeTree Inspector
+    if(anIndex==9) {
+        setInspector(_viewTree);
+        getView("ShapeSpecificButton", ToggleButton.class).getToggleGroup().setSelected(null);
+    }
 }
 
 /**

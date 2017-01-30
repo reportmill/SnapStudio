@@ -58,6 +58,10 @@ public String getWindowTitle()  { return "Shape Inspector"; }
  */
 protected View createUI()
 {
+    View ui = super.createUI();
+    if(ui!=null)
+        return ui;
+        
     TableView table = new TableView(); table.setName("PropTable");
     TableCol c1 = new TableCol(); c1.setHeaderValue("Key"); c1.setItemKey("Key"); c1.setPrefWidth(120);
     TableCol c2 = new TableCol(); c2.setHeaderValue("Value"); c2.setItemKey("ValueString"); c2.setGrowWidth(true);
@@ -182,6 +186,27 @@ public EditorPane getEditorPane()
 public EditorEvents getEditorEvents()  { return _editor.getEvents(); }
 
 /**
+ * Returns the event point in editor conent coords.
+ */
+public Point getEventPointInDoc()  { return getEditorEvents().getEventPointInDoc(); }
+
+/**
+ * Returns the event point editor super selected view coords.
+ */
+public Point getEventPointInSuperSelectedView(boolean shouldSnap)
+{
+    return getEditorEvents().getEventPointInShape(shouldSnap);
+}
+
+/**
+ * Returns the event point editor super selected view coords.
+ */
+public Point getEventPointInSuperSelectedView(boolean snapToGrid, boolean snapEdges)
+{
+    return getEditorEvents().getEventPointInShape(snapToGrid, snapEdges);
+}
+
+/**
  * Returns the current selected shape for the current editor.
  */
 public T getSelectedShape()
@@ -235,6 +260,14 @@ public boolean isSuperSelectable(View aShape)  { return aShape instanceof Parent
  * Returns whether a given shape accepts children.
  */
 public boolean getAcceptsChildren(View aShape)  { return aShape instanceof ParentView; }
+
+/**
+ * Returns whether a given shape accepts children.
+ */
+public boolean childrenSuperSelectImmediately()
+{
+    return childrenSuperSelectImmediately(getEditor().getSuperSelectedShape());
+}
 
 /**
  * Returns whether a given shape accepts children.
@@ -428,7 +461,7 @@ public void mousePressed(ViewEvent anEvent)
     getEditor().undoerSetUndoTitle("Add Shape");
 
     // Save the mouse down point
-    //_downPoint = getEditor().getEditorInputAdapter().getEventPointInShape(true);
+    _downPoint = getEventPointInSuperSelectedView(true);
 
     // Create shape and move to downPoint
     _shape = newInstance();
@@ -445,12 +478,12 @@ public void mousePressed(ViewEvent anEvent)
 public void mouseDragged(ViewEvent anEvent)
 {
     _shape.repaint();
-    //Point currentPoint = getEditor().getEditorInputAdapter().getEventPointInShape(true);
-    //double x = Math.min(_downPoint.getX(), currentPoint.getX());
-    //double y = Math.min(_downPoint.getY(), currentPoint.getY());
-    //double w = Math.abs(currentPoint.getX() - _downPoint.getX());
-    //double h = Math.abs(currentPoint.getY() - _downPoint.getY());
-    //_shape.setFrame(x, y, w, h);
+    Point currentPoint = getEventPointInSuperSelectedView(true);
+    double x = Math.min(_downPoint.getX(), currentPoint.getX());
+    double y = Math.min(_downPoint.getY(), currentPoint.getY());
+    double w = Math.abs(currentPoint.getX() - _downPoint.getX());
+    double h = Math.abs(currentPoint.getY() - _downPoint.getY());
+    _shape.setFrame(x, y, w, h);
 }
 
 /**
@@ -1016,32 +1049,12 @@ public static ViewTool createTool(Class aClass)
     // Handle root
     if(aClass==View.class) return new ViewTool();
     
-    // Declare variable for tool class
-    Class tclass = null;
-    
-    // If class name starts with RM, check tool package for built-in RMShape tools
+    // Check tool package for built-in View tools
     String cname = aClass.getSimpleName();
-    if(cname.startsWith("RM")) {
-        tclass = ClassUtils.getClass("com.reportmill.apptools." + cname + "Tool");
-        if(tclass==null && cname.endsWith("Shape"))
-            tclass = ClassUtils.getClass("com.reportmill.apptools." + cname.replace("Shape", "Tool"));
-    }
+    Class tclass = ClassUtils.getClass("studio.apptools." + cname + "Tool");
+    if(tclass==null && cname.endsWith("View"))
+        tclass = ClassUtils.getClass("studio.apptools." + cname.replace("View", "Tool"));
 
-    // If not found, try looking in same package for shape class plus "Tool"
-    if(tclass==null)
-        tclass = ClassUtils.getClass(aClass.getName() + "Tool", aClass);
-    
-    // If not found and class ends in "Shape", try looking in same package for class that ends with "Tool" instead
-    if(tclass==null && cname.endsWith("Shape"))
-        tclass = ClassUtils.getClass(StringUtils.replace(aClass.getName(), "Shape", "Tool"), aClass);
-    
-    // If not found and class is some external shapes package, look in external tools package
-    if(tclass==null && aClass.getName().indexOf(".shape.")>0) {
-        String classPath = StringUtils.replace(aClass.getName(), ".shape.", ".tool.");
-        String classPath2 = StringUtils.delete(classPath, "Shape") + "Tool";
-        tclass = ClassUtils.getClass(classPath2, aClass);
-    }
-    
     // If not found, try looking for inner class named "Tool"
     if(tclass==null)
         tclass = ClassUtils.getClass(aClass.getName() + "$" + "Tool", aClass);

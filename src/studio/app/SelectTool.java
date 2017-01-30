@@ -133,13 +133,13 @@ public void mousePressed(ViewEvent anEvent)
     }
     
     // If a shape was selected whose parent childrenSuperSelectImmediately, go ahead and super select it
-    /*if(editor.getSelectedShape()!=null && editor.getSuperSelectedShape().childrenSuperSelectImmediately()) {
+    if(editor.getSelectedShape()!=null && editor.getSuperSelectedViewTool().childrenSuperSelectImmediately()) {
         editor.setSuperSelectedShape(editor.getSelectedShape());     // Super select selected shape
         mousePressed(anEvent); return;                               // Re-enter mouse pressed and return
-    }*/
+    }
     
     // Set last point to event point in super selected shape coords
-    _lastMousePoint = getEventPointInShape(false);
+    _lastMousePoint = getEventPointInSuperSelectedView(false);
     
     // Get editor super selected shape
     View superSelectedShape = editor.getSuperSelectedShape();
@@ -198,7 +198,7 @@ public void mouseDragged(ViewEvent anEvent)
             ParentView parent = editor.getSuperSelectedParentShape();
             
             // Get event point in super selected shape coords
-            Point point = getEventPointInShape(false);
+            Point point = getEventPointInSuperSelectedView(false);
 
             // Move shapes once to event point without SnapToGrid
             moveShapes(_lastMousePoint, point); _lastMousePoint = point;
@@ -217,7 +217,7 @@ public void mouseDragged(ViewEvent anEvent)
 
             // Set Undo title
             editor.undoerSetUndoTitle("Rotate");
-            Point point2 = getEventPointInShape(false);
+            Point point2 = getEventPointInSuperSelectedView(false);
             
             // Iterate over selected shapes and update roll
             for(View shape : editor.getSelectedShapes()) { //if(shape.isLocked()) continue;
@@ -234,7 +234,7 @@ public void mouseDragged(ViewEvent anEvent)
             editor.undoerSetUndoTitle("Resize");
             
             // Get event point in super selected shape coords snapped to grid 
-            Point resizePoint = getEventPointInShape(shouldSnap);
+            Point resizePoint = getEventPointInSuperSelectedView(shouldSnap);
             
             // Move handle to current point and break
             _shapeHandle.getTool().moveShapeHandle(_shapeHandle.getShape(), _shapeHandle.getHandle(), resizePoint);
@@ -353,24 +353,6 @@ public void mouseMoved(ViewEvent anEvent)
         View shape = editor.getSuperSelectedShape(i);
         editor.getTool(shape).mouseMoved(shape, anEvent);
     }
-}
-
-/**
- * Returns the event point in editor conent coords.
- */
-public Point getEventPointInDoc()  { return getEditorEvents().getEventPointInDoc(); }
-
-/**
- * Returns the event point editor super selected view coords.
- */
-public Point getEventPointInShape(boolean shouldSnap)  { return getEditorEvents().getEventPointInShape(shouldSnap); }
-
-/**
- * Returns the event point editor super selected view coords.
- */
-public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
-{
-    return getEditorEvents().getEventPointInShape(snapToGrid, snapEdges);
 }
 
 /**

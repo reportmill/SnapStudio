@@ -330,6 +330,15 @@ public List <View> getSelectedOrSuperSelectedShapes()
 {
     return getSelectedShapeCount()>0? _selectedShapes : Arrays.asList(getSuperSelectedShape());
 }
+
+/**
+ * Returns the super selected view tool.
+ */
+public ViewTool getSuperSelectedViewTool()
+{
+    View view = getSuperSelectedShape();
+    return getTool(view);
+}
     
 /**
  * Un-SuperSelect currently super selected shape.

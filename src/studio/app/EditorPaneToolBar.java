@@ -136,9 +136,8 @@ protected ViewTool[] createToolBarTools()
     List <ViewTool> tools = new ArrayList();
     Editor editor = getEditor();
     tools.add(editor.getSelectTool());
-    tools.add(new LineViewTool());
-    //tools.add(editor.getTool(RMLineShape.class));
-    //tools.add(editor.getTool(RMRectShape.class));
+    tools.add(editor.getTool(LineView.class));
+    tools.add(editor.getTool(RectView.class));
     //tools.add(editor.getTool(RMOvalShape.class));
     //tools.add(editor.getTool(RMTextShape.class));
     //tools.add(editor.getTool(RMPolygonShape.class));

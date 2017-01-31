@@ -109,7 +109,8 @@ protected void initUI()
     
     // Enable SitesTable MouseReleased
     TableView sitesTable = getView("SitesTable", TableView.class);
-    sitesTable.setRowHeight(24); //sitesTable.setStyle(new Style().setFontSize(10).toString());
+    sitesTable.setRowHeight(24);
+    if(getRecentFiles().size()>0) _selFile = getRecentFiles().get(0);
     enableEvents(sitesTable, MouseRelease);
     
     // Set preferred size

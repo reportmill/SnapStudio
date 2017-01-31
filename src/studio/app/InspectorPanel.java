@@ -216,7 +216,7 @@ public void resetSelectionPathMatrix()
     for(View shp=_deepestShape; shp!=contentBox && shp!=null; shp=shp.getParent()) {
         
         // Create new button and configure action
-        ToggleButton button = new ToggleButton(); button.setName("SelPath " + (shp.getParentCount()-1));
+        ToggleButton button = new ToggleButton(); button.setName("SelPath " + getParentCount(shp));
         button.setPrefSize(40,40); button.setMinSize(40,40); button.setShowBorder(false);
         
         // Set button images
@@ -258,25 +258,26 @@ public void popSelection(int selectedIndex)
     Editor editor = getEditor(); if(editor==null || _deepestShape==null) return;
     
     // If user selected descendant of current selected shape, select on down to it
-    if(selectedIndex > editor.getSelectedOrSuperSelectedShape().getParentCount()-1) {
+    if(selectedIndex > getParentCount(editor.getSelectedOrSuperSelectedShape())) {
         
         // Get current deepest shape
         View shape = _deepestShape;
 
         // Find shape that was clicked on
-        while(selectedIndex != shape.getParentCount()-1)
+        while(selectedIndex != getParentCount(shape))
             shape = shape.getParent();
 
         // If shape parent's childrenSuperSelectImmediately, superSelect shape
-        //if(shape.getParent().childrenSuperSelectImmediately())
-        //    editor.setSuperSelectedShape(shape);
+        View par = shape.getParent(); ViewTool tool = editor.getTool(par);
+        if(tool.childrenSuperSelectImmediately(par))
+            editor.setSuperSelectedShape(shape);
 
         // If shape shouldn't superSelect, just select it
-        /*else*/ editor.setSelectedShape(shape);
+        editor.setSelectedShape(shape);
     }
 
     // If user selected ancestor of current shape, pop selection up to it
-    else while(selectedIndex != editor.getSelectedOrSuperSelectedShape().getParentCount()-1)
+    else while(selectedIndex != getParentCount(editor.getSelectedOrSuperSelectedShape()))
         editor.popSelection();
 
     // Set selected shape to new editor selected shape
@@ -295,6 +296,15 @@ public void showDocumentInspector()
     setVisible(0); // Select the shape specific inspector
     resetSelectionPathMatrix(); // Reset selection path matrix
     popSelection(0); // Pop selection
+}
+
+/**
+ * Returns the parent count of a view relative to editor content.
+ */
+private int getParentCount(View aView)
+{
+    if(aView==getEditor().getContent() || aView==null) return 0;
+    return getParentCount(aView.getParent()) + 1;
 }
 
 /** View to render SelectionPath separator. */

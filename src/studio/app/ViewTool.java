@@ -78,7 +78,7 @@ protected View createUI()
 protected void initUI()
 {
     // Get/configure PropTable
-    TableView propTable = getView("PropTable", TableView.class);
+    TableView propTable = getView("PropTable", TableView.class); if(propTable==null) return;
     enableEvents(propTable, MouseRelease);
 }
 
@@ -87,7 +87,7 @@ protected void initUI()
  */
 protected void resetUI()
 {
-    TableView propTable = getView("PropTable", TableView.class);
+    TableView propTable = getView("PropTable", TableView.class); if(propTable==null) return;
     int sind = propTable.getSelectedIndex(); if(sind<0) sind = 0;
     propTable.setItems(getSelNodeItems());
     propTable.setSelectedIndex(sind);
@@ -1047,6 +1047,8 @@ public Image getImage()
 public static ViewTool createTool(Class aClass)
 {
     // Handle root
+    if(aClass==null)
+        aClass = View.class;
     if(aClass==View.class) return new ViewTool();
     
     // Check tool package for built-in View tools

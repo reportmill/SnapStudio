@@ -102,6 +102,17 @@ public XMLElement getContentXML()
 }
 
 /**
+ * Returns the "Page" if content is DocView such that childrenSuperSelectImmediately.
+ */
+public ParentView getContentPage()
+{
+    ParentView content = getContent();
+    if(getTool(content).childrenSuperSelectImmediately(content) && content.getChildCount()>0)
+        return (ParentView)content.getChild(0);
+    return null;
+}
+
+/**
  * Returns whether the editor is in mouse drag loop.
  */
 public boolean isMouseDown()  { return _isMouseDown; }
@@ -351,11 +362,12 @@ public void popSelection()
 
     // Otherwise select super-selected shape (or its parent if it has childrenSuperSelectImmediately)
     else if(getSuperSelectedShapeCount()>1) {
-        //if(getSuperSelectedShape() instanceof RMTextShape)
-        //    setSelectedShape(getSuperSelectedShape());
-        //else if(getSuperSelectedShape().getParent().childrenSuperSelectImmediately())
-        //    setSuperSelectedShape(getSuperSelectedShape().getParent());
-        //else setSelectedShape(getSuperSelectedShape());
+        View view = getSuperSelectedShape(), parent = view.getParent();
+        if(view instanceof TextView)
+            setSelectedShape(view);
+        else if(getTool(parent).childrenSuperSelectImmediately(parent))
+            setSuperSelectedShape(parent);
+        else setSelectedShape(view);
     }
 }
 
@@ -370,22 +382,23 @@ public View getShapeAtPoint(double aX, double aY)  { return getShapeAtPoint(new 
 public View getShapeAtPoint(Point aPoint)
 {
     // Get superSelectedShape
-    ParentView superSelectedShape = getSuperSelectedShape();
+    ParentView superSelView = getSuperSelectedShape();
     
-    // If superSelectedShape is document, start with the selected page instead (maybe should go)
-    //if(superSelectedShape==getDocument())  superSelectedShape = getSelectedPage();
+    // If superSelectedShape is document, start with page instead (maybe should go)
+    if(superSelView==getContent() && getContentPage()!=null)
+        superSelView = getContentPage();
 
     // Get the point in superSelectedShape's coords
-    Point point = convertToShape(superSelectedShape, aPoint.x, aPoint.y);
+    Point point = convertToShape(superSelView, aPoint.x, aPoint.y);
 
     // Get child of superSelectedShape hit by point
-    View shapeAtPoint = getChildShapeAtPoint(superSelectedShape, point);
+    View shapeAtPoint = getChildShapeAtPoint(superSelView, point);
     
     // If no superSelectedShape child hit by point, find first superSelectedShape that is hit & set to shapeAtPoint
-    while(superSelectedShape!=null && shapeAtPoint==null) {
-        superSelectedShape.localToParent(point.x, point.y);
-        superSelectedShape = superSelectedShape.getParent();
-        shapeAtPoint = getChildShapeAtPoint(superSelectedShape, point);
+    while(superSelView!=getContent() && shapeAtPoint==null) {
+        superSelView.localToParent(point.x, point.y);
+        superSelView = superSelView.getParent();
+        shapeAtPoint = getChildShapeAtPoint(superSelView, point);
     }
 
     // See if point really hits an upper level shape that overlaps shapeAtPoint
@@ -403,9 +416,8 @@ public View getShapeAtPoint(Point aPoint)
             
             // If child not equal to original shape, change shapeAtPoint
             if(hitChild != ssShape) {
-                superSelectedShape = ssShape.getParent();
-                shapeAtPoint = hitChild;
-                point = pnt;
+                superSelView = ssShape.getParent();
+                shapeAtPoint = hitChild; point = pnt;
             }
             
             // Update loop shape/point variables
@@ -415,7 +427,9 @@ public View getShapeAtPoint(Point aPoint)
     }
 
     // Make sure page is worst case
-    //if(shapeAtPoint==null || shapeAtPoint==getDocument()) shapeAtPoint = getSelectedPage();
+    if(shapeAtPoint==null) shapeAtPoint = getContent();
+    if(shapeAtPoint==getContent() && getContentPage()!=null)
+        shapeAtPoint = getContentPage();
 
     // Return shape at point
     return shapeAtPoint;
@@ -466,8 +480,8 @@ public ParentView firstSuperSelectedShapeThatAcceptsChildren()
         parent = parent.getParent();
 
     // Make sure page is worst case
-    //if(parent==getDocument())
-    //    parent = getSelectedPage();
+    if(parent==getContent() && getContentPage()!=null)
+        parent = getContentPage();
 
     // Return parent
     return parent;
@@ -487,7 +501,8 @@ public ParentView firstSuperSelectedShapeThatAcceptsChildrenAtPoint(Point aPoint
         !parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
 
         // If shape childrenSuperSelImmd and shape hitByPt, see if any shape children qualify (otherwise use parent)
-        if(getTool(parent).childrenSuperSelectImmediately(parent) && parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
+        if(getTool(parent).childrenSuperSelectImmediately(parent) &&
+            parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
             View childShape = parent.getChildAt(parent.parentToLocal(this,aPoint.x,aPoint.y));
             if(childShape!=null && getTool(childShape).getAcceptsChildren(childShape))
                 parent = (ParentView)childShape;
@@ -496,14 +511,12 @@ public ParentView firstSuperSelectedShapeThatAcceptsChildrenAtPoint(Point aPoint
 
         // If shape's children don't superSelectImmediately or it is not hit by aPoint, just go up parent chain
         else parent = parent.getParent();
-
-        //if(parent==null)
-        //    return getSelectedPage();
     }
 
     // Make sure page is worst case
-    //if(parent==getDocument())
-    //    parent = getSelectedPage();
+    if(parent==null) parent = getContent();
+    if(parent==getContent() && getContentPage()!=null)
+        parent = getContentPage();
 
     // Return shape
     return parent;
@@ -871,7 +884,7 @@ public void deepChange(PropChangeListener aShape, PropChange anEvent)
     }
     
     // Forward DeepChanges to EditorPane. Should have add/removeDeepChagneLister methods for this.
-    //RMEditorPane ep = getEditorPane(); if(ep!=null) ep.deepChange(this, anEvent);
+    EditorPane ep = getEditorPane(); if(ep!=null) ep.resetLater();
 }
 
 /**

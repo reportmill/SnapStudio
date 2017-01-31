@@ -232,6 +232,12 @@ public static Image getFrameIcon()  { return _frameIcon; }
  */
 public EditorPane newDocument()
 {
+    if(!ViewUtils.isAltDown()) {
+        PageView page = new PageView(); page.setPrefSize(612,792);
+        DocView doc = new DocView(); doc.setPage(page);
+        return open((Object)doc);
+    }
+    
     // Get new FormBuilder and configure
     FormBuilder form = new FormBuilder(); form.setPadding(20, 5, 15, 5);
     form.addLabel("Select file type:           ").setFont(new snap.gfx.Font("Arial", 24));
@@ -446,11 +452,6 @@ protected void editorClosed()
         epane.getEditor().requestFocus();
     else WelcomePanel.getShared().showPanel();
 }
-
-/**
- * Catch Editor DeepChanges to register resetUI.
- */
-public void deepChange(PropChangeListener aShape, PropChange anEvent)  { resetLater(); }
 
 /**
  * Called when the app is about to exit to gracefully handle any open documents.

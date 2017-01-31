@@ -7,7 +7,7 @@
     <ScrollView GrowHeight="true">
       <TableView Name="SitesTable">
         <binding aspect="Items" key="RecentFiles" />
-        <binding aspect="SelectedItem" key="SelectedSite" />
+        <binding aspect="SelectedItem" key="SelectedFile" />
         <TableCol PrefWidth="120" ItemKey="Name" Header="Name" />
         <TableCol GrowWidth="true" ItemKey="Parent.Path" Header="URL" />
       </TableView>

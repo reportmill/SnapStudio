@@ -60,7 +60,7 @@ public void mousePressed(ViewEvent anEvent)
     Editor editor = getEditor();
 
     // Call setNeedsRepaint on superSelectedShapes to wipe out handles
-    //RMShapeUtils.repaint(editor.getSuperSelectedShapes());
+    editor.getSuperSelectedShapes().forEach(i -> i.repaint());
 
     // See if tool wants to handle this one
     ViewTool toolShared = editor.getTool(editor.getSelectedOrSuperSelectedShapes());
@@ -108,7 +108,7 @@ public void mousePressed(ViewEvent anEvent)
     }
 
     // If Multi-click and SelectedShape is super-selectable, super-select shape and redo with reduced clicks
-    else if(anEvent.getClickCount()>1 && editor.getTool(selectedShape).isSuperSelectable(selectedShape)) {
+    else if(anEvent.getClickCount()>1 && getTool(selectedShape).isSuperSelectable(selectedShape)) {
         editor.setSuperSelectedShape(selectedShape);                               // Super select selectedShape
         ViewEvent event = anEvent.copyForClickCount(anEvent.getClickCount()-1);  // Get event with reduced clicks
         mousePressed(event); return;                                               // Re-enter and return
@@ -145,7 +145,7 @@ public void mousePressed(ViewEvent anEvent)
     View superSelectedShape = editor.getSuperSelectedShape();
         
     // Call mouse pressed for superSelectedShape's tool
-    editor.getTool(superSelectedShape).processEvent(superSelectedShape, anEvent);
+    getTool(superSelectedShape).processEvent(superSelectedShape, anEvent);
     
     // If redo mouse pressed was requested, do redo
     if(getRedoMousePressed()) {
@@ -162,7 +162,7 @@ public void mousePressed(ViewEvent anEvent)
     if(isSelected(mousePressedShape)) {
         
         // Call mouse pressed on mousePressedShape's tool
-        editor.getTool(mousePressedShape).processEvent(mousePressedShape, anEvent);
+        getTool(mousePressedShape).processEvent(mousePressedShape, anEvent);
         
         // If redo mouse pressed was requested, do redo
         if(getRedoMousePressed()) {
@@ -248,12 +248,9 @@ public void mouseDragged(ViewEvent anEvent)
             // Get current hit shapes
             List <View> newShapes = getHitShapes();
             
-            // Set current selected shapes to be redrawn
-            //for(int i=0, iMax=_whileSelectingSelectedShapes.size(); i<iMax; i++)
-            //    _whileSelectingSelectedShapes.get(i).repaint();
-            
-            // Set current selection rect to be redrawn
-            //editor.repaint(editor.convertFromShape(_selectionRect.getInsetRect(-2), null).getBounds());
+            // Repaint selected views and SelectionRect
+            _whileSelectingSelectedShapes.forEach(i -> i.repaint());
+            editor.repaint(editor.getContent().localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
             
             // Get new _selectionRect and clear _whileSelectingSelectedShapes
             _selectionRect = Rect.get(_downPoint, editor.convertToShape(null, anEvent.getX(), anEvent.getY()));
@@ -269,16 +266,15 @@ public void mouseDragged(ViewEvent anEvent)
             // If shit key not down, select all new shapes
             else _whileSelectingSelectedShapes.addAll(newShapes);
 
-            // Set newly selected shapes and new selection rect to be redrawn
-            for(int i=0, iMax=_whileSelectingSelectedShapes.size(); i<iMax; i++)
-                _whileSelectingSelectedShapes.get(i).repaint();
+            // Repaint selected views and SelectionRect
+            _whileSelectingSelectedShapes.forEach(i -> i.repaint());
             editor.repaint(editor.getContent().localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
 
             // break
             break;
 
         // Handle DragModeSuperSelect: Forward mouse drag on to super selected shape's mouse dragged and break
-        case EventDispatch: editor.getTool(_eventShape).processEvent(_eventShape, anEvent); break;
+        case EventDispatch: getTool(_eventShape).processEvent(_eventShape, anEvent); break;
 
         // Handle DragModeNone
         case None: break;
@@ -324,7 +320,7 @@ public void mouseReleased(ViewEvent anEvent)
 
         // Handle EventDispatch
         case EventDispatch:
-            editor.getTool(_eventShape).processEvent(_eventShape, anEvent);
+            getTool(_eventShape).processEvent(_eventShape, anEvent);
             _eventShape = null;
             break;
             
@@ -351,7 +347,7 @@ public void mouseMoved(ViewEvent anEvent)
     Editor editor = getEditor();
     for(int i=1, iMax=editor.getSuperSelectedShapeCount(); i<iMax && !anEvent.isConsumed(); i++) {
         View shape = editor.getSuperSelectedShape(i);
-        editor.getTool(shape).mouseMoved(shape, anEvent);
+        getTool(shape).mouseMoved(shape, anEvent);
     }
 }
 
@@ -385,7 +381,7 @@ private List <View> getHitShapes()
 
     // If selection rect is outside super selected shape, move up shape hierarchy
     while(superShape!=content &&
-        !path.getBounds().intersectsEvenIfEmpty(editor.getTool(superShape).getBoundsSuperSelected(superShape))) {
+        !path.getBounds().intersectsEvenIfEmpty(getTool(superShape).getBoundsSuperSelected(superShape))) {
         ParentView parent = superShape.getParent();
         editor.setSuperSelectedShape(parent);
         path = superShape.parentToLocal(path);
@@ -423,8 +419,7 @@ public void paintTool(Painter aPntr)
     // Iterate over super selected shapes and have tool paint SuperSelected
     Editor editor = getEditor();
     for(int i=1, iMax=editor.getSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = editor.getSuperSelectedShape(i);
-        ViewTool tool = editor.getTool(shape);
+        View shape = editor.getSuperSelectedShape(i); ViewTool tool = getTool(shape);
         tool.paintShapeHandles(shape, aPntr, true);
     }
     
@@ -437,7 +432,7 @@ public void paintTool(Painter aPntr)
 
     // Iterate over SelectedShapes and have tool paint Selected
     for(int i=0, iMax=selectedShapes.size(); i<iMax; i++) { View shape = selectedShapes.get(i);
-        ViewTool tool = editor.getTool(shape);
+        ViewTool tool = getTool(shape);
         tool.paintShapeHandles(shape, aPntr, false);
     }
 

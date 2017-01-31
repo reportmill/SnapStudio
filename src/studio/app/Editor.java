@@ -25,7 +25,7 @@ public class Editor extends Viewer implements DeepChangeListener {
     View             _lastPasteShape;
     
     // An object to handle events
-    EditorEvents     _eventHndlr = new EditorEvents(this);
+    EditorEvents     _events = new EditorEvents(this);
     
     // A helper class providing utilities for shape
     //EditorShapes      _shapesHelper = createShapesHelper();
@@ -80,7 +80,7 @@ public EditorPane getEditorPane()  { return _ep!=null? _ep : (_ep=getOwner(Edito
 /**
  * Returns the Editor events helper.
  */
-public EditorEvents getEvents()  { return _eventHndlr; }
+public EditorEvents getEvents()  { return _events; }
 
 /**
  * Sets the root shape that is the content of this viewer.
@@ -785,9 +785,7 @@ protected void processEvent(ViewEvent anEvent)
     // Do normal version
     super.processEvent(anEvent);
     
-    _eventHndlr.processEvent(anEvent);
-    
-    getSelectTool().processEvent(anEvent);
+    getEvents().processEvent(anEvent);
     
     // Handle DragEvent
     if(anEvent.isDragEvent())

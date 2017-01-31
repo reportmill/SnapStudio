@@ -45,11 +45,9 @@ public void respondUI(ViewEvent anEvent)
     // Get the current rectangle (just return if null)
     RectView rect = getSelectedShape(); if(rect==null) return;
     
-    // Get selected rectangles
+    // Get selected rectangles and register for repaint
     List <RectView> rects = (List)getSelectedShapes();
-    
-    // Register rects for repaint (and thus undo)
-    //RMShapeUtils.repaint(rects);
+    rects.forEach(i -> i.repaint());
 
     // Handle Rounding Radius Thumb & Text
     /*if(anEvent.equals("RoundingThumb") || anEvent.equals("RoundingText")) {

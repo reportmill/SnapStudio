@@ -222,6 +222,11 @@ public T getSelectedShape()
 public List <? extends View> getSelectedShapes()  { return getEditor().getSelectedOrSuperSelectedShapes(); }
 
 /**
+ * Returns a tool for given object.
+ */
+public ViewTool getTool(Object anObj)  { return getEditor().getTool(anObj); }
+
+/**
  * Called when a tool is selected.
  */
 public void activateTool()  { }
@@ -797,14 +802,14 @@ public RMShapeHandle getShapeHandleAtPoint(Point aPoint)
     // Check selected shapes for a selected handle index
     for(int i=0, iMax=editor.getSelectedShapeCount(); handle==-1 && i<iMax; i++) {
         shape = editor.getSelectedShape(i);
-        tool = editor.getTool(shape);
+        tool = getTool(shape);
         handle = tool.getHandleAtPoint(shape, aPoint, false);
     }
 
     // Check super selected shapes for a selected handle index
     for(int i=0, iMax=editor.getSuperSelectedShapeCount(); handle==-1 && i<iMax; i++) {
         shape = editor.getSuperSelectedShape(i);
-        tool = editor.getTool(shape);
+        tool = getTool(shape);
         handle = tool.getHandleAtPoint(shape, aPoint, true);
     }
 
@@ -828,7 +833,7 @@ public boolean acceptsDrag(T aShape, ViewEvent anEvent)
         return true;
     
     // Return true in any case if accepts children
-    return getEditor().getTool(aShape).getAcceptsChildren(aShape);
+    return getTool(aShape).getAcceptsChildren(aShape);
 }
 
 /**
@@ -982,7 +987,7 @@ public void dropImageFile(View aShape, String aPath, Point aPoint) //private
         switch(dbox.showOptionDialog(null, options[0])) {
         
             // Handle Create Image Shape
-            case 0: while(!editor.getTool(aShape).getAcceptsChildren(aShape)) aShape = aShape.getParent(); break;
+            case 0: while(!getTool(aShape).getAcceptsChildren(aShape)) aShape = aShape.getParent(); break;
             
             // Handle Create Texture
             //case 1: aShape.setFill(new RMImageFill(aPath, true));

@@ -377,14 +377,14 @@ private void moveShapes(Point fromPoint, Point toPoint)
 private List <View> getHitShapes()
 {
     // Get selection path from rect around currentPoint and _downPoint
-    Editor editor = getEditor(); View contentBox = editor.getContent().getParent();
+    Editor editor = getEditor(); View content = editor.getContent();
     ParentView superShape = editor.getSuperSelectedParentShape(); if(superShape==null) return Collections.emptyList();
     Point curPoint = getEventPointInDoc();
     Rect selRect = Rect.get(curPoint, _downPoint);
     Shape path = superShape.parentToLocal(editor, selRect);
 
     // If selection rect is outside super selected shape, move up shape hierarchy
-    while(superShape.getParent()!=contentBox &&
+    while(superShape!=content &&
         !path.getBounds().intersectsEvenIfEmpty(editor.getTool(superShape).getBoundsSuperSelected(superShape))) {
         ParentView parent = superShape.getParent();
         editor.setSuperSelectedShape(parent);
@@ -393,8 +393,8 @@ private List <View> getHitShapes()
     }
 
     // Make sure page is worst case
-    //if(superShape == editor.getContent()) { superShape = editor.getSelectedPage();
-    //    path = superShape.getConvertedFromShape(selRect, null); editor.setSuperSelectedShape(superShape); }
+    if(superShape==content && editor.getContentPage()!=null) { superShape = editor.getContentPage();
+        path = superShape.parentToLocal(selRect); editor.setSuperSelectedShape(superShape); }
 
     // Returns the children of the super-selected shape that intersect selection path
     return superShape.getChildrenAt(path);

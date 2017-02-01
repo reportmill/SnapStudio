@@ -137,7 +137,7 @@ protected ViewTool[] createToolBarTools()
     tools.add(editor.getSelectTool());
     tools.add(editor.getTool(LineView.class));
     tools.add(editor.getTool(RectView.class));
-    //tools.add(editor.getTool(RMOvalShape.class));
+    tools.add(editor.getTool(ArcView.class));
     //tools.add(editor.getTool(RMTextShape.class));
     //tools.add(editor.getTool(RMPolygonShape.class));
     //tools.add(new RMPolygonShapeTool.PencilTool());

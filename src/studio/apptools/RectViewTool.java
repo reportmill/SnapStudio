@@ -8,19 +8,14 @@ import java.util.*;
 import snap.view.*;
 
 /**
- * This class handles editing of rectangle shapes.
+ * This class handles editing of RectViews.
  */
 public class RectViewTool <T extends RectView> extends ViewTool <T> {
     
 /**
  * Returns a new instance of the shape class that this tool is responsible for.
  */
-protected T newInstance()
-{
-    T view = super.newInstance();
-    view.setBorder(Color.BLACK, 1); //shape.setStroke(new RMStroke());
-    return view;
-}
+protected T newInstance()  { T rect = super.newInstance(); rect.setBorder(Color.BLACK, 1); return rect; }
 
 protected void initUI()  { }
 
@@ -33,8 +28,8 @@ public void resetUI()
     RectView rect = getSelectedShape(); if(rect==null) return;
     
     // Update RoundingThumb and RoundingText
-    //setViewValue("RoundingThumb", rect.getRadius());
-    //setViewValue("RoundingText", rect.getRadius());
+    setViewValue("RoundingThumb", rect.getRadius());
+    setViewValue("RoundingText", rect.getRadius());
 }
 
 /**
@@ -42,23 +37,20 @@ public void resetUI()
  */
 public void respondUI(ViewEvent anEvent)
 {
-    // Get the current rectangle (just return if null)
+    // Get the current rect view and rects list (just return if null)
     RectView rect = getSelectedShape(); if(rect==null) return;
-    
-    // Get selected rectangles and register for repaint
     List <RectView> rects = (List)getSelectedShapes();
-    rects.forEach(i -> i.repaint());
 
     // Handle Rounding Radius Thumb & Text
-    /*if(anEvent.equals("RoundingThumb") || anEvent.equals("RoundingText")) {
-        rect.undoerSetUndoTitle("Rounding Change");
+    if(anEvent.equals("RoundingThumb") || anEvent.equals("RoundingText")) {
+        //rect.undoerSetUndoTitle("Rounding Change");
         float value = anEvent.getFloatValue();
-        for(RMRectShape r : rects) {
+        for(RectView r : rects) {
             r.setRadius(value);
-            if(r.getStroke()==null)
-                r.setStroke(new RMStroke());
+            if(r.getBorder()==null)
+                r.setBorder(Color.BLACK, 1);
         }
-    }*/
+    }
 }
 
 /**

@@ -53,7 +53,7 @@ public void initUI()
     enableEvents(_selectionPathPane, MouseRelease);
     
     // Create the Action that redispatches the event and add the action to the action map
-    addKeyActionEvent("UndoAction", "meta Z");
+    addKeyActionHandler("UndoAction", "meta Z");
     //getView("OffscreenButton").setPickable(false);
     
     // Configure Window

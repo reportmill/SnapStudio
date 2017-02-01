@@ -85,17 +85,17 @@ public Pos getHandlePos(T aShape, int anIndex)
  */
 public void moveViewHandle(ViewHandle <T> aViewHandle, Point aPoint)
 {
-    // Get view and handle
-    T view = aViewHandle.view;
-    Pos handle = getHandlePos(view, aViewHandle.index); // Re-evaluate since handle/index might have flipped
+    // Get line view and handle
+    T lview = aViewHandle.view;
+    Pos handle = getHandlePos(lview, aViewHandle.index); // Re-evaluate since handle/index might have flipped
     
-    // Get opposite point from view handle
-    Point p0 = getHandlePoint(view, handle.getOpposing(), false);
-    p0 = view.localToParent(p0.x, p0.y);
+    // Get opposite point from line view handle
+    Point p0 = getHandlePoint(lview, handle.getOpposing(), false);
+    p0 = lview.localToParent(p0.x, p0.y);
     
     // Get ends points and set (flip if moving handle 0)
     Point p1 = aPoint; if(aViewHandle.index==0) { Point p = p0; p0 = p1; p1 = p; }
-    view.setLineInParent(p0.x, p0.y, p1.x, p1.y);
+    lview.setLineInParent(p0.x, p0.y, p1.x, p1.y);
 }
 
 /**

@@ -27,16 +27,8 @@ public class ViewTool <T extends View> extends ViewOwner {
     // The image for a view handle
     static Image          _handle = Image.get(Editor.class, "Handle8x8.png");
     
-    // Handle constants
+    // Constants
     public static final byte HandleWidth = 8;
-    public static final Pos HandleNW = Pos.TOP_LEFT;
-    public static final Pos HandleNE = Pos.TOP_RIGHT;
-    public static final Pos HandleSW = Pos.BOTTOM_LEFT;
-    public static final Pos HandleSE = Pos.BOTTOM_RIGHT;
-    public static final Pos HandleW = Pos.CENTER_LEFT;
-    public static final Pos HandleE = Pos.CENTER_RIGHT;
-    public static final Pos HandleN = Pos.TOP_CENTER;
-    public static final Pos HandleS = Pos.BOTTOM_CENTER;
 
 /**
  * Returns the View class that this tool handles.
@@ -488,7 +480,7 @@ public void mouseDragged(ViewEvent anEvent)
     double y = Math.min(_downPoint.getY(), currentPoint.getY());
     double w = Math.abs(currentPoint.getX() - _downPoint.getX());
     double h = Math.abs(currentPoint.getY() - _downPoint.getY());
-    _view.setFrame(x, y, w, h);
+    _view.setBounds(x, y, w, h);
 }
 
 /**
@@ -623,14 +615,10 @@ public int getHandleCount(T aView)  { return 8; }
 public Pos getHandlePos(T aView, int anIndex)
 {
     switch(anIndex) {
-        case 0: return Pos.TOP_LEFT;
-        case 1: return Pos.TOP_RIGHT;
-        case 2: return Pos.BOTTOM_LEFT;
-        case 3: return Pos.BOTTOM_RIGHT;
-        case 4: return Pos.CENTER_LEFT;
-        case 5: return Pos.CENTER_RIGHT;
-        case 6: return Pos.TOP_CENTER;
-        case 7: return Pos.BOTTOM_CENTER;
+        case 0: return Pos.TOP_LEFT; case 1: return Pos.TOP_RIGHT;
+        case 2: return Pos.BOTTOM_LEFT; case 3: return Pos.BOTTOM_RIGHT;
+        case 4: return Pos.CENTER_LEFT; case 5: return Pos.CENTER_RIGHT;
+        case 6: return Pos.TOP_CENTER; case 7: return Pos.BOTTOM_CENTER;
         default: throw new RuntimeException("ViewTool: getHandlePos: Unsupported: " + anIndex);
     }
 }
@@ -641,34 +629,20 @@ public Pos getHandlePos(T aView, int anIndex)
 public Point getHandlePoint(T aView, Pos aHandle, boolean isSuperSelected)
 {
     // Get bounds of given shape
-    Rect bounds = isSuperSelected? getBoundsSuperSelected(aView).getInsetRect(-HandleWidth/2) : aView.getBoundsInside();
-    
-    // Get minx and miny of given shape
-    double minX = aView.getWidth()>=0? bounds.getX() : bounds.getMaxX();
-    double minY = aView.getHeight()>=0? bounds.getY() : bounds.getMaxY();
-    
-    // Get maxx and maxy of givn shape
-    double maxX = aView.getWidth()>=0? bounds.getMaxX() : bounds.getX();
-    double maxY = aView.getHeight()>=0? bounds.getMaxY() : bounds.getY();
-    
-    // Get midx and midy of given shape
-    double midX = minX + (maxX-minX)/2;
-    double midY = minY + (maxY-minY)/2;
+    Rect bnds = isSuperSelected? getBoundsSuperSelected(aView).getInsetRect(-HandleWidth/2) : aView.getBoundsInside();
     
     // Get point for given handle
     switch(aHandle) {
-        case TOP_LEFT: return new Point(minX, minY);
-        case TOP_RIGHT: return new Point(maxX, minY);
-        case BOTTOM_LEFT: return new Point(minX, maxY);
-        case BOTTOM_RIGHT: return new Point(maxX, maxY);
-        case CENTER_LEFT: return new Point(minX, midY);
-        case CENTER_RIGHT: return new Point(maxX, midY);
-        case TOP_CENTER: return new Point(midX, minY);
-        case BOTTOM_CENTER: return new Point(midX, maxY);
+        case TOP_LEFT: return new Point(bnds.getX(), bnds.getY());
+        case TOP_RIGHT: return new Point(bnds.getMaxX(), bnds.getY());
+        case BOTTOM_LEFT: return new Point(bnds.getX(), bnds.getMaxY());
+        case BOTTOM_RIGHT: return new Point(bnds.getMaxX(), bnds.getMaxY());
+        case CENTER_LEFT: return new Point(bnds.getX(), bnds.getMidY());
+        case CENTER_RIGHT: return new Point(bnds.getMaxX(), bnds.getMidY());
+        case TOP_CENTER: return new Point(bnds.getMidX(), bnds.getY());
+        case BOTTOM_CENTER: return new Point(bnds.getMidX(), bnds.getMaxY());
+        default: return null;
     }
-    
-    // Return null if invalid handle
-    return null;
 }
 
 /**
@@ -702,44 +676,7 @@ public Pos getHandleAtPoint(T aView, Point aPoint, boolean isSuperSelected)
 /**
  * Returns the cursor for given handle.
  */
-public Cursor getHandleCursor(T aView, Pos aHandle)
-{
-    switch(aHandle) {
-        case TOP_CENTER: return Cursor.N_RESIZE;
-        case BOTTOM_CENTER: return Cursor.S_RESIZE;
-        case CENTER_RIGHT: return Cursor.E_RESIZE;
-        case CENTER_LEFT: return Cursor.W_RESIZE;
-        case TOP_LEFT: return Cursor.NW_RESIZE;
-        case TOP_RIGHT: return Cursor.NE_RESIZE;
-        case BOTTOM_LEFT: return Cursor.SW_RESIZE;
-        case BOTTOM_RIGHT: return Cursor.SE_RESIZE;
-        default: return null;
-    }
-}
-
-/**
- * Moves the handle at the given index to the given point.
- */
-public void moveViewHandle2(ViewHandle <T> aViewHandle, Point toPoint)
-{
-    View view = aViewHandle.view;
-    Point anchor = aViewHandle.anchor;
-
-    double x0 = anchor.x, y0 = anchor.y, x1 = toPoint.x, y1 = toPoint.y;
-    
-    Point p0 = view.parentToLocal(x0, y0);
-    Point p1 = view.parentToLocal(x1, y1);
-    
-    double x = Math.min(p0.x,p1.x), w = Math.max(p0.x,p1.x) - x;
-    double y = Math.min(p0.y,p1.y), h = Math.max(p0.y,p1.y) - y;
-    
-    double dw = w - view.getWidth();
-    double dh = h - view.getHeight();
-    
-    view.setSize(w, h);
-    
-    aViewHandle.view.setFrame(x, y, w, h);
-}
+public Cursor getHandleCursor(T aView, Pos aHandle)  { return Cursor.get(aHandle); }
 
 /**
  * Moves the handle at the given index to the given point.
@@ -750,67 +687,20 @@ public void moveViewHandle(ViewHandle <T> aViewHandle, Point toPoint)
     T view = aViewHandle.view;
     Pos handle = aViewHandle.handle;
     Point anchor = aViewHandle.anchor;
-    Point p1 = getHandlePoint(view, handle, false);
-    Point p2 = view.parentToLocal(toPoint.x, toPoint.y);
     
-    // If middle handle is used, set delta and p2 of that component to 0
-    boolean minX = false, maxX = false, minY = false, maxY = false;
+    // Get anchor/drag points in local and calculate new bounds
+    Point p0 = view.parentToLocal(anchor.x,anchor.y);
+    Point p1 = view.parentToLocal(toPoint.x,toPoint.y);
+    double x = Math.min(p0.x,p1.x), w = Math.max(p0.x,p1.x) - x; w = Math.round(w);
+    double y = Math.min(p0.y,p1.y), h = Math.max(p0.y,p1.y) - y; h = Math.round(h);
+    
+    // If middle handles, constrain
     switch(handle) {
-        case TOP_LEFT: minX = minY = true; break;
-        case TOP_RIGHT: maxX = minY = true; break;
-        case BOTTOM_LEFT: minX = maxY = true; break;
-        case BOTTOM_RIGHT: maxX = maxY = true; break;
-        case CENTER_LEFT: minX = true; break;
-        case CENTER_RIGHT: maxX = true; break;
-        case BOTTOM_CENTER: maxY = true; break;
-        case TOP_CENTER: minY = true; break;
-    }
-
-    // Calculate new width and height for handle move
-    double dx = p2.getX() - p1.getX(), dy = p2.getY() - p1.getY();
-    double nw = minX? view.getWidth() - dx : maxX? view.getWidth() + dx : view.getWidth();  // was width/height()
-    double nh = minY? view.getHeight() - dy : maxY? view.getHeight() + dy : view.getHeight();
-
-    // Set new width and height, but calc new X & Y such that opposing handle is at same location w.r.t. parent
-    //Point op = getHandlePoint(view, handle.getOpposing(), false); op = view.parentToLocal(op.x, op.y);
-    Point op = view.parentToLocal(anchor.x, anchor.y);
-    
-    // Make sure new width and height are not too small
-    if(Math.abs(nw)<.1) nw = MathUtils.sign(nw)*.1f;
-    if(Math.abs(nh)<.1) nh = MathUtils.sign(nh)*.1f;
-
-    // Set size
-    view.setSize(Math.abs(nw), Math.abs(nh));  //view.setSize(nw, nh);
-    
-    // Get point
-    //Point np = getHandlePoint(view, handle.getOpposing(), false); np = view.parentToLocal(np.x,np.y);
-    Point np = view.parentToLocal(anchor.x, anchor.y);
-    
-    // Set frame
-    view.setXY(view.getX() + op.getX() - np.getX(), view.getY() + op.getY() - np.getY()); // Was setFrameXY
-}
-
-/**
- * An inner class describing a view and a handle.
- */
-public static class ViewHandle <T extends View> {
-
-    // The view, handle index and shape tool
-    public T         view;
-    public int       index;
-    public Pos       handle;
-    public Point     anchor;
-    public ViewTool  tool;
-    
-    /** Creates a new shape-handle. */
-    public ViewHandle(T aView, Pos aHndl, ViewTool aTool)
-    {
-        view = aView; handle = aHndl; tool = aTool;
-        for(int i=0;i<tool.getHandleCount(view);i++)
-            if(tool.getHandlePos(view,i)==handle) { index = i; break; }
-        anchor = tool.getHandlePoint(view, handle.getOpposing(), false);
-        anchor = view.localToParent(anchor.x, anchor.y);
-    }
+        case CENTER_LEFT: case CENTER_RIGHT: y = 0; h = view.getHeight(); break;
+        case BOTTOM_CENTER: case TOP_CENTER: x = 0; w = view.getWidth(); break; }
+        
+    // Set view bounds in local coords
+    view.setBoundsLocal(x, y, w, h);
 }
 
 /**
@@ -1094,6 +984,29 @@ public static ViewTool createTool(Class aClass)
         
     // Otherwise, get tool for super class
     return createTool(aClass.getSuperclass());
+}
+
+/**
+ * A class describing a view handle for resizing operations.
+ */
+public static class ViewHandle <T extends View> {
+
+    // The view, handle index, handle position, anchor point and shape tool
+    public T         view;
+    public int       index;
+    public Pos       handle;
+    public Point     anchor;
+    public ViewTool  tool;
+    
+    /** Creates a new shape-handle. */
+    public ViewHandle(T aView, Pos aHndl, ViewTool aTool)
+    {
+        view = aView; handle = aHndl; tool = aTool;
+        for(int i=0;i<tool.getHandleCount(view);i++)
+            if(tool.getHandlePos(view,i)==handle) { index = i; break; }
+        anchor = tool.getHandlePoint(view, handle.getOpposing(), false);
+        anchor = view.localToParent(anchor.x, anchor.y);
+    }
 }
 
 }

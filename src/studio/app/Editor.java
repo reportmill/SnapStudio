@@ -239,28 +239,28 @@ public ParentView getSuperSelectedParentShape()
 /**
  * Super select a shape.
  */
-public void setSuperSelectedShape(View aShape)
+public void setSuperSelectedShape(View aView)
 {
-    // If given shape is null, reset to selected page
-    View shape = aShape!=null? aShape : getContent();
+    // If given view is null, reset to selected page
+    View view = aView!=null? aView : getContent();
     
-    // Unselect selected shapes
+    // Unselect selected views
     _selectedShapes.clear();
 
-    // Remove current super-selected shapes that aren't an ancestor of given shape   
+    // Remove current super-selected views that aren't an ancestor of given view   
     if(getSuperSelectedShape()!=null)
-    while(shape!=getSuperSelectedShape() && !shape.isAncestor(getSuperSelectedShape())) {
+    while(view!=getSuperSelectedShape() && !view.isAncestor(getSuperSelectedShape())) {
         View ssShape = getSuperSelectedShape();
         getTool(ssShape).willLoseSuperSelected(ssShape);
         ListUtils.removeLast(_superSelectedShapes);
     }
 
-    // Add super selected shape (recursively adds parents if missing)
-    if(shape!=getSuperSelectedShape())
-        addSuperSelectedShape(shape);
+    // Add super selected view (recursively adds parents if missing)
+    if(view!=getSuperSelectedShape())
+        addSuperSelectedShape(view);
     
     // Fire PropertyChange and repaint
-    firePropChange(SuperSelectedShape_Prop, null, aShape);
+    firePropChange(SuperSelectedShape_Prop, null, view);
     repaint();
 }
 

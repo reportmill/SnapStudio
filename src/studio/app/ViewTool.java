@@ -251,12 +251,12 @@ public boolean isSuperSelected(View aView)  { return getEditor().isSuperSelected
 /**
  * Returns whether a given view is super-selectable.
  */
-public boolean isSuperSelectable(View aView)  { return aView instanceof ParentView; }
+public boolean isSuperSelectable(T aView)  { return aView instanceof ParentView; }
 
 /**
  * Returns whether a given view accepts children.
  */
-public boolean getAcceptsChildren(View aView)  { return aView instanceof ParentView; }
+public boolean getAcceptsChildren(T aView)  { return aView instanceof ParentView; }
 
 /**
  * Returns whether a given view accepts children.
@@ -275,6 +275,35 @@ public boolean childrenSuperSelectImmediately(View aView)  { return false; }
  * Returns whether a given view can be ungrouped.
  */
 public boolean isUngroupable(View aView)  { return false; }//aView.getChildCount()>0; }
+
+/**
+ * Adds a child to given view.
+ */
+public void addChild(T aView, View aChild)
+{
+    int index = aView instanceof ParentView? ((ParentView)aView).getChildCount() : -1;
+    addChild(aView, aChild, index);
+}
+
+/**
+ * Adds a child to given view.
+ */
+public void addChild(T aView, View aChild, int anIndex)
+{
+    if(aView instanceof ChildView)
+        ((ChildView)aView).addChild(aChild, anIndex);
+    else System.err.println(getClass().getSimpleName() + ".addChild: Not supported");
+}
+
+/**
+ * Removes a child from view.
+ */
+public void removeChild(T aView, View aChild)
+{
+    if(aView instanceof ChildView)
+        ((ChildView)aView).removeChild(aChild);
+    else System.err.println(getClass().getSimpleName() + ".removeChild: Not supported");
+}
 
 /**
  * Editor method - called when an instance of this tool's view is super selected.
@@ -465,7 +494,8 @@ public void mousePressed(ViewEvent anEvent)
     _view.setXY(_downPoint.x, _downPoint.y);
     
     // Add shape to superSelectedShape and select shape
-    ((ChildView)getEditor().getSuperSelectedParentShape()).addChild(_view);
+    ParentView parent = getEditor().getSuperSelectedParentShape(); ViewTool ptool = getTool(parent);
+    ptool.addChild(parent, _view);
     getEditor().setSelectedShape(_view);
 }
 

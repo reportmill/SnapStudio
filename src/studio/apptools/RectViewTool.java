@@ -69,7 +69,7 @@ public void mouseMoved(ViewEvent anEvent)  { getEditor().setCursor(Cursor.CROSSH
 /**
  * Returns the class that this tool is responsible for.
  */
-public Class getShapeClass()  { return RectView.class; }
+public Class getViewClass()  { return RectView.class; }
 
 /**
  * Returns the name to be presented to user.

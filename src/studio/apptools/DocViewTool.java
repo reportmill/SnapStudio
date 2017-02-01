@@ -24,7 +24,7 @@ public class DocViewTool <T extends DocView> extends ViewTool <T> {
 /**
  * Returns the class that tool edits.
  */
-public Class getShapeClass()  { return DocView.class; }
+public Class getViewClass()  { return DocView.class; }
 
 /**
  * Returns the name to be show in inspector window.

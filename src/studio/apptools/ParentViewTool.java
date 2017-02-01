@@ -11,9 +11,9 @@ import snap.view.*;
 public class ParentViewTool <T extends ParentView> extends ViewTool <T> {
 
 /**
- * Override to return shape class.
+ * Override to return ParentView class.
  */
-public Class<T> getShapeClass()  { return (Class<T>)ParentView.class; }
+public Class <T> getViewClass()  { return (Class<T>)ParentView.class; }
 
 /**
  * Returns the string to be used for the inspector window title.

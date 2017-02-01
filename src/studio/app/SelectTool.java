@@ -20,8 +20,8 @@ public class SelectTool extends ViewTool {
     // The point of last mouse
     Point         _lastMousePoint;
     
-    // A construct representing a shape whose handle was hit and the handle
-    RMShapeHandle _shapeHandle;
+    // A construct representing a view whose handle was hit and the handle
+    ViewHandle    _viewHandle;
     
     // The shape handling mouse events
     View          _eventShape;
@@ -73,21 +73,21 @@ public void mousePressed(ViewEvent anEvent)
     // Set downPoint to event location.
     _downPoint = getEventPointInDoc();
     
-    // Get shape handle for event point
-    _shapeHandle = getShapeHandleAtPoint(anEvent.getPoint());
+    // Get view handle for event point
+    _viewHandle = getViewHandleAtPoint(anEvent.getPoint());
 
-    // If shape handle was found for event point, set mode to resize.
-    if(_shapeHandle!=null) {
+    // If view handle was found for event point, set mode to resize.
+    if(_viewHandle!=null) {
         
         // Set DragMode to Resize
         _dragMode = DragMode.Resize;
         
-        // Register shape handle shape for repaint
-        _shapeHandle.getShape().repaint();
+        // Register view handle view for repaint
+        _viewHandle.view.repaint();
 
         // If _selectedShape is superSelected, select it instead
-        if(isSuperSelected(_shapeHandle.getShape()))
-            editor.setSelectedShape(_shapeHandle.getShape());
+        if(isSuperSelected(_viewHandle.view))
+            editor.setSelectedShape(_viewHandle.view);
 
         // Just return
         return;
@@ -237,9 +237,9 @@ public void mouseDragged(ViewEvent anEvent)
             Point resizePoint = getEventPointInSuperSelectedView(shouldSnap);
             
             // Move handle to current point and break
-            _shapeHandle.getTool().moveShapeHandle(_shapeHandle.getShape(), _shapeHandle.getHandle(), resizePoint);
-            if(_shapeHandle.getShape().getParent() instanceof SpringView)
-                ((SpringView)_shapeHandle.getShape().getParent()).resetSpringInfo();
+            _viewHandle.tool.moveViewHandle(_viewHandle, resizePoint);
+            if(_viewHandle.view.getParent() instanceof SpringView)
+                ((SpringView)_viewHandle.view.getParent()).resetSpringInfo();
             break;
 
         // Handle DragModeSelect
@@ -420,7 +420,7 @@ public void paintTool(Painter aPntr)
     Editor editor = getEditor();
     for(int i=1, iMax=editor.getSuperSelectedShapeCount(); i<iMax; i++) {
         View shape = editor.getSuperSelectedShape(i); ViewTool tool = getTool(shape);
-        tool.paintShapeHandles(shape, aPntr, true);
+        tool.paintViewHandles(shape, aPntr, true);
     }
     
     // Get selected shapes
@@ -433,7 +433,7 @@ public void paintTool(Painter aPntr)
     // Iterate over SelectedShapes and have tool paint Selected
     for(int i=0, iMax=selectedShapes.size(); i<iMax; i++) { View shape = selectedShapes.get(i);
         ViewTool tool = getTool(shape);
-        tool.paintShapeHandles(shape, aPntr, false);
+        tool.paintViewHandles(shape, aPntr, false);
     }
 
     // Draw SelectionRect: light gray rect with darker border (semi transparent)

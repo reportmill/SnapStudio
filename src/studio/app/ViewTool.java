@@ -8,7 +8,7 @@ import snap.view.*;
 import snap.web.*;
 
 /**
- * This is the base class for tools in RM - the objects that provide GUI editing for RM shapes.
+ * This is the base class for tools in SnapStudio - the objects that provide UI editing for Views.
  */
 public class ViewTool <T extends View> extends ViewOwner {
     
@@ -18,40 +18,40 @@ public class ViewTool <T extends View> extends ViewOwner {
     // The Editor pane
     EditorPane            _editorPane;
 
-    // The newly created shape instance
-    protected View                 _shape;
+    // The newly created view instance
+    protected T           _view;
     
     // The mouse down point that initiated last tool mouse loop
-    protected Point                   _downPoint;
+    protected Point       _downPoint;
     
-    // The image for a shape handle
-    static Image            _handle = Image.get(Editor.class, "Handle8x8.png");
+    // The image for a view handle
+    static Image          _handle = Image.get(Editor.class, "Handle8x8.png");
     
     // Handle constants
     public static final byte HandleWidth = 8;
-    public static final byte HandleNW = 0;
-    public static final byte HandleNE = 1;
-    public static final byte HandleSW = 2;
-    public static final byte HandleSE = 3;
-    public static final byte HandleW = 4;
-    public static final byte HandleE = 5;
-    public static final byte HandleN = 6;
-    public static final byte HandleS = 7;
+    public static final Pos HandleNW = Pos.TOP_LEFT;
+    public static final Pos HandleNE = Pos.TOP_RIGHT;
+    public static final Pos HandleSW = Pos.BOTTOM_LEFT;
+    public static final Pos HandleSE = Pos.BOTTOM_RIGHT;
+    public static final Pos HandleW = Pos.CENTER_LEFT;
+    public static final Pos HandleE = Pos.CENTER_RIGHT;
+    public static final Pos HandleN = Pos.TOP_CENTER;
+    public static final Pos HandleS = Pos.BOTTOM_CENTER;
 
 /**
- * Returns the shape class that this tool handles.
+ * Returns the View class that this tool handles.
  */
-public Class <T> getShapeClass()  { return (Class<T>)View.class; }
+public Class <T> getViewClass()  { return (Class<T>)View.class; }
 
 /**
- * Returns a new instance of the shape class that this tool is responsible for.
+ * Returns a new instance of the view class that this tool is responsible for.
  */
-protected T newInstance()  { return ClassUtils.newInstance(getShapeClass()); }
+protected T newInstance()  { return ClassUtils.newInstance(getViewClass()); }
 
 /**
  * Returns the string to be used for the inspector window title.
  */
-public String getWindowTitle()  { return "Shape Inspector"; }
+public String getWindowTitle()  { return "View Inspector"; }
 
 /**
  * Create Node.
@@ -207,17 +207,17 @@ public Point getEventPointInSuperSelectedView(boolean snapToGrid, boolean snapEd
 }
 
 /**
- * Returns the current selected shape for the current editor.
+ * Returns the current selected view for the current editor.
  */
 public T getSelectedShape()
 {
     Editor e = getEditor(); if(e==null) return null;
     View s = e.getSelectedOrSuperSelectedShape();
-    return ClassUtils.getInstance(s, getShapeClass());
+    return ClassUtils.getInstance(s, getViewClass());
 }
 
 /**
- * Returns the current selected shapes for the current editor.
+ * Returns the current selected views for the current editor.
  */
 public List <? extends View> getSelectedShapes()  { return getEditor().getSelectedOrSuperSelectedShapes(); }
 
@@ -244,30 +244,30 @@ public void reactivateTool()  { }
 /**
  * Called when a tool is deselected to give an opportunity to finalize changes in progress.
  */
-public void flushChanges(Editor anEditor, View aShape)  { }
+public void flushChanges(Editor anEditor, View aView)  { }
 
 /**
- * Returns whether a given shape is selected in the editor.
+ * Returns whether a given view is selected in the editor.
  */
-public boolean isSelected(View aShape)  { return getEditor().isSelected(aShape); }
+public boolean isSelected(View aView)  { return getEditor().isSelected(aView); }
 
 /**
- * Returns whether a given shape is superselected in the editor.
+ * Returns whether a given view is superselected in the editor.
  */
-public boolean isSuperSelected(View aShape)  { return getEditor().isSuperSelected(aShape); }
+public boolean isSuperSelected(View aView)  { return getEditor().isSuperSelected(aView); }
 
 /**
- * Returns whether a given shape is super-selectable.
+ * Returns whether a given view is super-selectable.
  */
-public boolean isSuperSelectable(View aShape)  { return aShape instanceof ParentView; }
+public boolean isSuperSelectable(View aView)  { return aView instanceof ParentView; }
 
 /**
- * Returns whether a given shape accepts children.
+ * Returns whether a given view accepts children.
  */
-public boolean getAcceptsChildren(View aShape)  { return aShape instanceof ParentView; }
+public boolean getAcceptsChildren(View aView)  { return aView instanceof ParentView; }
 
 /**
- * Returns whether a given shape accepts children.
+ * Returns whether a given view accepts children.
  */
 public boolean childrenSuperSelectImmediately()
 {
@@ -275,32 +275,32 @@ public boolean childrenSuperSelectImmediately()
 }
 
 /**
- * Returns whether a given shape accepts children.
+ * Returns whether a given view accepts children.
  */
-public boolean childrenSuperSelectImmediately(View aShape)  { return false; }
+public boolean childrenSuperSelectImmediately(View aView)  { return false; }
 
 /**
- * Returns whether a given shape can be ungrouped.
+ * Returns whether a given view can be ungrouped.
  */
-public boolean isUngroupable(View aShape)  { return false; }//aShape.getChildCount()>0; }
+public boolean isUngroupable(View aView)  { return false; }//aView.getChildCount()>0; }
 
 /**
- * Editor method - called when an instance of this tool's shape is super selected.
+ * Editor method - called when an instance of this tool's view is super selected.
  */
-public void didBecomeSuperSelected(T aShape)  { }
+public void didBecomeSuperSelected(T aView)  { }
 
 /**
- * Editor method - called when an instance of this tool's shape in de-super-selected.
+ * Editor method - called when an instance of this tool's view in de-super-selected.
  */
-public void willLoseSuperSelected(T aShape)  { }
+public void willLoseSuperSelected(T aView)  { }
 
 /**
- * Returns the bounds of the shape in parent coords when super selected (same as getBoundsMarkedDeep by default).
+ * Returns the bounds of the view in parent coords when super selected (same as getBoundsMarkedDeep by default).
  */
-public Rect getBoundsSuperSelected(T aShape)  { return aShape.getBoundsInside(); } //getBoundsMarkedDeep(); }
+public Rect getBoundsSuperSelected(T aView)  { return aView.getBoundsInside(); } //getBoundsMarkedDeep(); }
 
 /**
- * Converts from shape units to tool units.
+ * Converts from view units to tool units.
  */
 public double getUnitsFromPoints(double aValue)
 {
@@ -310,7 +310,7 @@ public double getUnitsFromPoints(double aValue)
 }
 
 /**
- * Converts from tool units to shape units.
+ * Converts from tool units to view units.
  */
 public double getPointsFromUnits(double aValue)
 {
@@ -320,73 +320,73 @@ public double getPointsFromUnits(double aValue)
 }
 
 /**
- * Returns the font for the given shape.
+ * Returns the font for the given view.
  */
-public Font getFont(Editor anEditor, View aShape)  { return aShape.getFont(); }
+public Font getFont(Editor anEditor, View aView)  { return aView.getFont(); }
 
 /**
- * Sets the font for the given shape.
+ * Sets the font for the given view.
  */
-public void setFont(Editor anEditor, View aShape, Font aFont)  { aShape.setFont(aFont); }
+public void setFont(Editor anEditor, View aView, Font aFont)  { aView.setFont(aFont); }
 
 /**
- * Returns the font for the given shape.
+ * Returns the font for the given view.
  */
-public Font getFontDeep(Editor anEditor, View aShape)
+public Font getFontDeep(Editor anEditor, View aView)
 {
-    Font font = getFont(anEditor, aShape);
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax && font==null; i++) font = aShape.getChild(i).getFont();
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax && font==null; i++) {
-    //    View child = aShape.getChild(i); RMTool tool = anEditor.getTool(child);
+    Font font = getFont(anEditor, aView);
+    //for(int i=0, iMax=aView.getChildCount(); i<iMax && font==null; i++) font = aView.getChild(i).getFont();
+    //for(int i=0, iMax=aView.getChildCount(); i<iMax && font==null; i++) {
+    //    View child = aView.getChild(i); RMTool tool = anEditor.getTool(child);
     //    font = tool.getFontDeep(anEditor, child);
     //}
     return font;
 }
 
 /**
- * Sets the font family for given shape.
+ * Sets the font family for given view.
  */
-public void setFontFamily(Editor anEditor, View aShape, Font aFont)
+public void setFontFamily(Editor anEditor, View aView, Font aFont)
 {
-    // Get new font for given font family font and current shape font size/style and set
-    Font font = getFont(anEditor, aShape), font2 = aFont;
+    // Get new font for given font family font and current view font size/style and set
+    Font font = getFont(anEditor, aView), font2 = aFont;
     if(font!=null) {
         if(font.isBold()!=font2.isBold() && font2.getBold()!=null) font2 = font2.getBold();
         if(font.isItalic()!=font2.isItalic() && font2.getItalic()!=null) font2 = font2.getItalic();
         font2 = font2.deriveFont(font.getSize());
     }
-    setFont(anEditor, aShape, font2);
+    setFont(anEditor, aView, font2);
 }
 
 /**
- * Sets the font family for given shape.
+ * Sets the font family for given view.
  */
-public void setFontFamilyDeep(Editor anEditor, View aShape, Font aFont)
+public void setFontFamilyDeep(Editor anEditor, View aView, Font aFont)
 {
-    // Set FontFamily for shape and recurse for children
-    setFontFamily(anEditor, aShape, aFont);
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
+    // Set FontFamily for view and recurse for children
+    setFontFamily(anEditor, aView, aFont);
+    //for(int i=0, iMax=aView.getChildCount(); i<iMax; i++) { View child = aView.getChild(i);
     //    RMTool tool = anEditor.getTool(child); tool.setFontFamilyDeep(anEditor, child, aFont); }
 }
 
 /**
- * Sets the font name for given shape.
+ * Sets the font name for given view.
  */
-public void setFontName(Editor anEditor, View aShape, Font aFont)
+public void setFontName(Editor anEditor, View aView, Font aFont)
 {
-    // Get new font for name and current shape size and set
-    Font font = getFont(anEditor, aShape);
+    // Get new font for name and current view size and set
+    Font font = getFont(anEditor, aView);
     Font font2 = font!=null? aFont.deriveFont(font.getSize()) : aFont;
-    setFont(anEditor, aShape, font2);
+    setFont(anEditor, aView, font2);
 }
 
 /**
- * Sets the font name for given shape.
+ * Sets the font name for given view.
  */
-public void setFontNameDeep(Editor anEditor, View aShape, Font aFont)
+public void setFontNameDeep(Editor anEditor, View aView, Font aFont)
 {
-    // Set Font name for shape and recurse for children
-    setFontName(anEditor, aShape, aFont);
+    // Set Font name for view and recurse for children
+    setFontName(anEditor, aView, aFont);
     //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
     //    RMTool tool = anEditor.getTool(child); tool.setFontNameDeep(anEditor, child, aFont); }
 }
@@ -394,20 +394,20 @@ public void setFontNameDeep(Editor anEditor, View aShape, Font aFont)
 /**
  * Sets the font size for given shape.
  */
-public void setFontSize(Editor anEditor, View aShape, double aSize, boolean isRelative)
+public void setFontSize(Editor anEditor, View aView, double aSize, boolean isRelative)
 {
     // Get new font for current shape font at new size and set
-    Font font = getFont(anEditor, aShape); if(font==null) return;
+    Font font = getFont(anEditor, aView); if(font==null) return;
     Font font2 = isRelative? font.deriveFont(font.getSize() + aSize) : font.deriveFont(aSize);
-    setFont(anEditor, aShape, font2);
+    setFont(anEditor, aView, font2);
 }
 
 /**
  * Sets the font size for given shape.
  */
-public void setFontSizeDeep(Editor anEditor, View aShape, double aSize, boolean isRelative)
+public void setFontSizeDeep(Editor anEditor, View aView, double aSize, boolean isRelative)
 {
-    setFontSize(anEditor, aShape, aSize, isRelative);
+    setFontSize(anEditor, aView, aSize, isRelative);
     //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
     //    RMTool tool = anEditor.getTool(child); tool.setFontSizeDeep(anEditor, child, aSize, isRelative); }    
 }
@@ -415,19 +415,19 @@ public void setFontSizeDeep(Editor anEditor, View aShape, double aSize, boolean 
 /**
  * Sets the font to bold or not bold for given shape.
  */
-public void setFontBold(Editor anEditor, View aShape, boolean aFlag)
+public void setFontBold(Editor anEditor, View aView, boolean aFlag)
 {
-    Font font = getFont(anEditor, aShape); if(font==null || font.isBold()==aFlag) return;
+    Font font = getFont(anEditor, aView); if(font==null || font.isBold()==aFlag) return;
     Font font2 = font.getBold(); if(font2==null) return;
-    setFont(anEditor, aShape, font2);
+    setFont(anEditor, aView, font2);
 }
 
 /**
  * Sets the font to bold or not bold for given shape and its children.
  */
-public void setFontBoldDeep(Editor anEditor, View aShape, boolean aFlag)
+public void setFontBoldDeep(Editor anEditor, View aView, boolean aFlag)
 {
-    setFontBold(anEditor, aShape, aFlag);
+    setFontBold(anEditor, aView, aFlag);
     //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
     //    RMTool tool = anEditor.getTool(child); tool.setFontBoldDeep(anEditor, child, aFlag); }    
 }
@@ -435,19 +435,19 @@ public void setFontBoldDeep(Editor anEditor, View aShape, boolean aFlag)
 /**
  * Sets the font to italic or not italic for given shape.
  */
-public void setFontItalic(Editor anEditor, View aShape, boolean aFlag)
+public void setFontItalic(Editor anEditor, View aView, boolean aFlag)
 {
-    Font font = getFont(anEditor, aShape); if(font==null || font.isItalic()==aFlag) return;
+    Font font = getFont(anEditor, aView); if(font==null || font.isItalic()==aFlag) return;
     Font font2 = font.getItalic(); if(font2==null) return;
-    setFont(anEditor, aShape, font2);
+    setFont(anEditor, aView, font2);
 }
 
 /**
  * Sets the font to italic or not italic for given shape and its children.
  */
-public void setFontItalicDeep(Editor anEditor, View aShape, boolean aFlag)
+public void setFontItalicDeep(Editor anEditor, View aView, boolean aFlag)
 {
-    setFontItalic(anEditor, aShape, aFlag);
+    setFontItalic(anEditor, aView, aFlag);
     //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { RMShape child = aShape.getChild(i);
     //    RMTool tool = anEditor.getTool(child); tool.setFontItalicDeep(anEditor, child, aFlag); }    
 }
@@ -469,12 +469,12 @@ public void mousePressed(ViewEvent anEvent)
     _downPoint = getEventPointInSuperSelectedView(true);
 
     // Create shape and move to downPoint
-    _shape = newInstance();
-    _shape.setXY(_downPoint.x, _downPoint.y);
+    _view = newInstance();
+    _view.setXY(_downPoint.x, _downPoint.y);
     
     // Add shape to superSelectedShape and select shape
-    ((ChildView)getEditor().getSuperSelectedParentShape()).addChild(_shape);
-    getEditor().setSelectedShape(_shape);
+    ((ChildView)getEditor().getSuperSelectedParentShape()).addChild(_view);
+    getEditor().setSelectedShape(_view);
 }
 
 /**
@@ -482,79 +482,79 @@ public void mousePressed(ViewEvent anEvent)
  */
 public void mouseDragged(ViewEvent anEvent)
 {
-    _shape.repaint();
+    _view.repaint();
     Point currentPoint = getEventPointInSuperSelectedView(true);
     double x = Math.min(_downPoint.getX(), currentPoint.getX());
     double y = Math.min(_downPoint.getY(), currentPoint.getY());
     double w = Math.abs(currentPoint.getX() - _downPoint.getX());
     double h = Math.abs(currentPoint.getY() - _downPoint.getY());
-    _shape.setFrame(x, y, w, h);
+    _view.setFrame(x, y, w, h);
 }
 
 /**
  * Event handling for shape creation.
  */
-public void mouseReleased(ViewEvent anEvent)  { getEditor().setCurrentToolToSelectTool(); _shape = null; }
+public void mouseReleased(ViewEvent anEvent)  { getEditor().setCurrentToolToSelectTool(); _view = null; }
 
 /**
  * Event handling from SelectTool for super selected shapes.
  */
-public void processEvent(T aShape, ViewEvent anEvent)
+public void processEvent(T aView, ViewEvent anEvent)
 {
     switch(anEvent.getType()) {
-        case MousePress: mousePressed(aShape, anEvent); break;
-        case MouseDrag: mouseDragged(aShape, anEvent); break;
-        case MouseRelease: mouseReleased(aShape, anEvent); break;
-        case MouseMove: mouseMoved(aShape, anEvent); break;
-        default: if(anEvent.isKeyEvent()) processKeyEvent(aShape, anEvent);
+        case MousePress: mousePressed(aView, anEvent); break;
+        case MouseDrag: mouseDragged(aView, anEvent); break;
+        case MouseRelease: mouseReleased(aView, anEvent); break;
+        case MouseMove: mouseMoved(aView, anEvent); break;
+        default: if(anEvent.isKeyEvent()) processKeyEvent(aView, anEvent);
     }
 }
 
 /**
  * Event handling from select tool for super selected shapes.
  */
-public void mousePressed(T aShape, ViewEvent anEvent)  { }
+public void mousePressed(T aView, ViewEvent anEvent)  { }
 
 /**
  * Event handling from select tool for super selected shapes.
  */
-public void mouseDragged(T aShape, ViewEvent anEvent)  { }
+public void mouseDragged(T aView, ViewEvent anEvent)  { }
 
 /**
  * Event handling from select tool for super selected shapes.
  */
-public void mouseReleased(T aShape, ViewEvent anEvent)  { }
+public void mouseReleased(T aView, ViewEvent anEvent)  { }
 
 /**
  * Event handling from select tool - called on mouse move when tool shape is super selected.
  * MouseMoved is useful for setting a custom cursor.
  */
-public void mouseMoved(T aShape, ViewEvent anEvent)
+public void mouseMoved(T aView, ViewEvent anEvent)
 {
-    // Just return if shape isn't the super-selected shape
-    //if(aShape!=getEditor().getSuperSelectedShape()) return;
+    // Just return if view isn't the super-selected view
+    //if(aView!=getEditor().getSuperSelectedShape()) return;
     
-    // Get handle shape
-    RMShapeHandle shapeHandle = getShapeHandleAtPoint(anEvent.getPoint());
+    // Get ViewHandle
+    ViewHandle viewHandle = getViewHandleAtPoint(anEvent.getPoint());
     
     // Declare variable for cursor
     Cursor cursor = null;
     
-    // If shape handle is non-null, set cursor and return
-    if(shapeHandle!=null)
-        cursor = shapeHandle.getTool().getHandleCursor(shapeHandle.getShape(), shapeHandle.getHandle());
+    // If view handle is non-null, set cursor and return
+    if(viewHandle!=null)
+        cursor = viewHandle.tool.getHandleCursor(viewHandle.view, viewHandle.handle);
     
-    // If mouse not on handle, check for mouse over a shape
+    // If mouse not on handle, check for mouse over a view
     else {
         
-        // Get mouse over shape
-        View shape = getEditor().getShapeAtPoint(anEvent.getX(),anEvent.getY());
+        // Get mouse over view
+        View view = getEditor().getShapeAtPoint(anEvent.getX(),anEvent.getY());
         
         // If shape isn't super selected and it's parent doesn't superselect children immediately, choose move cursor
-        //if(!isSuperSelected(shape) && !shape.getParent().childrenSuperSelectImmediately()) cursor = Cursor.MOVE;
+        //if(!isSuperSelected(view) && !view.getParent().childrenSuperSelectImmediately()) cursor = Cursor.MOVE;
         
         // If shape is text and either super-selected or child of a super-select-immediately, choose text cursor
-        //if(shape instanceof RMTextShape && (isSuperSelected(shape) || shape.getParent().childrenSuperSelectImmediately()))
+        //if(view instanceof RMTextShape && (isSuperSelected(view) || view.getParent().childrenSuperSelectImmediately()))
         //    cursor = Cursor.TEXT;
     }
     
@@ -568,14 +568,14 @@ public void mouseMoved(T aShape, ViewEvent anEvent)
 public boolean mousePressedSelection(ViewEvent anEvent)  { return false; }
 
 /**
- * Returns a tool tip string for given shape and event.
+ * Returns a tool tip string for given view and event.
  */
-public String getToolTip(T aShape, ViewEvent anEvent)  { return null; }
+public String getToolTip(T aView, ViewEvent anEvent)  { return null; }
 
 /**
  * Editor method.
  */
-public void processKeyEvent(T aShape, ViewEvent anEvent)  { }
+public void processKeyEvent(T aView, ViewEvent anEvent)  { }
 
 /**
  * Paints when tool is active for things like SelectTool's handles & selection rect or polygon's in-progress path.
@@ -583,12 +583,12 @@ public void processKeyEvent(T aShape, ViewEvent anEvent)  { }
 public void paintTool(Painter aPntr)  { }
 
 /**
- * Handles painting shape handles (or any indication that a shape is selected/super-selected).
+ * Handles painting view handles (or any indication that a shape is selected/super-selected).
  */
-public void paintShapeHandles(T aShape, Painter aPntr, boolean isSuperSelected)
+public void paintViewHandles(T aView, Painter aPntr, boolean isSuperSelected)
 {
     // If no handles, just return
-    if(getHandleCount(aShape)==0) return;
+    if(getHandleCount(aView)==0) return;
     
     // Turn off antialiasing and cache current composite
     aPntr.setAntialiasing(false);
@@ -599,11 +599,11 @@ public void paintShapeHandles(T aShape, Painter aPntr, boolean isSuperSelected)
         aPntr.setOpacity(.64);
     
     // Determine if rect should be reduced if the shape is especially small
-    boolean mini = aShape.getWidth()<16 || aShape.getHeight()<16;
+    boolean mini = aView.getWidth()<16 || aView.getHeight()<16;
         
-    // Iterate over shape handles, get rect (reduce if needed) and draw
-    for(int i=0, iMax=getHandleCount(aShape); i<iMax; i++) {
-        Rect hr = getHandleRect(aShape, i, isSuperSelected); if(mini) hr.inset(1, 1);
+    // Iterate over view handles, get rect (reduce if needed) and draw
+    for(int i=0, iMax=getHandleCount(aView); i<iMax; i++) { Pos hpos = getHandlePos(aView, i);
+        Rect hr = getHandleRect(aView, hpos, isSuperSelected); if(mini) hr.inset(1, 1);
         aPntr.drawImage(_handle, hr.getX(), hr.getY(), hr.getWidth(), hr.getHeight());
     }
         
@@ -613,25 +613,43 @@ public void paintShapeHandles(T aShape, Painter aPntr, boolean isSuperSelected)
 }
 
 /**
- * Returns the number of handles for this shape.
+ * Returns the number of handles for given view.
  */
-public int getHandleCount(T aShape)  { return 8; }
+public int getHandleCount(T aView)  { return 8; }
+
+/**
+ * Returns the handle position for given index.
+ */
+public Pos getHandlePos(T aView, int anIndex)
+{
+    switch(anIndex) {
+        case 0: return Pos.TOP_LEFT;
+        case 1: return Pos.TOP_RIGHT;
+        case 2: return Pos.BOTTOM_LEFT;
+        case 3: return Pos.BOTTOM_RIGHT;
+        case 4: return Pos.CENTER_LEFT;
+        case 5: return Pos.CENTER_RIGHT;
+        case 6: return Pos.TOP_CENTER;
+        case 7: return Pos.BOTTOM_CENTER;
+        default: throw new RuntimeException("ViewTool: getHandlePos: Unsupported: " + anIndex);
+    }
+}
 
 /**
  * Returns the point for the handle of the given shape at the given handle index in the given shape's coords.
  */
-public Point getHandlePoint(T aShape, int aHandle, boolean isSuperSelected)
+public Point getHandlePoint(T aView, Pos aHandle, boolean isSuperSelected)
 {
     // Get bounds of given shape
-    Rect bounds = isSuperSelected? getBoundsSuperSelected(aShape).getInsetRect(-HandleWidth/2):aShape.getBoundsInside();
+    Rect bounds = isSuperSelected? getBoundsSuperSelected(aView).getInsetRect(-HandleWidth/2) : aView.getBoundsInside();
     
     // Get minx and miny of given shape
-    double minX = aShape.getWidth()>=0? bounds.getX() : bounds.getMaxX();
-    double minY = aShape.getHeight()>=0? bounds.getY() : bounds.getMaxY();
+    double minX = aView.getWidth()>=0? bounds.getX() : bounds.getMaxX();
+    double minY = aView.getHeight()>=0? bounds.getY() : bounds.getMaxY();
     
     // Get maxx and maxy of givn shape
-    double maxX = aShape.getWidth()>=0? bounds.getMaxX() : bounds.getX();
-    double maxY = aShape.getHeight()>=0? bounds.getMaxY() : bounds.getY();
+    double maxX = aView.getWidth()>=0? bounds.getMaxX() : bounds.getX();
+    double maxY = aView.getHeight()>=0? bounds.getMaxY() : bounds.getY();
     
     // Get midx and midy of given shape
     double midX = minX + (maxX-minX)/2;
@@ -639,14 +657,14 @@ public Point getHandlePoint(T aShape, int aHandle, boolean isSuperSelected)
     
     // Get point for given handle
     switch(aHandle) {
-        case HandleNW: return new Point(minX, minY);
-        case HandleNE: return new Point(maxX, minY);
-        case HandleSW: return new Point(minX, maxY);
-        case HandleSE: return new Point(maxX, maxY);
-        case HandleW: return new Point(minX, midY);
-        case HandleE: return new Point(maxX, midY);
-        case HandleN: return new Point(midX, minY);
-        case HandleS: return new Point(midX, maxY);
+        case TOP_LEFT: return new Point(minX, minY);
+        case TOP_RIGHT: return new Point(maxX, minY);
+        case BOTTOM_LEFT: return new Point(minX, maxY);
+        case BOTTOM_RIGHT: return new Point(maxX, maxY);
+        case CENTER_LEFT: return new Point(minX, midY);
+        case CENTER_RIGHT: return new Point(maxX, midY);
+        case TOP_CENTER: return new Point(midX, minY);
+        case BOTTOM_CENTER: return new Point(midX, maxY);
     }
     
     // Return null if invalid handle
@@ -656,11 +674,11 @@ public Point getHandlePoint(T aShape, int aHandle, boolean isSuperSelected)
 /**
  * Returns the rect for the handle at the given index in editor coords.
  */
-public Rect getHandleRect(T aShape, int aHandle, boolean isSuperSelected)
+public Rect getHandleRect(T aView, Pos aHandle, boolean isSuperSelected)
 {
     // Get handle point for given handle index in shape coords and editor coords
-    Point hp = getHandlePoint(aShape, aHandle, isSuperSelected);
-    Point hpEd = aShape.localToParent(getEditor(), hp.getX(), hp.getY());
+    Point hp = getHandlePoint(aView, aHandle, isSuperSelected);
+    Point hpEd = aView.localToParent(getEditor(), hp.getX(), hp.getY());
     
     // Get handle rect at handle point, outset rect by handle width and return
     Rect hr = new Rect(Math.round(hpEd.getX()), Math.round(hpEd.getY()), 0, 0);
@@ -671,159 +689,162 @@ public Rect getHandleRect(T aShape, int aHandle, boolean isSuperSelected)
 /**
  * Returns the handle hit by the given editor coord point.
  */
-public int getHandleAtPoint(T aShape, Point aPoint, boolean isSuperSelected)
+public Pos getHandleAtPoint(T aView, Point aPoint, boolean isSuperSelected)
 {
-    // Iterate over shape handles, get handle rect for current loop handle and return index if rect contains point
-    for(int i=0, iMax=getHandleCount(aShape); i<iMax; i++) {
-        Rect hr = getHandleRect(aShape, i, isSuperSelected);
+    // Iterate over view handles, get handle rect for current loop handle and return index if rect contains point
+    for(int i=0, iMax=getHandleCount(aView); i<iMax; i++) { Pos hpos = getHandlePos(aView, i);
+        Rect hr = getHandleRect(aView, hpos, isSuperSelected);
         if(hr.contains(aPoint.getX(), aPoint.getY()))
-            return i; }
-    return -1; // Return -1 since no handle at given point
+            return hpos; }
+    return null; // Return null since no handle at given point
 }
 
 /**
  * Returns the cursor for given handle.
  */
-public Cursor getHandleCursor(T aShape, int aHandle)
+public Cursor getHandleCursor(T aView, Pos aHandle)
 {
-    // Get cursor for handle type
     switch(aHandle) {
-        case HandleN: return Cursor.N_RESIZE;
-        case HandleS: return Cursor.S_RESIZE;
-        case HandleE: return Cursor.E_RESIZE;
-        case HandleW: return Cursor.W_RESIZE;
-        case HandleNW: return Cursor.NW_RESIZE;
-        case HandleNE: return Cursor.NE_RESIZE;
-        case HandleSW: return Cursor.SW_RESIZE;
-        case HandleSE: return Cursor.SE_RESIZE;
+        case TOP_CENTER: return Cursor.N_RESIZE;
+        case BOTTOM_CENTER: return Cursor.S_RESIZE;
+        case CENTER_RIGHT: return Cursor.E_RESIZE;
+        case CENTER_LEFT: return Cursor.W_RESIZE;
+        case TOP_LEFT: return Cursor.NW_RESIZE;
+        case TOP_RIGHT: return Cursor.NE_RESIZE;
+        case BOTTOM_LEFT: return Cursor.SW_RESIZE;
+        case BOTTOM_RIGHT: return Cursor.SE_RESIZE;
+        default: return null;
     }
-
-    // Return null
-    return null;
 }
 
 /**
  * Moves the handle at the given index to the given point.
  */
-public void moveShapeHandle(T aShape, int aHandle, Point toPoint)
+public void moveViewHandle2(ViewHandle <T> aViewHandle, Point toPoint)
+{
+    View view = aViewHandle.view;
+    Point anchor = aViewHandle.anchor;
+
+    double x0 = anchor.x, y0 = anchor.y, x1 = toPoint.x, y1 = toPoint.y;
+    
+    Point p0 = view.parentToLocal(x0, y0);
+    Point p1 = view.parentToLocal(x1, y1);
+    
+    double x = Math.min(p0.x,p1.x), w = Math.max(p0.x,p1.x) - x;
+    double y = Math.min(p0.y,p1.y), h = Math.max(p0.y,p1.y) - y;
+    
+    double dw = w - view.getWidth();
+    double dh = h - view.getHeight();
+    
+    view.setSize(w, h);
+    
+    aViewHandle.view.setFrame(x, y, w, h);
+}
+
+/**
+ * Moves the handle at the given index to the given point.
+ */
+public void moveViewHandle(ViewHandle <T> aViewHandle, Point toPoint)
 {
     // Get handle point in shape coords and shape parent coords
-    Point p1 = getHandlePoint(aShape, aHandle, false);
-    Point p2 = aShape.parentToLocal(aShape.getParent(), toPoint.x, toPoint.y);
+    T view = aViewHandle.view;
+    Pos handle = aViewHandle.handle;
+    Point anchor = aViewHandle.anchor;
+    Point p1 = getHandlePoint(view, handle, false);
+    Point p2 = view.parentToLocal(toPoint.x, toPoint.y);
     
     // If middle handle is used, set delta and p2 of that component to 0
     boolean minX = false, maxX = false, minY = false, maxY = false;
-    switch(aHandle) {
-        case HandleNW: minX = minY = true; break;
-        case HandleNE: maxX = minY = true; break;
-        case HandleSW: minX = maxY = true; break;
-        case HandleSE: maxX = maxY = true; break;
-        case HandleW: minX = true; break;
-        case HandleE: maxX = true; break;
-        case HandleS: maxY = true; break;
-        case HandleN: minY = true; break;
+    switch(handle) {
+        case TOP_LEFT: minX = minY = true; break;
+        case TOP_RIGHT: maxX = minY = true; break;
+        case BOTTOM_LEFT: minX = maxY = true; break;
+        case BOTTOM_RIGHT: maxX = maxY = true; break;
+        case CENTER_LEFT: minX = true; break;
+        case CENTER_RIGHT: maxX = true; break;
+        case BOTTOM_CENTER: maxY = true; break;
+        case TOP_CENTER: minY = true; break;
     }
 
     // Calculate new width and height for handle move
     double dx = p2.getX() - p1.getX(), dy = p2.getY() - p1.getY();
-    double nw = minX? aShape.getWidth() - dx : maxX? aShape.getWidth() + dx : aShape.getWidth();  // was width/height()
-    double nh = minY? aShape.getHeight() - dy : maxY? aShape.getHeight() + dy : aShape.getHeight();
+    double nw = minX? view.getWidth() - dx : maxX? view.getWidth() + dx : view.getWidth();  // was width/height()
+    double nh = minY? view.getHeight() - dy : maxY? view.getHeight() + dy : view.getHeight();
 
     // Set new width and height, but calc new X & Y such that opposing handle is at same location w.r.t. parent
-    Point op = getHandlePoint(aShape, getHandleOpposing(aHandle), false);
-    aShape.parentToLocal(op.x, op.y);
+    //Point op = getHandlePoint(view, handle.getOpposing(), false); op = view.parentToLocal(op.x, op.y);
+    Point op = view.parentToLocal(anchor.x, anchor.y);
     
     // Make sure new width and height are not too small
     if(Math.abs(nw)<.1) nw = MathUtils.sign(nw)*.1f;
     if(Math.abs(nh)<.1) nh = MathUtils.sign(nh)*.1f;
 
     // Set size
-    aShape.setSize(nw, nh);
+    view.setSize(Math.abs(nw), Math.abs(nh));  //view.setSize(nw, nh);
     
     // Get point
-    Point p = getHandlePoint(aShape, getHandleOpposing(aHandle), false);
-    aShape.parentToLocal(p.x, p.y);
+    //Point np = getHandlePoint(view, handle.getOpposing(), false); np = view.parentToLocal(np.x,np.y);
+    Point np = view.parentToLocal(anchor.x, anchor.y);
     
     // Set frame
-    aShape.setXY(aShape.getX() + op.getX() - p.getX(), aShape.getY() + op.getY() - p.getY()); // Was setFrameXY
+    view.setXY(view.getX() + op.getX() - np.getX(), view.getY() + op.getY() - np.getY()); // Was setFrameXY
 }
 
 /**
- * Returns the handle index that is across from given handle index.
+ * An inner class describing a view and a handle.
  */
-public int getHandleOpposing(int handle)
-{
-    // Return opposing handle from given panel
-    switch(handle) {
-        case HandleNW: return HandleSE;
-        case HandleNE: return HandleSW;
-        case HandleSW: return HandleNE;
-        case HandleSE: return HandleNW;
-        case HandleW: return HandleE;
-        case HandleE: return HandleW;
-        case HandleS: return HandleN;
-        case HandleN: return HandleS;
-    }
-    
-    // Return -1 if given handle is unknown
-    return -1;
-}
+public static class ViewHandle <T extends View> {
 
-/**
- * An inner class describing a shape and a handle.
- */
-public static class RMShapeHandle {
-
-    // The shape, handle index and shape tool
-    View _shape; int _handle; ViewTool _tool;
+    // The view, handle index and shape tool
+    public T         view;
+    public int       index;
+    public Pos       handle;
+    public Point     anchor;
+    public ViewTool  tool;
     
     /** Creates a new shape-handle. */
-    public RMShapeHandle(View aShape, int aHndl, ViewTool aTool) { _shape = aShape; _handle = aHndl; _tool = aTool; }
-    
-    /** Returns the shape. */
-    public View getShape()  { return _shape; }
-    
-    /** Returns the handle. */
-    public int getHandle()  { return _handle; }
-    
-    /** Returns the tool. */
-    public ViewTool getTool()  { return _tool; }
+    public ViewHandle(T aView, Pos aHndl, ViewTool aTool)
+    {
+        view = aView; handle = aHndl; tool = aTool;
+        for(int i=0;i<tool.getHandleCount(view);i++)
+            if(tool.getHandlePos(view,i)==handle) { index = i; break; }
+        anchor = tool.getHandlePoint(view, handle.getOpposing(), false);
+        anchor = view.localToParent(anchor.x, anchor.y);
+    }
 }
 
 /**
- * Returns the shape handle for the given editor point.
+ * Returns the view handle for the given editor point.
  */
-public RMShapeHandle getShapeHandleAtPoint(Point aPoint)
+public ViewHandle getViewHandleAtPoint(Point aPoint)
 {
-    // Declare variable for shape and handle and shape tool
-    View shape = null; int handle = -1; ViewTool tool = null;
+    // Declare variables for view, handle, tool
     Editor editor = getEditor();
+    View view = null; Pos handle = null; ViewTool tool = null;
 
     // Check selected shapes for a selected handle index
-    for(int i=0, iMax=editor.getSelectedShapeCount(); handle==-1 && i<iMax; i++) {
-        shape = editor.getSelectedShape(i);
-        tool = getTool(shape);
-        handle = tool.getHandleAtPoint(shape, aPoint, false);
+    for(int i=0, iMax=editor.getSelectedShapeCount(); handle==null && i<iMax; i++) {
+        view = editor.getSelectedShape(i); tool = getTool(view);
+        handle = tool.getHandleAtPoint(view, aPoint, false);
     }
 
     // Check super selected shapes for a selected handle index
-    for(int i=0, iMax=editor.getSuperSelectedShapeCount(); handle==-1 && i<iMax; i++) {
-        shape = editor.getSuperSelectedShape(i);
-        tool = getTool(shape);
-        handle = tool.getHandleAtPoint(shape, aPoint, true);
+    for(int i=0, iMax=editor.getSuperSelectedShapeCount(); handle==null && i<iMax; i++) {
+        view = editor.getSuperSelectedShape(i); tool = getTool(view);
+        handle = tool.getHandleAtPoint(view, aPoint, true);
     }
 
-    // Return shape handle
-    return handle>=0? new RMShapeHandle(shape, handle, tool) : null;
+    // Return view handle
+    return handle!=null? new ViewHandle(view, handle, tool) : null;
 }
 
 /**
- * Implemented by shapes that can handle drag & drop.
+ * Implemented by tools that can handle drag & drop.
  */
-public boolean acceptsDrag(T aShape, ViewEvent anEvent)
+public boolean acceptsDrag(T aView, ViewEvent anEvent)
 {
     // Bogus, but currently the page accepts everything
-    //if(aShape.isRoot()) return true;
+    //if(aView.isRoot()) return true;
     
     // Return true for Color drag or File drag
     if(anEvent.hasDragContent(Clipboard.COLOR)) return true;
@@ -833,43 +854,43 @@ public boolean acceptsDrag(T aShape, ViewEvent anEvent)
         return true;
     
     // Return true in any case if accepts children
-    return getTool(aShape).getAcceptsChildren(aShape);
+    return getTool(aView).getAcceptsChildren(aView);
 }
 
 /**
- * Notifies tool that a something was dragged into of one of it's shapes with drag and drop.
+ * Notifies tool that a something was dragged into of one of it's views with drag and drop.
  */
-public void dragEnter(View aShape, ViewEvent anEvent)  { }
+public void dragEnter(View aView, ViewEvent anEvent)  { }
 
 /**
- * Notifies tool that a something was dragged out of one of it's shapes with drag and drop.
+ * Notifies tool that a something was dragged out of one of it's views with drag and drop.
  */
-public void dragExit(View aShape, ViewEvent anEvent)  { }
+public void dragExit(View aView, ViewEvent anEvent)  { }
 
 /**
- * Notifies tool that something was dragged over one of it's shapes with drag and drop.
+ * Notifies tool that something was dragged over one of it's views with drag and drop.
  */
-public void dragOver(View aShape, ViewEvent anEvent)  { }
+public void dragOver(View aView, ViewEvent anEvent)  { }
 
 /**
- * Notifies tool that something was dropped on one of it's shapes with drag and drop.
+ * Notifies tool that something was dropped on one of it's views with drag and drop.
  */
-public void drop(T aShape, ViewEvent anEvent)
+public void drop(T aView, ViewEvent anEvent)
 {
     // If a binding key drop, apply binding
-    //if(KeysPanel.getDragKey()!=null) KeysPanel.dropDragKey(aShape, anEvent);
+    //if(KeysPanel.getDragKey()!=null) KeysPanel.dropDragKey(aView, anEvent);
 
     // Handle String drop
     /*else*/ if(anEvent.hasDragString())
-        dropString(aShape, anEvent);
+        dropString(aView, anEvent);
 
     // Handle color panel drop
     else if(anEvent.hasDragContent(Clipboard.COLOR))
-        dropColor(aShape, anEvent);
+        dropColor(aView, anEvent);
 
     // Handle File drop - get list of dropped files and add individually
     else if(anEvent.hasDragFiles())
-        dropFiles(aShape, anEvent);
+        dropFiles(aView, anEvent);
 }
 
 /**
@@ -901,32 +922,32 @@ public void dropString(T aView, ViewEvent anEvent)
 /**
  * Called to handle dropping a color.
  */
-public void dropColor(T aShape, ViewEvent anEvent)
+public void dropColor(T aView, ViewEvent anEvent)
 {
     Color color = anEvent.getDragboard().getColor();
     getEditor().undoerSetUndoTitle("Set Fill Color");
-    aShape.setFill(color);
+    aView.setFill(color);
 }
 
 /**
  * Called to handle dropping a file.
  */
-public void dropFiles(T aShape, ViewEvent anEvent)
+public void dropFiles(T aView, ViewEvent anEvent)
 {
     List <File> filesList = anEvent.getDropFiles(); Point point = anEvent.getPoint();
     for(File file : filesList)
-        point = dropFile(aShape, file, anEvent);
+        point = dropFile(aView, file, anEvent);
 }
 
 /**
  * Called to handle a file drop on the editor.
  */
-private Point dropFile(T aShape, File aFile, ViewEvent anEvent)
+private Point dropFile(T aView, File aFile, ViewEvent anEvent)
 {
     // If directory, recurse and return
     if(aFile.isDirectory()) {
         for(File file : aFile.listFiles())
-            dropFile(aShape, file, anEvent);
+            dropFile(aView, file, anEvent);
         return null;
     }
     
@@ -944,12 +965,12 @@ private Point dropFile(T aShape, File aFile, ViewEvent anEvent)
         ifile2.setBytes(ifile1.getBytes());
         ifile2.save();
         
-        Point pnt = aShape.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
+        Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
         ImageView iview = new ImageView(ifile2); iview.setImageName(fname); iview.setSize(iview.getPrefSize());
         double w = iview.getWidth(), h = iview.getHeight();
         double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
         iview.setBounds(x,y,w,h);
-        ((ChildView)aShape).addChild(iview);
+        ((ChildView)aView).addChild(iview);
         getEditor().setSelectedShape(iview);
     }
 
@@ -957,13 +978,13 @@ private Point dropFile(T aShape, File aFile, ViewEvent anEvent)
     //if(ext.equalsIgnoreCase("xml") || ext.equalsIgnoreCase("json"))
     //    getEditorPane().setDataSource(WebURL.getURL(aFile), aPoint.getX(), aPoint.getY());
 
-    // If image file, add image shape
+    // If image file, add image view
     //else if(RMImageData.canRead(ext))
-    //    runLater(() -> dropImageFile(aShape, path, aPoint));
+    //    runLater(() -> dropImageFile(aView, path, aPoint));
 
     // If reportmill file, addReportFile
     //else if(ext.equalsIgnoreCase("rpt"))
-    //    dropReportFile(aShape, path, aPoint);
+    //    dropReportFile(aView, path, aPoint);
     
     // Return point offset by 10
     return null;//aPoint.offset(10, 10); return aPoint;
@@ -972,69 +993,69 @@ private Point dropFile(T aShape, File aFile, ViewEvent anEvent)
 /**
  * Called to handle an image drop on the editor.
  */
-public void dropImageFile(View aShape, String aPath, Point aPoint) //private
+public void dropImageFile(View aView, String aPath, Point aPoint) //private
 {
-    // If image hit a real shape, see if user wants it to be a texture
+    // If image hit a real view, see if user wants it to be a texture
     Editor editor = getEditor();
-    if(aShape!=editor.getContent()) {
+    if(aView!=editor.getContent()) {
         
         // Create drop image file options array
-        String options[] = { "Image Shape", "Texture", "Cancel" };
+        String options[] = { "ImageView", "Texture", "Cancel" };
         
         // Run drop image file options panel
-        String msg = "Image can be either image shape or texture", title = "Image import";
+        String msg = "Image can be either image view or texture", title = "Image import";
         DialogBox dbox = new DialogBox(title); dbox.setQuestionMessage(msg); dbox.setOptions(options);
         switch(dbox.showOptionDialog(null, options[0])) {
         
-            // Handle Create Image Shape
-            case 0: while(!getTool(aShape).getAcceptsChildren(aShape)) aShape = aShape.getParent(); break;
+            // Handle Create ImageView
+            case 0: while(!getTool(aView).getAcceptsChildren(aView)) aView = aView.getParent(); break;
             
             // Handle Create Texture
-            //case 1: aShape.setFill(new RMImageFill(aPath, true));
+            //case 1: aView.setFill(new RMImageFill(aPath, true));
             
             // Handle Cancel
             case 2: return;
         }
     }
     
-    // Get parent to add image shape to and drop point in parent coords
-    ParentView parent = aShape instanceof ParentView? (ParentView)aShape : aShape.getParent();
+    // Get parent to add image view to and drop point in parent coords
+    ParentView parent = aView instanceof ParentView? (ParentView)aView : aView.getParent();
     Point point = editor.convertToShape(parent, aPoint.x, aPoint.y);
     
-    // Create new image shape
-    //RMImageShape imageShape = new RMImageShape(aPath);
+    // Create new image view
+    //ImageView imageView = new ImageView(aPath);
     
-    // If image not PDF and is bigger than hit shape, shrink down
-    /*if(!imageShape.getImageData().getType().equals("pdf"))
-        if(imageShape.getWidth()>parent.getWidth() || imageShape.getHeight()>parent.getHeight()) {
-            double w = imageShape.getWidth();
-            double h = imageShape.getHeight();
+    // If image not PDF and is bigger than hit view, shrink down
+    /*if(!imageView.getImageData().getType().equals("pdf"))
+        if(imageView.getWidth()>parent.getWidth() || imageView.getHeight()>parent.getHeight()) {
+            double w = imageView.getWidth();
+            double h = imageView.getHeight();
             double w2 = w>h? 320 : 320/h*w;
             double h2 = h>w? 320 : 320/w*h;
-            imageShape.setSize(w2, h2);
+            imageView.setSize(w2, h2);
         }
 
     // Set bounds centered around point (or centered on page if image covers 75% of page or more)
-    if(imageShape.getWidth()/editor.getWidth()>.75f || imageShape.getHeight()/editor.getHeight()>.75)
-        imageShape.setXY(0, 0);
-    else imageShape.setXY(point.x - imageShape.getWidth()/2, point.y - imageShape.getHeight()/2);
+    if(imageView.getWidth()/editor.getWidth()>.75f || imageView.getHeight()/editor.getHeight()>.75)
+        imageView.setXY(0, 0);
+    else imageView.setXY(point.x - imageView.getWidth()/2, point.y - imageView.getHeight()/2);
 
-    // Add imageShape with undo
+    // Add imageView with undo
     editor.undoerSetUndoTitle("Add Image");
-    parent.addChild(imageShape);
+    parent.addChild(imageView);
     
-    // Select imageShape and SelectTool
-    editor.setSelectedShape(imageShape);*/
+    // Select imageView and SelectTool
+    editor.setSelectedShape(imageView);*/
     editor.setCurrentToolToSelectTool();
 }
 
 /**
- * Returns a clone of a gallery shape (hook to allow extra configuration for subclasses).
+ * Returns a clone of a gallery view (hook to allow extra configuration for subclasses).
  */
-public View getGalleryClone(T aShape)  { return null; }//return aShape.cloneDeep(); }
+public View getGalleryClone(T aView)  { return null; }//return aView.cloneDeep(); }
 
 /**
- * Returns the image used to represent shapes that this tool represents.
+ * Returns the image used to represent views that this tool represents.
  */
 public Image getImage()
 {
@@ -1047,7 +1068,7 @@ public Image getImage()
 }
 
 /**
- * Returns the specific tool for a given shape.
+ * Returns the specific tool for a given view.
  */
 public static ViewTool createTool(Class aClass)
 {

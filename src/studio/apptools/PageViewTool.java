@@ -148,9 +148,9 @@ public void respondUI(ViewEvent anEvent)
 }*/
 
 /**
- * Returns the shape class that this tool is responsible for.
+ * Returns the class that this tool is responsible for.
  */
-public Class getShapeClass()  { return PageView.class; }
+public Class getViewClass()  { return PageView.class; }
 
 /**
  * Returns the name to be used for this tool in the inspector window title.

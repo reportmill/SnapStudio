@@ -40,37 +40,30 @@ public void mouseMoved(ViewEvent anEvent)  { getEditor().setCursor(Cursor.CROSSH
 /**
  * Handles mouse press for line creation.
  */
-public void mousePressed(ViewEvent anEvent)
-{
-    super.mousePressed(anEvent);
-    _hysteresis = true;
-}
+public void mousePressed(ViewEvent anEvent)  { super.mousePressed(anEvent); _hysteresis = true; }
 
 /**
  * Handles mouse drag for line creation.
  */
 public void mouseDragged(ViewEvent anEvent)
 {
-    Point currentPoint = getEditorEvents().getEventPointInShape(true);
-    double dx = currentPoint.getX() - _downPoint.getX();
-    double dy = currentPoint.getY() - _downPoint.getY();
-    double breakingPoint = 20f;
+    Point dragPoint = getEditorEvents().getEventPointInShape(true);
+    double dx = Math.abs(dragPoint.x - _downPoint.x);
+    double dy = Math.abs(dragPoint.y - _downPoint.y);
+    double breakAmt = 20f;
     
     if(_hysteresis) {
-        if(Math.abs(dx) > Math.abs(dy)) {
-            if(Math.abs(dy) < breakingPoint) dy = 0;
+        if(dx>dy) {
+            if(dy<breakAmt) dragPoint.y = _downPoint.y;
             else _hysteresis = false;
         }
         
-        else if(Math.abs(dx) < breakingPoint) dx = 0;
+        else if(dx<breakAmt) dragPoint.x = _downPoint.x;
         else _hysteresis = false;
     }
     
-    // Register shape for repaint
-    _shape.repaint();
-    
     // Set adjusted bounds
-    _shape.setBounds(_downPoint.getX(), _downPoint.getY(), dx, dy);
+    _view.setLineInParent(_downPoint.x, _downPoint.y, dragPoint.x, dragPoint.y);
 }
 
 /**
@@ -79,19 +72,30 @@ public void mouseDragged(ViewEvent anEvent)
 public int getHandleCount(T aShape)  { return 2; }
 
 /**
- * Editor method.
+ * Returns the handle position for given index.
  */
-public Point getHandlePoint(T aShape, int anIndex, boolean isSuperSel)
+public Pos getHandlePos(T aShape, int anIndex)
 {
-    return super.getHandlePoint(aShape, anIndex==HandleEndPoint? HandleSE : anIndex, isSuperSel);
+    Pos pos = aShape.getOriginPos();
+    return anIndex==0? pos : pos.getOpposing();
 }
 
 /**
  * Editor method.
  */
-public void moveShapeHandle(T aShape, int aHandle, Point aPoint)
+public void moveViewHandle(ViewHandle <T> aViewHandle, Point aPoint)
 {
-    super.moveShapeHandle(aShape, aHandle==HandleEndPoint? HandleSE : aHandle, aPoint);
+    // Get view and handle
+    T view = aViewHandle.view;
+    Pos handle = getHandlePos(view, aViewHandle.index); // Re-evaluate since handle/index might have flipped
+    
+    // Get opposite point from view handle
+    Point p0 = getHandlePoint(view, handle.getOpposing(), false);
+    p0 = view.localToParent(p0.x, p0.y);
+    
+    // Get ends points and set (flip if moving handle 0)
+    Point p1 = aPoint; if(aViewHandle.index==0) { Point p = p0; p0 = p1; p1 = p; }
+    view.setLineInParent(p0.x, p0.y, p1.x, p1.y);
 }
 
 /**

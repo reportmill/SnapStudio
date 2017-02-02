@@ -396,7 +396,7 @@ public View getShapeAtPoint(Point aPoint)
     
     // If no superSelectedShape child hit by point, find first superSelectedShape that is hit & set to shapeAtPoint
     while(superSelView!=getContent() && shapeAtPoint==null) {
-        superSelView.localToParent(point.x, point.y);
+        point = superSelView.localToParent(point.x, point.y);
         superSelView = superSelView.getParent();
         shapeAtPoint = getChildShapeAtPoint(superSelView, point);
     }

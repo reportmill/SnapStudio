@@ -28,7 +28,10 @@ public class TextViewTool <T extends TextView> extends ViewTool <T> implements P
 /**
  * Returns whether a given view is super-selectable.
  */
-public boolean isSuperSelectable(T aView)  { return true; }
+public boolean isSuperSelectable(T aView)
+{
+    return true;
+}
 
 /**
  * Initialize UI panel.
@@ -347,53 +350,35 @@ public void mouseReleased(ViewEvent e)
 /**
  * Event handling for shape editing (just forwards to text editor).
  */
-public void processEvent(T aTextShape, ViewEvent anEvent)
+public void processEvent(T aTextView, ViewEvent anEvent)
 {
     // Handle KeyEvent
     if(anEvent.isKeyEvent()) {
-        processKeyEvent(aTextShape, anEvent); return; }
+        processKeyEvent(aTextView, anEvent); return; }
         
     // If shape isn't super selected, just return
-    if(!isSuperSelected(aTextShape)) return;
+    if(!isSuperSelected(aTextView)) return;
     
     // If mouse event, convert event to text shape coords and consume
-    //if(anEvent.isMouseEvent()) { anEvent.consume();
-    //    Point pnt = getEditor().convertToShape(anEvent.getX(), anEvent.getY(), aTextShape);
-    //    anEvent = anEvent.copyForPoint(pnt.getX(), pnt.getY());
-    //}
+    if(anEvent.isMouseEvent()) { anEvent.consume();
+        //Point pnt = getEditor().convertToShape(anEvent.getX(), anEvent.getY(), aTextView);
+        //anEvent = anEvent.copyForPoint(pnt.getX(), pnt.getY());
+        anEvent = anEvent.copyForView(aTextView);
+    }
         
     // Forward on to editor
     //aTextShape.getTextEditor().processEvent(anEvent); aTextShape.repaint();
+    ViewUtils.processEvent(aTextView, anEvent);
 }
 
 /**
  * Key event handling for super selected text.
  */
-public void processKeyEvent(T aTextShape, ViewEvent anEvent)
+public void processKeyEvent(T aTextView, ViewEvent anEvent)
 {
-    // If tab was pressed and text is structured table row column, forward selection onto next column
-    /*if(aTextShape.isStructured() && anEvent.isKeyPress() &&
-        anEvent.getKeyCode()==KeyCode.TAB && !anEvent.isAltDown()) {
-        
-        // Get structured text table row, child table rows and index of child
-        RMParentShape tableRow = aTextShape.getParent();
-        List children = RMSort.sortedList(tableRow.getChildren(), "getX");
-        int index = children.indexOf(aTextShape);
-        
-        // If shift is down, get index to the left, wrapped, otherwise get index to the right, wrapped
-        if(anEvent.isShiftDown()) index = (index - 1 + children.size())%children.size();
-        else index = (index + 1)%children.size();
-        
-        // Get next text and super-select
-        RMShape nextText = (RMShape)children.get(index);
-        getEditor().setSuperSelectedShape(nextText);
-        
-        // Consume event and return
-        anEvent.consume(); return;
-    }*/
-
     // Have text editor process key event
-    //aTextShape.getTextEditor().processEvent(anEvent); aTextShape.repaint();
+    //aTextView.getTextEditor().processEvent(anEvent); aTextShape.repaint();
+    ViewUtils.processEvent(aTextView, anEvent);
 }
 
 /**

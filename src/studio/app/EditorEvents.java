@@ -42,6 +42,15 @@ public void processEvent(ViewEvent anEvent)
     // Cache current event
     _currentEvent = anEvent;
     
+    // If editing, send event to tool: Get super selected shape and its tool and send event
+    Editor editor = getEditor();
+    boolean isKey = anEvent.isKeyEvent() && !anEvent.isConsumed();
+    if(isKey) {
+        View superSelectedShape = editor.getSuperSelectedShape();
+        ViewTool tool = editor.getTool(superSelectedShape);
+        tool.processKeyEvent(superSelectedShape, anEvent);
+    }
+    
     // Forward mouse pressed and released to official methods
     switch(anEvent.getType()) {
         case MouseMove: mouseMoved(anEvent); break;

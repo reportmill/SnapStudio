@@ -49,9 +49,9 @@
   <ToggleButton Name="ItalicButton" PrefWidth="22" PrefHeight="22" ToolTip="Make Italic" image="Format_Italic.png" ShowBorder="false" />
   <ToggleButton Name="UnderlineButton" PrefWidth="22" PrefHeight="22" ToolTip="Make Underline" image="Format_Underline.png" ShowBorder="false" />
   <Separator PrefWidth="8" PrefHeight="18" Vertical="true" />
-  <ToggleButton Name="AlignLeftButton" PrefWidth="22" PrefHeight="22" image="Format_AlignLeft.png" ShowBorder="false" ToggleGroup="bg1" />
-  <ToggleButton Name="AlignCenterButton" PrefWidth="22" PrefHeight="22" image="Format_AlignCenter.png" ShowBorder="false" ToggleGroup="bg1" />
-  <ToggleButton Name="AlignRightButton" PrefWidth="22" PrefHeight="22" image="Format_AlignRight.png" ShowBorder="false" ToggleGroup="bg1" />
-  <ToggleButton Name="AlignFullButton" PrefWidth="22" PrefHeight="22" image="Format_AlignFull.png" ShowBorder="false" ToggleGroup="bg1" />
+  <ToggleButton Name="AlignLeftButton" PrefWidth="22" PrefHeight="22" image="Format_AlignLeft.png" ShowBorder="false" ToggleGroup="bg2" />
+  <ToggleButton Name="AlignCenterButton" PrefWidth="22" PrefHeight="22" image="Format_AlignCenter.png" ShowBorder="false" ToggleGroup="bg2" />
+  <ToggleButton Name="AlignRightButton" PrefWidth="22" PrefHeight="22" image="Format_AlignRight.png" ShowBorder="false" ToggleGroup="bg2" />
+  <ToggleButton Name="AlignFullButton" PrefWidth="22" PrefHeight="22" image="Format_AlignFull.png" ShowBorder="false" ToggleGroup="bg2" />
 </HBox>
 </VBox>

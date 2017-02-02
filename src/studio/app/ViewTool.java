@@ -356,11 +356,12 @@ public void setFont(Editor anEditor, View aView, Font aFont)  { aView.setFont(aF
 public Font getFontDeep(Editor anEditor, View aView)
 {
     Font font = getFont(anEditor, aView);
-    //for(int i=0, iMax=aView.getChildCount(); i<iMax && font==null; i++) font = aView.getChild(i).getFont();
-    //for(int i=0, iMax=aView.getChildCount(); i<iMax && font==null; i++) {
-    //    View child = aView.getChild(i); RMTool tool = anEditor.getTool(child);
-    //    font = tool.getFontDeep(anEditor, child);
-    //}
+    ParentView par = aView instanceof ParentView? (ParentView)aView : null; if(par==null) return font;
+    for(int i=0, iMax=par.getChildCount(); i<iMax && font==null; i++) font = par.getChild(i).getFont();
+    for(int i=0, iMax=par.getChildCount(); i<iMax && font==null; i++) {
+        View child = par.getChild(i); ViewTool tool = getTool(child);
+        font = tool.getFontDeep(anEditor, child);
+    }
     return font;
 }
 
@@ -386,8 +387,9 @@ public void setFontFamilyDeep(Editor anEditor, View aView, Font aFont)
 {
     // Set FontFamily for view and recurse for children
     setFontFamily(anEditor, aView, aFont);
-    //for(int i=0, iMax=aView.getChildCount(); i<iMax; i++) { View child = aView.getChild(i);
-    //    RMTool tool = anEditor.getTool(child); tool.setFontFamilyDeep(anEditor, child, aFont); }
+    ParentView par = aView instanceof ParentView? (ParentView)aView : null; if(par==null) return;
+    for(int i=0, iMax=par.getChildCount(); i<iMax; i++) { View child = par.getChild(i);
+        ViewTool tool = getTool(child); tool.setFontFamilyDeep(anEditor, child, aFont); }
 }
 
 /**
@@ -408,8 +410,9 @@ public void setFontNameDeep(Editor anEditor, View aView, Font aFont)
 {
     // Set Font name for view and recurse for children
     setFontName(anEditor, aView, aFont);
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
-    //    RMTool tool = anEditor.getTool(child); tool.setFontNameDeep(anEditor, child, aFont); }
+    ParentView par = aView instanceof ParentView? (ParentView)aView : null; if(par==null) return;
+    for(int i=0, iMax=par.getChildCount(); i<iMax; i++) { View child = par.getChild(i);
+        ViewTool tool = getTool(child); tool.setFontNameDeep(anEditor, child, aFont); }
 }
 
 /**
@@ -429,8 +432,9 @@ public void setFontSize(Editor anEditor, View aView, double aSize, boolean isRel
 public void setFontSizeDeep(Editor anEditor, View aView, double aSize, boolean isRelative)
 {
     setFontSize(anEditor, aView, aSize, isRelative);
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
-    //    RMTool tool = anEditor.getTool(child); tool.setFontSizeDeep(anEditor, child, aSize, isRelative); }    
+    ParentView par = aView instanceof ParentView? (ParentView)aView : null; if(par==null) return;
+    for(int i=0, iMax=par.getChildCount(); i<iMax; i++) { View child = par.getChild(i);
+        ViewTool tool = getTool(child); tool.setFontSizeDeep(anEditor, child, aSize, isRelative); }    
 }
 
 /**
@@ -449,8 +453,9 @@ public void setFontBold(Editor anEditor, View aView, boolean aFlag)
 public void setFontBoldDeep(Editor anEditor, View aView, boolean aFlag)
 {
     setFontBold(anEditor, aView, aFlag);
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { View child = aShape.getChild(i);
-    //    RMTool tool = anEditor.getTool(child); tool.setFontBoldDeep(anEditor, child, aFlag); }    
+    ParentView par = aView instanceof ParentView? (ParentView)aView : null; if(par==null) return;
+    for(int i=0, iMax=par.getChildCount(); i<iMax; i++) { View child = par.getChild(i);
+        ViewTool tool = getTool(child); tool.setFontBoldDeep(anEditor, child, aFlag); }    
 }
 
 /**
@@ -469,8 +474,9 @@ public void setFontItalic(Editor anEditor, View aView, boolean aFlag)
 public void setFontItalicDeep(Editor anEditor, View aView, boolean aFlag)
 {
     setFontItalic(anEditor, aView, aFlag);
-    //for(int i=0, iMax=aShape.getChildCount(); i<iMax; i++) { RMShape child = aShape.getChild(i);
-    //    RMTool tool = anEditor.getTool(child); tool.setFontItalicDeep(anEditor, child, aFlag); }    
+    ParentView par = aView instanceof ParentView? (ParentView)aView : null; if(par==null) return;
+    for(int i=0, iMax=par.getChildCount(); i<iMax; i++) { View child = par.getChild(i);
+        ViewTool tool = getTool(child); tool.setFontItalicDeep(anEditor, child, aFlag); }    
 }
 
 /**
@@ -554,7 +560,7 @@ public void mouseReleased(T aView, ViewEvent anEvent)  { }
 public void mouseMoved(T aView, ViewEvent anEvent)
 {
     // Just return if view isn't the super-selected view
-    //if(aView!=getEditor().getSuperSelectedShape()) return;
+    if(aView!=getEditor().getSuperSelectedShape()) return;
     
     // Get ViewHandle
     ViewHandle viewHandle = getViewHandleAtPoint(anEvent.getPoint());
@@ -571,13 +577,14 @@ public void mouseMoved(T aView, ViewEvent anEvent)
         
         // Get mouse over view
         View view = getEditor().getShapeAtPoint(anEvent.getX(),anEvent.getY());
+        View parent = view.getParent();
         
         // If shape isn't super selected and it's parent doesn't superselect children immediately, choose move cursor
-        //if(!isSuperSelected(view) && !view.getParent().childrenSuperSelectImmediately()) cursor = Cursor.MOVE;
+        if(!isSuperSelected(view) && !getTool(parent).childrenSuperSelectImmediately(parent)) cursor = Cursor.MOVE;
         
         // If shape is text and either super-selected or child of a super-select-immediately, choose text cursor
-        //if(view instanceof RMTextShape && (isSuperSelected(view) || view.getParent().childrenSuperSelectImmediately()))
-        //    cursor = Cursor.TEXT;
+        if(view instanceof TextView && (isSuperSelected(view)||getTool(parent).childrenSuperSelectImmediately(parent)))
+            cursor = Cursor.TEXT;
     }
     
     // Set cursor if it differs
@@ -607,7 +614,7 @@ public void paintTool(Painter aPntr)  { }
 /**
  * Handles painting view handles (or any indication that a shape is selected/super-selected).
  */
-public void paintViewHandles(T aView, Painter aPntr, boolean isSuperSelected)
+public void paintHandles(T aView, Painter aPntr, boolean isSuperSelected)
 {
     // If no handles, just return
     if(getHandleCount(aView)==0) return;

@@ -28,17 +28,13 @@ public class TextViewTool <T extends TextView> extends ViewTool <T> implements P
 /**
  * Returns whether a given view is super-selectable.
  */
-public boolean isSuperSelectable(T aView)
-{
-    return true;
-}
+public boolean isSuperSelectable(T aView)  { return true; }
 
 /**
  * Initialize UI panel.
  */
 protected void initUI()
 {
-    // Get the TextPrea
     _textView = getView("TextPane", TextViewPane.class);
 }
 
@@ -52,13 +48,11 @@ public void resetUI()
     TextView text = getSelectedShape(); if(text==null) return;
     
     // Get paragraph from text
-    //RMParagraph pgraph = text.getXString().getParagraphAt(0);
-    TextStyle style = text.getRichText().getStyleAt(0);
+    TextStyle style = text.getRichText().getStyleAt(0); //RMParagraph pgraph = text.getXString().getParagraphAt(0);
     TextLineStyle lstyle = text.getRichText().getLineStyleAt(0);
     
     // If editor is text editing, get paragraph from text editor instead
-    //RMTextEditor ted = editor.getTextEditor();
-    //if(ted!=null) pgraph = ted.getInputParagraph();
+    //RMTextEditor ted = editor.getTextEditor(); if(ted!=null) pgraph = ted.getInputParagraph();
     
     // Update AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
     setViewValue("AlignLeftButton", lstyle.getAlign()==HPos.LEFT && !lstyle.isJustify());
@@ -70,8 +64,10 @@ public void resetUI()
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
     
     // Revalidate TextPane for (potentially) updated TextShape
-    _textView.getTextBox().setText(text.getRichText());
-    //if(ted!=null) _textView.setSel(ted.getSelStart(),ted.getSelEnd());
+    _textView.getTextBox().setText(text.getRichText()); //if(ted!=null)_tVew.setSel(ted.getSelStart(),ted.getSelEnd());
+    
+    // Reset PaddingText
+    setViewValue("PaddingText", text.getPadding().getString());
 
     // Get text's background color and set in TextArea if found
     //Color color = null; for(RMShape shape=text; color==null && shape!=null;) {
@@ -85,11 +81,6 @@ public void resetUI()
     //for(int i=0,iMax=xstring.getRunCount();i<iMax;i++) fsize = Math.min(fsize, xstring.getRun(i).getFont().getSize());
     //_textArea.setFontScale(fsize<12? 12/fsize : 1);
 
-    // Update PaginateRadio, ShrinkRadio, GrowRadio
-    //setViewValue("PaginateRadio", text.getWraps()==RMTextShape.WRAP_BASIC);
-    //setViewValue("ShrinkRadio", text.getWraps()==RMTextShape.WRAP_SCALE);
-    //setViewValue("GrowRadio", text.getWraps()==RMTextShape.WRAP_NONE);
-    
     // Update CharSpacingThumb and CharSpacingText
     setViewValue("CharSpacingThumb", style.getCharSpacing());
     setViewValue("CharSpacingText", style.getCharSpacing());
@@ -159,7 +150,13 @@ public void respondUI(ViewEvent anEvent)
     if(anEvent.equals("AlignMiddleButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.CENTER));
     if(anEvent.equals("AlignBottomButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.BOTTOM));
     
-    // If RoundingThumb or RoundingText, make sure shapes have stroke
+    // Handle PaddingText
+    if(anEvent.equals("PaddingText")) {
+        Insets ins = Insets.get(anEvent.getStringValue());
+        texts.forEach(i -> i.setPadding(ins));
+    }
+    
+    // Handle RoundingThumb, RoundingText: make sure shapes have stroke
     if(anEvent.equals("RoundingThumb") || anEvent.equals("RoundingText"))
         for(TextView t : texts) t.setBorder(Color.BLACK, 1);
 
@@ -276,7 +273,7 @@ public void mousePressed(ViewEvent anEvent)
     _downPoint = getEditorEvents().getEventPointInShape(true);
     
     // Create default text instance and set initial bounds to reasonable value
-    _view = (T)new TextView(); _view.setBorder(Color.BLACK, 10);
+    _view = (T)new TextView();
     _view.setBounds(getDefaultBounds((TextView)_view, _downPoint)); // Was setFrame()
     
     // Add shape to superSelectedShape (within an undo grouping) and superSelect
@@ -352,9 +349,11 @@ public void mouseReleased(ViewEvent e)
  */
 public void processEvent(T aTextView, ViewEvent anEvent)
 {
-    // Handle KeyEvent
+    // Handle KeyEvent: Forward to TextView and return
     if(anEvent.isKeyEvent()) {
-        processKeyEvent(aTextView, anEvent); return; }
+        ViewUtils.processEvent(aTextView, anEvent);
+        aTextView.repaint(); return;
+    }
         
     // If shape isn't super selected, just return
     if(!isSuperSelected(aTextView)) return;
@@ -366,9 +365,8 @@ public void processEvent(T aTextView, ViewEvent anEvent)
         anEvent = anEvent.copyForView(aTextView);
     }
         
-    // Forward on to editor
-    //aTextShape.getTextEditor().processEvent(anEvent); aTextShape.repaint();
-    ViewUtils.processEvent(aTextView, anEvent);
+    // Forward to TextView
+    ViewUtils.processEvent(aTextView, anEvent); aTextView.repaint();
 }
 
 /**
@@ -376,9 +374,8 @@ public void processEvent(T aTextView, ViewEvent anEvent)
  */
 public void processKeyEvent(T aTextView, ViewEvent anEvent)
 {
-    // Have text editor process key event
-    //aTextView.getTextEditor().processEvent(anEvent); aTextShape.repaint();
-    ViewUtils.processEvent(aTextView, anEvent);
+    // Forward to TextView
+    ViewUtils.processEvent(aTextView, anEvent); aTextView.repaint();
 }
 
 /**
@@ -455,6 +452,38 @@ public String getToolTip(T aTextView, ViewEvent anEvent)
     String string = aTextView.getText(); if(string==null || string.length()==0) return null;
     if(string.length()>64) string = string.substring(0,64) + "...";
     return string;
+}
+
+/**
+ * Paints selected shape indicator, like handles (and maybe a text linking indicator).
+ */
+public void paintHandles(T aText, Painter aPntr, boolean isSuperSelected)
+{
+    // If super-selected, draw box
+    if(paintBoundsRect(aText)) {
+        aPntr.save();
+        aPntr.setColor(isSuperSelected? new Color(.9f, .4f, .4f) : Color.LIGHTGRAY);
+        aPntr.setStroke(Stroke.Stroke1.copyForDashes(3, 2));
+        Shape path = aText.getBoundsShape();
+        path = aText.localToParent(getEditor(), path);
+        aPntr.setAntialiasing(false); aPntr.draw(path); aPntr.setAntialiasing(true);
+        aPntr.restore();
+    }
+    
+    // If not super-selected draw normal
+    if(!isSuperSelected)
+        super.paintHandles(aText, aPntr, isSuperSelected);
+}
+
+/**
+ * Returns whether to draw bounds rect.
+ */
+private boolean paintBoundsRect(T aText)
+{
+    if(aText.getBorder()!=null) return false; // If text draws it's own stroke, return false
+    if(getEditor().isSelected(aText) || getEditor().isSuperSelected(aText)) return true; // If selected, return true
+    if(aText.length()==0) return true; // If text is zero length, return true
+    return false; // Otherwise, return false
 }
 
 /**

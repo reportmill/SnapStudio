@@ -420,7 +420,7 @@ public void paintTool(Painter aPntr)
     Editor editor = getEditor();
     for(int i=1, iMax=editor.getSuperSelectedShapeCount(); i<iMax; i++) {
         View shape = editor.getSuperSelectedShape(i); ViewTool tool = getTool(shape);
-        tool.paintViewHandles(shape, aPntr, true);
+        tool.paintHandles(shape, aPntr, true);
     }
     
     // Get selected shapes
@@ -433,7 +433,7 @@ public void paintTool(Painter aPntr)
     // Iterate over SelectedShapes and have tool paint Selected
     for(int i=0, iMax=selectedShapes.size(); i<iMax; i++) { View shape = selectedShapes.get(i);
         ViewTool tool = getTool(shape);
-        tool.paintViewHandles(shape, aPntr, false);
+        tool.paintHandles(shape, aPntr, false);
     }
 
     // Draw SelectionRect: light gray rect with darker border (semi transparent)

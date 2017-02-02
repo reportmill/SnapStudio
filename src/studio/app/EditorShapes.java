@@ -374,9 +374,8 @@ public static void convertToImage(Editor anEditor)
 public static void moveRightOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Right One Point");
-    //double offset = anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    //for(RMShape shape : anEditor.getSelectedShapes())
-    //    shape.setFrameX(shape.getFrameX() + offset);
+    double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
+    anEditor.getSelectedShapes().forEach(i -> i.setX(i.getX() + offset));
 }
 
 /**
@@ -385,9 +384,8 @@ public static void moveRightOnePoint(Editor anEditor)
 public static void moveLeftOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Left One Point");
-    //double offset = anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    //for(RMShape shape : anEditor.getSelectedShapes())
-    //    shape.setFrameX(shape.getFrameX() - offset);
+    double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
+    anEditor.getSelectedShapes().forEach(i -> i.setX(i.getX() - offset));
 }
 
 /**
@@ -396,9 +394,8 @@ public static void moveLeftOnePoint(Editor anEditor)
 public static void moveUpOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Up One Point");
-    //double offset = anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    //for(RMShape shape : anEditor.getSelectedShapes())
-    //    shape.setFrameY(shape.getFrameY() - offset);
+    double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
+    anEditor.getSelectedShapes().forEach(i -> i.setY(i.getY() - offset));
 }
 
 /**
@@ -407,9 +404,8 @@ public static void moveUpOnePoint(Editor anEditor)
 public static void moveDownOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Down One Point");
-    //double offset = anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    //for(RMShape shape : anEditor.getSelectedShapes())
-    //    shape.setFrameY(shape.getFrameY() + offset);
+    double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
+    anEditor.getSelectedShapes().forEach(i -> i.setX(i.getX() + offset));
 }
 
 /**
@@ -417,19 +413,20 @@ public static void moveDownOnePoint(Editor anEditor)
  */
 public static Color getSelectedColor(Editor anEditor)
 {
-    // Get selected or super selected shape
-    View shape = anEditor.getSelectedOrSuperSelectedShape();
+    // Get selected or super selected view
+    View view = anEditor.getSelectedOrSuperSelectedShape();
     
-    // If selected or super selected shape is page that doesn't draw color, return "last color" (otherwise, reset it)
-    //if((shape instanceof RMPage || shape instanceof RMDocument) && shape.getFill()==null)
-    //    return _lastColor;
-    /*else*/ _lastColor = Color.BLACK;
+    // If selected or super selected view is page that doesn't draw color, return "last color" (otherwise, reset it)
+    if((view instanceof PageView || view instanceof DocView) && view.getFill()==null)
+        return _lastColor;
+    else _lastColor = Color.BLACK;
         
     // If text color and text editing, return color of text editor
     //if(anEditor.getTextEditor()!=null) return anEditor.getTextEditor().getColor();
         
     // Return selected shape's color
-    return Color.BLACK;//anEditor.getSelectedOrSuperSelectedShape().getColor();
+    Paint p = anEditor.getSelectedOrSuperSelectedShape().getFill();
+    return p instanceof Color? (Color)p : Color.BLACK;
 }
 
 /**
@@ -437,40 +434,27 @@ public static Color getSelectedColor(Editor anEditor)
  */
 public static void setSelectedColor(Editor anEditor, Color aColor)
 {
-    // Get selected or super selected shape
-    View shape = anEditor.getSelectedOrSuperSelectedShape();
+    // Get selected or super selected view
+    View view = anEditor.getSelectedOrSuperSelectedShape();
         
-    // If editor selected or super selected shape is document or page, set "last color" and return
-    //if(shape instanceof RMPage || shape instanceof RMDocument) { _lastColor = aColor; return; }
+    // If editor selected or super selected view is doc or page, set "last color" and return
+    if(view instanceof PageView || view instanceof DocView) { _lastColor = aColor; return; }
 
     // If text color and text editing, return color of text editor
-    /*if(anEditor.getTextEditor()!=null) {
-        
-        // Get text editor
-        RMTextEditor ted = anEditor.getTextEditor();
-        
-        // If command down, and text is outlined, set color of outline instead
-        if(ViewUtils.isMetaDown() && ted.getTextBorder()!=null) {
-            Border lbrdr = ted.getTextBorder();
-            ted.setTextBorder(Border.createLineBorder(aColor, lbrdr.getWidth()));
-        }
-        
-        // If no command down, set color of text editor
-        else ted.setColor(aColor);
-    }*/
+    /*if(anEditor.getTextEditor()!=null) { RMTextEditor ted = anEditor.getTextEditor();
+        if(ViewUtils.isMetaDown() && ted.getTextBorder()!=null) { Border lbrdr = ted.getTextBorder();
+            ted.setTextBorder(Border.createLineBorder(aColor, lbrdr.getWidth())); }
+        else ted.setColor(aColor); } else*/
     
-    // If fill color, set selected shapes' fill color
-    /*else*/ {
-    
-        // If command-click, set gradient fill
-        /*if(ViewUtils.isMetaDown()) {
-            RMColor c1 = shape.getFill()!=null? shape.getColor() : RMColor.clearWhite;
-            shape.setFill(new RMGradientFill(c1, aColor, 0));
-        }*/
-        
-        // If not command click, just set the color of all the selected shapes
-        /*else*/ setColor(anEditor, aColor);
+    // If command-click, set gradient fill
+    if(ViewUtils.isMetaDown()) {
+        Paint p = view.getFill();
+        Color c1 = p instanceof Color? (Color)p : Color.CLEARWHITE;
+        view.setFill(new GradientPaint(c1, aColor, 0));
     }
+        
+    // If not command click, just set the color of all the selected shapes
+    else setColor(anEditor, aColor);
 }
 
 /**
@@ -478,9 +462,7 @@ public static void setSelectedColor(Editor anEditor, Color aColor)
  */
 public static void setColor(Editor anEditor, Color aColor)
 {
-    // Iterate over editor selected shapes or super selected shape
-    for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
-        shape.setFill(aColor);
+    anEditor.getSelectedOrSuperSelectedShapes().forEach(i -> i.setFill(aColor));
 }
 
 /**
@@ -488,9 +470,9 @@ public static void setColor(Editor anEditor, Color aColor)
  */
 public static void setStrokeColor(Editor anEditor, Color aColor)
 {
-    // Iterate over editor selected shapes or super selected shape
-    //for(RMShape shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    shape.setStrokeColor(aColor);
+    Border bdr = anEditor.getSelectedOrSuperSelectedShape().getBorder();
+    double w = bdr!=null? bdr.getWidth() : 1;
+    anEditor.getSelectedOrSuperSelectedShapes().forEach(i -> i.setBorder(aColor,w));
 }
 
 /**
@@ -498,13 +480,9 @@ public static void setStrokeColor(Editor anEditor, Color aColor)
  */
 public static void setTextColor(Editor anEditor, Color aColor)
 {
-    // If text editing, forward on to text editor
-    //if(anEditor.getTextEditor()!=null)
-    //    anEditor.getTextEditor().setColor(aColor);
-        
-    // Otherwise, iterate over editor selected shapes or super selected shape
-    //else for(RMShape shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    shape.setTextColor(aColor);
+    //if(anEditor.getTextEditor()!=null) anEditor.getTextEditor().setColor(aColor);
+    //for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+    //    if(view instanceof TextView) ((TextView)view).setTextFill(aColor);
 }
 
 /**
@@ -514,14 +492,12 @@ public static Font getFont(Editor anEditor)
 {
     Font font = null;
     for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax && font==null; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
-        ViewTool tool = anEditor.getTool(shape);
-        font = tool.getFont(anEditor, shape);
+        View view = anEditor.getSelectedOrSuperSelectedShape(i); ViewTool tool = anEditor.getTool(view);
+        font = tool.getFont(anEditor, view);
     }
     for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax && font==null; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
-        ViewTool tool = anEditor.getTool(shape);
-        font = tool.getFontDeep(anEditor, shape);
+        View view = anEditor.getSelectedOrSuperSelectedShape(i); ViewTool tool = anEditor.getTool(view);
+        font = tool.getFontDeep(anEditor, view);
     }
     return font!=null? font : new Font();//.getDefaultFont();
 }
@@ -599,8 +575,8 @@ public static boolean isUnderlined(Editor anEdtr)  { return false; }//anEdtr.get
 public static void setUnderlined(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Make Underlined");
-    //for(RMShape shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    shape.setUnderlined(!shape.isUnderlined());
+    //for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+    //    view.setUnderlined(!view.isUnderlined());
 }
 
 /**

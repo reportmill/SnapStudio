@@ -1,7 +1,9 @@
 package studio.app;
 import java.util.*;
+import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
+import snap.viewx.ColorButton;
 
 /**
  * Tool bar for EditorPane.
@@ -89,31 +91,46 @@ protected void respondUI(ViewEvent anEvent)
     if(anEvent.equals("UndoButton")) _editorPane.respondUI(anEvent);
     if(anEvent.equals("RedoButton")) _editorPane.respondUI(anEvent);
     
-    // Handle FillColorButton, StrokeColorButton
-    //if(anEvent.equals("FillColorButton"))
-    //    EditorShapes.setColor(editor, anEvent.getView(ColorButton.class).getColor());
-    //if(anEvent.equals("StrokeColorButton"))
-    //    EditorShapes.setStrokeColor(editor, anEvent.getView(ColorButton.class).getColor());
+    // Handle FillColorButton, StrokeColorButton, TextColorButton
+    if(anEvent.equals("FillColorButton"))
+        EditorShapes.setColor(editor, anEvent.getView(ColorButton.class).getColor());
+    if(anEvent.equals("StrokeColorButton"))
+        EditorShapes.setStrokeColor(editor, anEvent.getView(ColorButton.class).getColor());
+    if(anEvent.equals("TextColorButton"))
+        EditorShapes.setTextColor(editor, anEvent.getView(ColorButton.class).getColor());
+    
+    // Handle FontFaceComboBox
+    if(anEvent.equals("FontFaceComboBox")) {
+        String familyName = anEvent.getText();
+        String fontNames[] = Font.getFontNames(familyName); if(fontNames==null || fontNames.length==0) return;
+        String fontName = fontNames[0];
+        Font font = Font.get(fontName, 12);
+        EditorShapes.setFontFamily(editor, font);
+        editor.requestFocus();
+    }
+    
+    // Handle FontSizeComboBox
+    if(anEvent.equals("FontSizeComboBox")) {
+        EditorShapes.setFontSize(editor, anEvent.getFloatValue(), false);
+        editor.requestFocus();
+    }
+    
+    // Handle FontSizeUpButton, FontSizeDownButton
+    if(anEvent.equals("FontSizeUpButton")) { Font font = EditorShapes.getFont(editor);
+        EditorShapes.setFontSize(editor, font.getSize()<16? 1 : 2, true); }
+    if(anEvent.equals("FontSizeDownButton")) { Font font = EditorShapes.getFont(editor);
+        EditorShapes.setFontSize(editor, font.getSize()<16? -1 : -2, true); }
     
     // Handle Format BoldButton, ItalicButton, UnderlineButton
-    if(anEvent.equals("BoldButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("ItalicButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("UnderlineButton")) _editorPane.respondUI(anEvent);
+    if(anEvent.equals("BoldButton")) EditorShapes.setFontBold(editor, anEvent.getBoolValue());
+    if(anEvent.equals("ItalicButton")) EditorShapes.setFontItalic(editor, anEvent.getBoolValue());
+    if(anEvent.equals("UnderlineButton")) EditorShapes.setUnderlined(editor);
     
     // Handle AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton
-    if(anEvent.equals("AlignLeftButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("AlignCenterButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("AlignRightButton")) _editorPane.respondUI(anEvent);
+    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignmentX(editor, HPos.LEFT);
+    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignmentX(editor, HPos.CENTER);
+    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignmentX(editor, HPos.RIGHT);
     if(anEvent.equals("AlignFullButton")) _editorPane.respondUI(anEvent);
-    
-    // Handle FontSizeUpButton, FontSizeDownButton, TextColorButton
-    //if(anEvent.equals("TextColorButton"))
-    //    EditorShapes.setTextColor(editor, anEvent.getView(ColorButton.class).getColor());
-
-    // Handle Preview/Edit button and PreviewMenuItem
-    if(anEvent.equals("PreviewEditButton") || anEvent.equals("PreviewMenuItem")) {
-        
-    }
     
     // Handle PreviewXMLMenuItem
     if(anEvent.equals("PreviewXMLMenuItem"))

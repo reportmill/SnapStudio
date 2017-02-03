@@ -13,13 +13,13 @@ import snap.view.*;
  */
 public class TextViewTool <T extends TextView> extends ViewTool <T> implements PropChangeListener {
     
-    // The text area
-    TextViewPane      _textView;
+    // The inspector TextView
+    TextView          _textView;
     
-    // The shape hit by text tool on mouse down
+    // The view hit by text tool on mouse down
     View              _downView;
     
-    // Whether editor should resize RMText whenever text changes
+    // Whether editor should resize TextView whenever text changes
     boolean           _updatingSize = false;
     
     // The minimum height of the RMText when editor text editor is updating size
@@ -35,7 +35,8 @@ public boolean isSuperSelectable(T aView)  { return true; }
  */
 protected void initUI()
 {
-    _textView = getView("TextPane", TextViewPane.class);
+    _textView = getView("TextView", TextView.class);
+    _textView.addPropChangeListener(pce -> textViewDidChange(pce), TextView.Selection_Prop);
 }
 
 /**
@@ -47,12 +48,9 @@ public void resetUI()
     Editor editor = getEditor();
     TextView text = getSelectedShape(); if(text==null) return;
     
-    // Get paragraph from text
-    TextStyle style = text.getRichText().getStyleAt(0); //RMParagraph pgraph = text.getXString().getParagraphAt(0);
+    // Get text style and line style
+    TextStyle style = text.getRichText().getStyleAt(0);
     TextLineStyle lstyle = text.getRichText().getLineStyleAt(0);
-    
-    // If editor is text editing, get paragraph from text editor instead
-    //RMTextEditor ted = editor.getTextEditor(); if(ted!=null) pgraph = ted.getInputParagraph();
     
     // Update AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
     setViewValue("AlignLeftButton", lstyle.getAlign()==HPos.LEFT && !lstyle.isJustify());
@@ -63,8 +61,8 @@ public void resetUI()
     setViewValue("AlignMiddleButton", text.getTextBox().getAlignY()==VPos.CENTER);
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
     
-    // Revalidate TextPane for (potentially) updated TextShape
-    _textView.getTextBox().setText(text.getRichText()); //if(ted!=null)_tVew.setSel(ted.getSelStart(),ted.getSelEnd());
+    // Revalidate TextView for (potentially) updated TextShape
+    _textView.getTextBox().setText(text.getRichText()); //_textView.setSel(text.getSelStart(),text.getSelEnd());
     
     // Reset PaddingText
     setViewValue("PaddingText", text.getPadding().getString());
@@ -73,11 +71,8 @@ public void resetUI()
     //Color color = null; for(RMShape shape=text; color==null && shape!=null;) {
     //    if(shape.getFill()==null) shape = shape.getParent(); else color = shape.getFill().getColor(); }
     //_textArea.setBackground(color==null? Color.white : color);
-    // Set the xstring in text inspector
-    //RMXString xstring = text.getXString();
-    //if(!_textArea.isFocusOwner()) _textArea.setXString(xstring);
     // Get xstring font size and scale up to 12pt if any string run is smaller
-    //double fsize = 12;
+    //RMXString xstring = text.getXString(); double fsize = 12;
     //for(int i=0,iMax=xstring.getRunCount();i<iMax;i++) fsize = Math.min(fsize, xstring.getRun(i).getFont().getSize());
     //_textArea.setFontScale(fsize<12? 12/fsize : 1);
 
@@ -111,7 +106,7 @@ public void resetUI()
  */
 public void respondUI(ViewEvent anEvent)
 {
-    // Get editor, currently selected text shape and text shapes (just return if null)
+    // Get editor, currently selected text view and text views (just return if null)
     Editor editor = getEditor();
     TextView text = getSelectedShape(); if(text==null) return;
     List <TextView> texts = (List)getSelectedShapes();
@@ -119,7 +114,7 @@ public void respondUI(ViewEvent anEvent)
     // Register repaint for texts
     texts.forEach(i -> i.repaint());
     
-    // Handle TextArea: Send KeyEvents to Editor.TextEditor (and update its selection after MouseEvents)
+    // Handle TextView: Send KeyEvents to Editor.TextEditor (and update its selection after MouseEvents)
     /*if(anEvent.getTarget()==_textArea) {
         
         // Get Editor TextEditor (if not yet installed, SuperSelect text and try again)
@@ -194,44 +189,6 @@ public void respondUI(ViewEvent anEvent)
     // Handle MakeMinWidthMenuItem, MakeMinHeightMenuItem
     if(anEvent.equals("MakeMinWidthMenuItem")) texts.forEach(i -> i.setWidth(i.getBestWidth(-1)));
     if(anEvent.equals("MakeMinHeightMenuItem")) texts.forEach(i -> i.setHeight(i.getBestHeight(-1)));
-    
-    // Handle TurnToPathMenuItem
-    /*if(anEvent.equals("TurnToPathMenuItem"))
-        for(int i=0; i<texts.size(); i++) { TextView text1 = texts.get(i);
-            View textPathShape = TextViewUtils.getTextPathShape(text1);
-            ParentView parent = text1.getParent();
-            parent.addChild(textPathShape, text1.indexOf());
-            parent.removeChild(text1);
-            editor.setSelectedShape(textPathShape);
-        }*/
-    
-    // Handle TurnToCharsShapeMenuItem
-    /*if(anEvent.equals("TurnToCharsShapeMenuItem"))
-        for(int i=0; i<texts.size(); i++) { TextView text1 = texts.get(i);
-            ShapeView textCharsShape = TextShapeUtils.getTextCharsShape(text1);
-            ParentView parent = text1.getParent();
-            parent.addChild(textCharsShape, text1.indexOf());
-            parent.removeChild(text1);
-            editor.setSelectedShape(textCharsShape);
-        }*/
-    
-    // Handle LinkedTextMenuItem
-    /*if(anEvent.equals("LinkedTextMenuItem")) {
-        
-        // Get linked text identical to original text and add to text's parent
-        LinkedText linkedText = new LinkedText(text);
-        text.getParent().addChild(linkedText);
-        
-        // Shift linked text down if there's room, otherwise right, otherwise just offset by quarter inch
-        if(text.getFrameMaxY() + 18 + text.getFrame().height*.75 < text.getParent().getHeight())
-            linkedText.offsetXY(0, text.getHeight() + 18);
-        else if(text.getFrameMaxX() + 18 + text.getFrame().width*.75 < text.getParent().getWidth())
-            linkedText.offsetXY(text.getWidth() + 18, 0);
-        else linkedText.offsetXY(18, 18);
-        
-        // Select and repaint new linked text
-        editor.setSelectedShape(linkedText); linkedText.repaint();
-    }*/   
 }
 
 /**
@@ -251,7 +208,7 @@ public void mouseMoved(ViewEvent anEvent)  { getEditor().setCursor(Cursor.TEXT);
 /**
  * Event handling - overridden to install text cursor.
  */
-public void mouseMoved(T aShape, ViewEvent anEvent)
+public void mouseMoved(T aText, ViewEvent anEvent)
 {
     if(getEditor().getShapeAtPoint(anEvent.getPoint()) instanceof TextView) {
         getEditor().setCursor(Cursor.TEXT); anEvent.consume(); }
@@ -316,7 +273,7 @@ public void mouseDragged(ViewEvent anEvent)
 /**
  * Event handling for text tool mouse loop.
  */
-public void mouseReleased(ViewEvent e)
+public void mouseReleased(ViewEvent anEvent)
 {
     // Get event point in view parent coords
     Point upPoint = getEditorEvents().getEventPointInShape(true);
@@ -347,47 +304,41 @@ public void mouseReleased(ViewEvent e)
 /**
  * Event handling for shape editing (just forwards to text editor).
  */
-public void processEvent(T aTextView, ViewEvent anEvent)
+public void processEvent(T aText, ViewEvent anEvent)
 {
     // Handle KeyEvent: Forward to TextView and return
     if(anEvent.isKeyEvent()) {
-        ViewUtils.processEvent(aTextView, anEvent);
-        aTextView.repaint(); return;
+        ViewUtils.processEvent(aText, anEvent);
+        aText.repaint(); return;
     }
         
     // If shape isn't super selected, just return
-    if(!isSuperSelected(aTextView)) return;
+    if(!isSuperSelected(aText)) return;
     
     // If mouse event, convert event to text shape coords and consume
     if(anEvent.isMouseEvent()) { anEvent.consume();
-        //Point pnt = getEditor().convertToShape(anEvent.getX(), anEvent.getY(), aTextView);
-        //anEvent = anEvent.copyForPoint(pnt.getX(), pnt.getY());
-        anEvent = anEvent.copyForView(aTextView);
-    }
+        anEvent = anEvent.copyForView(aText); }
         
     // Forward to TextView
-    ViewUtils.processEvent(aTextView, anEvent); aTextView.repaint();
+    ViewUtils.processEvent(aText, anEvent); aText.repaint();
 }
 
 /**
- * Key event handling for super selected text.
+ * Event handling for shape editing (just forwards to text editor).
  */
-public void processKeyEvent(T aTextView, ViewEvent anEvent)
+public void processKeyEvent(T aText, ViewEvent anEvent)
 {
-    // Forward to TextView
-    ViewUtils.processEvent(aTextView, anEvent); aTextView.repaint();
+    ViewUtils.processEvent(aText, anEvent);
 }
 
 /**
  * Editor method - installs this text in Editor's text editor.
  */
-public void didBecomeSuperSelected(T aTextShape)
+public void didBecomeSuperSelected(T aText)
 {
-    // If not superselected by TextInspector pane, have editor request focus
-    //if(!isUISet() || !_textArea.hasFocus()) anEditor.requestFocus();
-    
-    // Start listening to changes to TextShape RichText
-    aTextShape.getRichText().addPropChangeListener(this);
+    // Start listening to changes to TextView and RichText
+    aText.addPropChangeListener(this);
+    aText.getRichText().addPropChangeListener(this);
     
     // If UI is loaded, install string in text area
     //if(isUISet()) _textArea.getTextEditor().setXString(text.getXString());
@@ -396,60 +347,71 @@ public void didBecomeSuperSelected(T aTextShape)
 /**
  * Editor method - uninstalls this text from RMEditor's text editor and removes new text if empty.
  */
-public void willLoseSuperSelected(T aTextView)
+public void willLoseSuperSelected(T aText)
 {
     // If text editor was really just an insertion point and ending text length is zero, remove text
-    if(_updatingSize && aTextView.length()==0 && getEditor().getSelectTool().getDragMode()==SelectTool.DragMode.None) {
-        ParentView pview = aTextView.getParent(); ViewTool ptool = getTool(pview);
-        ptool.removeChild(pview, aTextView);
+    if(_updatingSize && aText.length()==0 && getEditor().getSelectTool().getDragMode()==SelectTool.DragMode.None) {
+        ParentView pview = aText.getParent(); ViewTool ptool = getTool(pview);
+        ptool.removeChild(pview, aText);
     }
 
     // Stop listening to changes to TextShape RichText
-    aTextView.getRichText().removePropChangeListener(this);
+    aText.removePropChangeListener(this);
+    aText.getRichText().removePropChangeListener(this);
     _updatingSize = false; _updatingMinHeight = 0;
-    
-    // Set text editor's text shape to null
-    //aTextShape.clearTextEditor();
 }
 
 /**
- * Handle changes to Selected TextShape 
+ * Handle changes to Selected TextView 
  */
 public void propertyChange(PropChange aPC)
 {
+    // Get Selected TextView
+    TextView text = getSelectedShape(); if(text==null) return;
+    String prop = aPC.getPropertyName();
+    
     // If updating size, reset text width & height to accommodate text
     if(_updatingSize) {
         
-        // Get TextShape
-        TextView textShape = getSelectedShape(); if(textShape==null) return;
-    
         // Get preferred text shape width
-        double maxWidth = _updatingMinHeight==0? textShape.getParent().getWidth() - textShape.getX() :
-            textShape.getWidth();
-        double prefWidth = textShape.getPrefWidth(); if(prefWidth>maxWidth) prefWidth = maxWidth;
+        double maxWidth = _updatingMinHeight==0? text.getParent().getWidth() - text.getX() : text.getWidth();
+        double prefWidth = text.getPrefWidth(); if(prefWidth>maxWidth) prefWidth = maxWidth;
 
         // If width gets updated, get & set desired width (make sure it doesn't go beyond page border)
         if(_updatingMinHeight==0)
-            textShape.setWidth(prefWidth);
+            text.setWidth(prefWidth);
 
         // If PrefHeight or current height is greater than UpdatingMinHeight (which won't be zero if user drew a
         //  text box to enter text), set Height to PrefHeight
-        double prefHeight = textShape.getPrefHeight();
-        if(prefHeight>_updatingMinHeight || textShape.getHeight()>_updatingMinHeight)
-            textShape.setHeight(Math.max(prefHeight, _updatingMinHeight));
+        double prefHeight = text.getPrefHeight();
+        if(prefHeight>_updatingMinHeight || text.getHeight()>_updatingMinHeight)
+            text.setHeight(Math.max(prefHeight, _updatingMinHeight));
     }
+    
+    // Sync selection
+    if(prop==TextView.Selection_Prop)
+        _textView.setSel(text.getSelStart(), text.getSelEnd());
+}
+
+/**
+ * Called when TextView (in inspector) has property change.
+ */
+protected void textViewDidChange(PropChange aPC)
+{
+    TextView text = getSelectedShape();
+    text.setSel(_textView.getSelStart(), _textView.getSelEnd());
 }
 
 /**
  * Overrides tool tooltip method to return text string if some chars aren't visible.
  */
-public String getToolTip(T aTextView, ViewEvent anEvent)
+public String getToolTip(T aText, ViewEvent anEvent)
 {
     // If all text is visible and greater than 8 pt, return null
-    if(!aTextView.getTextBox().isOutOfRoom() && aTextView.getFont().getSize()>=8) return null;
+    if(!aText.getTextBox().isOutOfRoom() && aText.getFont().getSize()>=8) return null;
     
     // Get text string (just return if empty), trim to 64 chars or less and return
-    String string = aTextView.getText(); if(string==null || string.length()==0) return null;
+    String string = aText.getText(); if(string==null || string.length()==0) return null;
     if(string.length()>64) string = string.substring(0,64) + "...";
     return string;
 }
@@ -601,35 +563,6 @@ private static void setLineHeightMax(Editor anEditor, float aHeight)
     anEditor.undoerSetUndoTitle("Max Line Height Change");
     //for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
     //    if(shape instanceof TextView) ((TextView)shape).setLineHeightMax(aHeight);
-}
-
-/**
- * A TextView subclass to edit current text shape text in text tool.
- */
-public static class TextViewPane extends TextView {
-    
-    /** Returns the TextTool. */
-    TextViewTool tool()  { return getOwner(TextViewTool.class); }
-    
-    /** Returns the current editor. */
-    Editor editor()  { return tool().getEditor(); }
-    
-    /** Returns the current text shape. */
-    View shape()  { Editor e = editor(); return e!=null? e.getSelectedOrSuperSelectedShape() : null; }
-    
-    /** Returns the current text shape. */
-    TextView text()  { View s = shape(); return s instanceof TextView? (TextView)s : null; }
-    
-    /** Returns the current text editor. */
-    //TextEditor ted()  { Editor e = editor(); return e!=null? e.getTextEditor() : null; }
-    
-    /** Sets the character index of the start and end of the text selection. */
-    public void setSel(int aStart, int anEnd, int anAnchor)
-    {
-        super.setSel(aStart, anEnd, anAnchor);
-        //TextEditor ted = ted(); if(ted!=null) ted.setSel(aStart,anEnd, anAnchor);
-        TextView text = text(); text.setSel(aStart, anEnd); //if(text!=null) text.repaint();
-    }
 }
 
 }

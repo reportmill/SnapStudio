@@ -1,5 +1,6 @@
 package studio.app;
 import snap.gfx.Font;
+import snap.util.StringUtils;
 import snap.view.*;
 
 /**
@@ -8,33 +9,32 @@ import snap.view.*;
  * changing the size and a text field for specifically setting a size. In addition, there is a pick list that
  * shows all the individual fonts available for a given family.
  */
-public class FontPanel extends ViewOwner {
+public class FontPanel extends EditorPane.SupportPane {
     
-    // The EditorPane
-    EditorPane    _editorPane;
-
 /**
- * Creates a new FontPanel for EditorPane.
+ * Creates a new FontPanel.
  */
-public FontPanel(EditorPane anEP)  { _editorPane = anEP; }
-
-/**
- * Returns the Editor.
- */
-public Editor getEditor()  { return _editorPane.getEditor(); }
-
-/**
- * Returns the EditorPane.
- */
-public EditorPane getEditorPane()  { return _editorPane; }
+public FontPanel(EditorPane anEP)  { super(anEP); }
 
 /**
  * Initialize UI panel.
  */
 protected void initUI()
 {
-    setViewItems("FamilyList", Font.getFamilyNames());
-    setViewItems("SizesList", new Object[] { 6,8,9,10,11,12,14,16,18,22,24,36,48,64,72,96,128,144 }); 
+    // Get/configure FamilyList
+    ListView <String> familyList = getView("FamilyList", ListView.class);
+    familyList.setItems(Font.getFamilyNames());
+    
+    // Get/configure FamilyComboBox
+    ComboBox familyComboBox = getView("FamilyComboBox", ComboBox.class);
+    familyComboBox.setListView(familyList);
+    
+    // Configure SizesList
+    setViewItems("SizesList", new Object[] { 6,8,9,10,11,12,14,16,18,22,24,36,48,64,72,96,128,144 });
+    
+    // Configure SizeText
+    TextField sizeText = getView("SizeText", TextField.class);
+    sizeText.addPropChangeListener(pce -> { if(sizeText.isFocused()) sizeText.selectAll(); }, View.Focused_Prop);
 }
 
 /**
@@ -52,9 +52,8 @@ public void resetUI()
     
     // Reset FamilyList, SizesList, SizeText, SizeThumb, and Bold, Italic, Underline and Outline buttons
     setViewValue("FamilyList", familyName);
-    setViewValue("FamilyText", familyName);
     setViewValue("SizesList", (int)size);
-    setViewValue("SizeText", "" + size + " pt"); //setNodeValue("SizeThumb", size);
+    setViewValue("SizeText", "" + StringUtils.toString(size) + " pt"); //setNodeValue("SizeThumb", size);
     setViewValue("BoldButton", font.isBold());
     setViewDisabled("BoldButton", font.getBold()==null);
     setViewValue("ItalicButton", font.isItalic());
@@ -79,47 +78,35 @@ public void respondUI(ViewEvent anEvent)
     // Get current editor
     Editor editor = getEditor();
     
-    // Handle FontSizeUpButton
+    // Handle FontSizeUpButton, FontSizeDownButton
     if(anEvent.equals("FontSizeUpButton")) { Font font = EditorShapes.getFont(editor);
         EditorShapes.setFontSize(editor, font.getSize()<16? 1 : 2, true); }
-    
-    // Handle FontSizeDownButton
     if(anEvent.equals("FontSizeDownButton")) { Font font = EditorShapes.getFont(editor);
         EditorShapes.setFontSize(editor, font.getSize()<16? -1 : -2, true); }
     
-    // Handle BoldButton
+    // Handle BoldButton, ItalicButton, UnderlineButton, OutlineButton
     if(anEvent.equals("BoldButton"))
         EditorShapes.setFontBold(editor, anEvent.getBoolValue());
-    
-    // Handle ItalicButton
     if(anEvent.equals("ItalicButton"))
         EditorShapes.setFontItalic(editor, anEvent.getBoolValue());
-    
-    // Handle UnderlineButton
     if(anEvent.equals("UnderlineButton"))
         EditorShapes.setUnderlined(editor);
-    
-    // Handle OutlineButton
     if(anEvent.equals("OutlineButton"))
         EditorShapes.setTextBorder(editor);
-    
-    // Handle SizeThumbwheel
-    //if(anEvent.equals("SizeThumb")) EditorShapes.setFontSize(editor, anEvent.getIntValue(), false);
     
     // Handle SizesList
     if(anEvent.equals("SizesList") && anEvent.getValue()!=null)
         EditorShapes.setFontSize(editor, anEvent.getFloatValue(), false);
     
     // Handle SizeText
-    if(anEvent.equals("SizeText")) {
+    if(anEvent.equals("SizeText"))
         EditorShapes.setFontSize(editor, anEvent.getFloatValue(), false);
-        editor.requestFocus();
-    }
 
-    // Handle FamilyList
-    if(anEvent.equals("FamilyList")) {
+    // Handle FamilyList, FamilyComboBox
+    if(anEvent.equals("FamilyList") || (anEvent.equals("FamilyComboBox") && anEvent.isActionEvent())) {
         String familyName = getViewStringValue("FamilyList");
-        String fontName = Font.getFontNames(familyName)[0];
+        String fontNames[] = Font.getFontNames(familyName); if(fontNames.length==0) return;
+        String fontName = fontNames[0];
         Font font = new Font(fontName, 12);
         EditorShapes.setFontFamily(editor, font);
     }

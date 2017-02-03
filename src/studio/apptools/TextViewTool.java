@@ -234,7 +234,7 @@ public void mousePressed(ViewEvent anEvent)
     _downPoint = getEditorEvents().getEventPointInShape(true);
     
     // Create default text instance and set initial bounds to reasonable value
-    _view = (T)new TextView();
+    _view = (T)new TextView(); _view.setRich(true); _view.setWrapText(true);
     _view.setBounds(getDefaultBounds((TextView)_view, _downPoint)); // Was setFrame()
     
     // Add shape to superSelectedShape (within an undo grouping) and superSelect
@@ -385,22 +385,8 @@ public void textPropChange(PropChange aPC)
     String prop = aPC.getPropertyName();
     
     // If updating size, reset text width & height to accommodate text
-    if(_updatingSize) {
-        
-        // Get preferred text shape width
-        double maxWidth = _updatingMinHeight==0? text.getParent().getWidth() - text.getX() : text.getWidth();
-        double prefWidth = text.getPrefWidth(); if(prefWidth>maxWidth) prefWidth = maxWidth;
-
-        // If width gets updated, get & set desired width (make sure it doesn't go beyond page border)
-        if(_updatingMinHeight==0)
-            text.setWidth(prefWidth);
-
-        // If PrefHeight or current height is greater than UpdatingMinHeight (which won't be zero if user drew a
-        //  text box to enter text), set Height to PrefHeight
-        double prefHeight = text.getPrefHeight();
-        if(prefHeight>_updatingMinHeight || text.getHeight()>_updatingMinHeight)
-            text.setHeight(Math.max(prefHeight, _updatingMinHeight));
-    }
+    if(_updatingSize && aPC.getSource() instanceof RichText)
+        runLater(() -> resizeText(text));
     
     // Sync selection
     if(prop==TextView.Selection_Prop)
@@ -423,6 +409,26 @@ protected void editorFocusedChange()
 {
     TextView text = getSelectedShape(); if(text==null) return;
     text.setCaretAnim(isCaretAnimNeeded(text));
+}
+
+/**
+ * Resizes Selected TextView for current content.
+ */
+protected void resizeText(TextView aText)
+{
+    // Get preferred text shape width
+    double maxWidth = _updatingMinHeight==0? aText.getParent().getWidth() - aText.getX() : aText.getWidth();
+    double prefWidth = aText.getPrefWidth(); if(prefWidth>maxWidth) prefWidth = maxWidth;
+
+    // If width gets updated, get & set desired width (make sure it doesn't go beyond page border)
+    if(_updatingMinHeight==0)
+        aText.setWidth(prefWidth);
+
+    // If PrefHeight or current height is greater than UpdatingMinHeight (which won't be zero if user drew a
+    //  text box to enter text), set Height to PrefHeight
+    double prefHeight = aText.getPrefHeight();
+    if(prefHeight>_updatingMinHeight || aText.getHeight()>_updatingMinHeight)
+        aText.setHeight(Math.max(prefHeight, _updatingMinHeight));
 }
 
 /**

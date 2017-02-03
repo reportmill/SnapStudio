@@ -8,38 +8,34 @@ import snap.viewx.ColorButton;
 /**
  * Tool bar for EditorPane.
  */
-public class EditorPaneToolBar extends ViewOwner {
+public class EditorPaneToolBar extends EditorPane.SupportPane {
 
-    // The editor pane that this tool bar works for
-    EditorPane      _editorPane;
-    
-    // The font face combobox
-    ComboBox          _fontComboBox;
-    
-    // The font size combobox
-    ComboBox          _fontSizeComboBox;
-    
     // The toolbar tools
-    ViewTool            _toolBarTools[];
+    ViewTool           _toolBarTools[];
 
 /**
- * Creates a new editor pane tool bar.
+ * Creates a new EditorPaneToolBar.
  */
-public EditorPaneToolBar(EditorPane anEditorPane)
+public EditorPaneToolBar(EditorPane anEP)
 {
-    _editorPane = anEditorPane;
+    super(anEP);
     _toolBarTools = createToolBarTools();
 }
 
 /**
- * Returns the editor pane.
+ * Initialize UI.
  */
-public EditorPane getEditorPane()  { return _editorPane; }
-
-/**
- * Returns the editor pane editor.
- */
-public Editor getEditor()  { return getEditorPane().getEditor(); }
+protected void initUI()
+{
+    // Get/configure FontFaceComboBox
+    ComboBox fontFaceComboBox = getView("FontFaceComboBox", ComboBox.class);
+    fontFaceComboBox.setItems((Object[])Font.getFamilyNames());
+    
+    // Get/configure FontSizeComboBox
+    ComboBox fontSizeComboBox = getView("FontSizeComboBox", ComboBox.class);
+    Object sizes[] = { 6, 8, 9, 10, 11, 12, 14, 16, 18, 22, 24, 36, 48, 64, 72, 96, 128, 144 };
+    fontSizeComboBox.setItems(sizes);
+}
 
 /**
  * Updates the UI panel controls.
@@ -48,21 +44,36 @@ protected void resetUI()
 {
     // Get the editor
     Editor editor = getEditor();
+    Font font = EditorShapes.getFont(editor);
     
     // Update UndoButton, RedoButton
     Undoer undoer = editor.getUndoer();
     setViewDisabled("UndoButton", undoer==null || undoer.getUndoSetLast()==null);
     setViewEnabled("RedoButton", undoer==null || undoer.getRedoSetLast()==null);
     
-    // Reset PreviewEditButton state if out of sync
-    //if(getViewBoolValue("PreviewEditButton")==getEditorPane().isEditing())
-    //    setViewValue("PreviewEditButton", !getEditorPane().isEditing());
-
     // Get selected tool button name and button - if found and not selected, select it
     String toolButtonName = editor.getCurrentTool().getClass().getSimpleName() + "Button";
     ToggleButton toolButton = getView(toolButtonName, ToggleButton.class);
     if(toolButton!=null && !toolButton.isSelected())
         toolButton.setSelected(true);
+        
+    // Reset FontFaceComboBox, FontSizeComboBox
+    setViewSelectedItem("FontFaceComboBox", font.getFamily());
+    setViewText("FontSizeComboBox", StringUtils.toString(font.getSize()) + " pt");
+        
+    // Reset BoldButton, ItalicButton, UnderlineButton
+    setViewValue("BoldButton", font.isBold());
+    setViewEnabled("BoldButton", font.getBold()!=null);
+    setViewValue("ItalicButton", font.isItalic());
+    setViewEnabled("ItalicButton", font.getItalic()!=null);
+    setViewValue("UnderlineButton", EditorShapes.isUnderlined(editor));
+    
+    // Update AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
+    HPos alignX = EditorShapes.getAlignmentX(editor);
+    setViewValue("AlignLeftButton", alignX==HPos.LEFT);
+    setViewValue("AlignCenterButton", alignX==HPos.CENTER);
+    setViewValue("AlignRightButton", alignX==HPos.RIGHT);
+    //setViewValue("AlignFullButton", alignX==RMTypes.AlignX.Full);
 }
 
 /**
@@ -71,25 +82,26 @@ protected void resetUI()
 protected void respondUI(ViewEvent anEvent)
 {
     // Get the editor
+    EditorPane epane = getEditorPane();
     Editor editor = getEditor();
     
     // Handle File NewButton, OpenButton, SaveButton, PreviewPDFButton, PreviewHTMLButton, PrintButton
-    if(anEvent.equals("NewButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("OpenButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("SaveButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("PreviewPDFButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("PreviewHTMLButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("PrintButton")) _editorPane.respondUI(anEvent);
+    if(anEvent.equals("NewButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("OpenButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("SaveButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("PreviewPDFButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("PreviewHTMLButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("PrintButton")) epane.respondUI(anEvent);
         
     // Handle Edit CutButton, CopyButton, PasteButton, DeleteButton
-    if(anEvent.equals("CutButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("CopyButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("PasteButton")) _editorPane.respondUI(anEvent);
+    if(anEvent.equals("CutButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("CopyButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("PasteButton")) epane.respondUI(anEvent);
     if(anEvent.equals("DeleteButton")) editor.delete();
         
     // Handle Edit UndoButton, RedoButton
-    if(anEvent.equals("UndoButton")) _editorPane.respondUI(anEvent);
-    if(anEvent.equals("RedoButton")) _editorPane.respondUI(anEvent);
+    if(anEvent.equals("UndoButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("RedoButton")) epane.respondUI(anEvent);
     
     // Handle FillColorButton, StrokeColorButton, TextColorButton
     if(anEvent.equals("FillColorButton"))
@@ -130,7 +142,7 @@ protected void respondUI(ViewEvent anEvent)
     if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignmentX(editor, HPos.LEFT);
     if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignmentX(editor, HPos.CENTER);
     if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignmentX(editor, HPos.RIGHT);
-    if(anEvent.equals("AlignFullButton")) _editorPane.respondUI(anEvent);
+    if(anEvent.equals("AlignFullButton")) epane.respondUI(anEvent);
     
     // Handle PreviewXMLMenuItem
     if(anEvent.equals("PreviewXMLMenuItem"))

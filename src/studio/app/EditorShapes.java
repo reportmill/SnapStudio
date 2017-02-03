@@ -480,9 +480,8 @@ public static void setStrokeColor(Editor anEditor, Color aColor)
  */
 public static void setTextColor(Editor anEditor, Color aColor)
 {
-    //if(anEditor.getTextEditor()!=null) anEditor.getTextEditor().setColor(aColor);
-    //for(View view : anEditor.getSelectedOrSuperSelectedShapes())
-    //    if(view instanceof TextView) ((TextView)view).setTextFill(aColor);
+    for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+        if(view instanceof TextView) ((TextView)view).setTextFill(aColor);
 }
 
 /**
@@ -575,8 +574,8 @@ public static boolean isUnderlined(Editor anEdtr)  { return false; }//anEdtr.get
 public static void setUnderlined(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Make Underlined");
-    //for(View view : anEditor.getSelectedOrSuperSelectedShapes())
-    //    view.setUnderlined(!view.isUnderlined());
+    for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+        if(view instanceof TextView) ((TextView)view).setUnderlined(!((TextView)view).isUnderlined());
 }
 
 /**
@@ -619,19 +618,44 @@ public static void setTextBorder(Editor anEditor, Border aBorder)
 /**
  * Returns the horizontal alignment of the text of the currently selected shapes.
  */
-public static HPos getAlignmentX(Editor anEditor)
+public static HPos getAlignX(Editor anEditor)
 {
-    return anEditor.getSelectedOrSuperSelectedShape().getAlign().getHPos();
+    View view = anEditor.getSelectedOrSuperSelectedShape();
+    if(view instanceof TextView)
+        return ((TextView)view).getLineAlign();
+    return view.getAlign().getHPos();
 }
 
 /**
  * Sets the horizontal alignment of the text of the currently selected shapes.
  */
-public static void setAlignmentX(Editor anEditor, HPos anAlign)
+public static void setAlignX(Editor anEditor, HPos anAlign)
 {
-    //anEditor.undoerSetUndoTitle("Alignment Change");
-    //for(RMShape shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    shape.setAlignmentX(anAlign);
+    anEditor.undoerSetUndoTitle("Alignment Change");
+    for(View view : anEditor.getSelectedOrSuperSelectedShapes()) {
+        if(view instanceof TextView)
+            ((TextView)view).setLineAlign(anAlign);
+        else view.setAlign(anAlign);
+    }
+}
+
+/**
+ * Returns whether currently selected view is text justify.
+ */
+public static boolean isJustify(Editor anEditor)
+{
+    View view = anEditor.getSelectedOrSuperSelectedShape();
+    return view instanceof TextView && ((TextView)view).isLineJustify();
+}
+
+/**
+ * Returns whether currently selected view is text justify.
+ */
+public static void setJustify(Editor anEditor, boolean aValue)
+{
+    anEditor.undoerSetUndoTitle("Alignment Change");
+    for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+        if(view instanceof TextView) ((TextView)view).setLineJustify(aValue);
 }
 
 /**

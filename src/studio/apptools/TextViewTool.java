@@ -55,12 +55,13 @@ public void resetUI()
     // Get text style and line style
     TextStyle style = text.getRichText().getStyleAt(0);
     TextLineStyle lstyle = text.getRichText().getLineStyleAt(0);
+    HPos lineAlign = lstyle.getAlign(); boolean isJustify = lstyle.isJustify();
     
     // Update AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
-    setViewValue("AlignLeftButton", lstyle.getAlign()==HPos.LEFT && !lstyle.isJustify());
-    setViewValue("AlignCenterButton", lstyle.getAlign()==HPos.CENTER && !lstyle.isJustify());
-    setViewValue("AlignRightButton", lstyle.getAlign()==HPos.RIGHT && !lstyle.isJustify());
-    setViewValue("AlignFullButton", lstyle.isJustify());
+    setViewValue("AlignLeftButton", lineAlign==HPos.LEFT && !isJustify);
+    setViewValue("AlignCenterButton", lineAlign==HPos.CENTER && !isJustify);
+    setViewValue("AlignRightButton", lineAlign==HPos.RIGHT && !isJustify);
+    setViewValue("AlignFullButton", isJustify);
     setViewValue("AlignTopButton", text.getTextBox().getAlignY()==VPos.TOP);
     setViewValue("AlignMiddleButton", text.getTextBox().getAlignY()==VPos.CENTER);
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
@@ -69,7 +70,7 @@ public void resetUI()
     _textView.getTextBox().setText(text.getRichText()); //_textView.setSel(text.getSelStart(),text.getSelEnd());
     
     // Reset PaddingText
-    setViewValue("PaddingText", text.getPadding().getString());
+    setViewValue("PaddingText", text.getPadding().getStringLong());
 
     // Get text's background color and set in TextArea if found
     //Color color = null; for(RMShape shape=text; color==null && shape!=null;) {
@@ -141,10 +142,10 @@ public void respondUI(ViewEvent anEvent)
     }*/
     
     // Handle AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
-    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignmentX(editor, HPos.LEFT);
-    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignmentX(editor, HPos.CENTER);
-    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignmentX(editor, HPos.RIGHT);
-    //if(anEvent.equals("AlignFullButton")) EditorShapes.setAlignmentX(editor, RMTypes.AlignX.Full);
+    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignX(editor, HPos.LEFT);
+    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignX(editor, HPos.CENTER);
+    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignX(editor, HPos.RIGHT);
+    if(anEvent.equals("AlignFullButton")) EditorShapes.setJustify(editor, true);
     if(anEvent.equals("AlignTopButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.TOP));
     if(anEvent.equals("AlignMiddleButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.CENTER));
     if(anEvent.equals("AlignBottomButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.BOTTOM));
@@ -234,7 +235,7 @@ public void mousePressed(ViewEvent anEvent)
     _downPoint = getEditorEvents().getEventPointInShape(true);
     
     // Create default text instance and set initial bounds to reasonable value
-    _view = (T)new TextView(); _view.setRich(true); _view.setWrapText(true);
+    _view = (T)new TextView(); _view.setRich(true); _view.setWrapText(true); _view.setFill(null);
     _view.setBounds(getDefaultBounds((TextView)_view, _downPoint)); // Was setFrame()
     
     // Add shape to superSelectedShape (within an undo grouping) and superSelect
@@ -371,6 +372,7 @@ public void willLoseSuperSelected(T aText)
     // Stop listening to changes to TextShape RichText
     aText.removePropChangeListener(_textPropLsner);
     aText.getRichText().removePropChangeListener(_textPropLsner);
+    aText.setSel(aText.length(), aText.length());
     aText.setCaretAnim(false);
     _updatingSize = false; _updatingMinHeight = 0;
 }

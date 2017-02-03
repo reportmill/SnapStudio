@@ -69,11 +69,11 @@ protected void resetUI()
     setViewValue("UnderlineButton", EditorShapes.isUnderlined(editor));
     
     // Update AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
-    HPos alignX = EditorShapes.getAlignmentX(editor);
-    setViewValue("AlignLeftButton", alignX==HPos.LEFT);
-    setViewValue("AlignCenterButton", alignX==HPos.CENTER);
-    setViewValue("AlignRightButton", alignX==HPos.RIGHT);
-    //setViewValue("AlignFullButton", alignX==RMTypes.AlignX.Full);
+    HPos lineAlign = EditorShapes.getAlignX(editor); boolean isJustify = EditorShapes.isJustify(editor);
+    setViewValue("AlignLeftButton", lineAlign==HPos.LEFT && !isJustify);
+    setViewValue("AlignCenterButton", lineAlign==HPos.CENTER && !isJustify);
+    setViewValue("AlignRightButton", lineAlign==HPos.RIGHT && !isJustify);
+    setViewValue("AlignFullButton", isJustify);
 }
 
 /**
@@ -139,10 +139,10 @@ protected void respondUI(ViewEvent anEvent)
     if(anEvent.equals("UnderlineButton")) EditorShapes.setUnderlined(editor);
     
     // Handle AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton
-    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignmentX(editor, HPos.LEFT);
-    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignmentX(editor, HPos.CENTER);
-    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignmentX(editor, HPos.RIGHT);
-    if(anEvent.equals("AlignFullButton")) epane.respondUI(anEvent);
+    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignX(editor, HPos.LEFT);
+    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignX(editor, HPos.CENTER);
+    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignX(editor, HPos.RIGHT);
+    if(anEvent.equals("AlignFullButton")) EditorShapes.setJustify(editor, true);
     
     // Handle PreviewXMLMenuItem
     if(anEvent.equals("PreviewXMLMenuItem"))

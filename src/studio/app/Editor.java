@@ -7,7 +7,7 @@ import snap.view.*;
 /**
  * This class subclasses RMViewer to support RMDocument editing.
  */
-public class Editor extends Viewer implements DeepChangeListener {
+public class Editor extends Viewer implements DeepChangeListener, RootView.Listener {
 
     // Whether we're really editing
     boolean             _editing = true;
@@ -809,6 +809,16 @@ protected void processEvent(ViewEvent anEvent)
 }
 
 /**
+ * Override to install RootView.Listener.
+ */
+protected void setShowing(boolean aValue)
+{
+    if(aValue==isShowing()) return; super.setShowing(aValue);
+    if(aValue) getRootView().addRootViewListener(this);
+    else if(getRootView()!=null) getRootView().removeRootViewListener(this);
+}
+
+/**
  * Called to undo the last edit operation in the editor.
  */
 public void undo()
@@ -845,7 +855,7 @@ public void redo()
  */
 protected void setUndoSelection(Object aSelection)
 {
-    // Handle List <RMShape>
+    // Handle List <View>
     if(aSelection instanceof List)
         setSelectedShapes((List)aSelection);
 }
@@ -853,11 +863,11 @@ protected void setUndoSelection(Object aSelection)
 /**
  * Property change.
  */
-public void deepChange(PropChangeListener aShape, PropChange anEvent)
+public void deepChange(PropChangeListener aView, PropChange anEvent)
 {
-    // If deep change for EditorTextEditor, just return since it registers Undo itself (with better coalesce)
-    //if(getTextEditor()!=null && getTextEditor().getTextShape()==aShape &&
-    //    (anEvent.getSource() instanceof RMXString || anEvent.getSource() instanceof RMXStringRun)) return;
+    // If deep change for TextView, just return since it registers Undo itself (with better coalesce)
+    Object src = anEvent.getSource();
+    if(aView instanceof TextView && src instanceof RichText) return;
     
     // If undoer exists, set selected objects and add property change
     Undoer undoer = getUndoer();
@@ -873,7 +883,7 @@ public void deepChange(PropChangeListener aShape, PropChange anEvent)
         // If adding child, add to child animator newborns
         String pname = anEvent.getPropertyName();
         if(pname.equals("Child") && anEvent.getNewValue()!=null) {
-            View parent = (View)anEvent.getSource(), child = (View)anEvent.getNewValue();
+            View parent = (View)src, child = (View)anEvent.getNewValue();
             //if(parent.getChildAnimator()!=null) parent.getChildAnimator().addNewborn(child);
         }
         
@@ -883,6 +893,16 @@ public void deepChange(PropChangeListener aShape, PropChange anEvent)
     
     // Forward DeepChanges to EditorPane. Should have add/removeDeepChagneLister methods for this.
     EditorPane ep = getEditorPane(); if(ep!=null) ep.resetLater();
+}
+
+/**
+ * RootView.Listener method.
+ */
+public Rect rootViewWillPaint(RootView aRV, Rect aRect)
+{
+    Rect rect = parentToLocal(aRV, aRect).getBounds();
+    if(rect.intersects(getBoundsInside())) { rect.inset(-4); rect = localToParent(aRV, rect).getBounds(); }
+    return rect;
 }
 
 /**

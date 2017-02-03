@@ -49,6 +49,8 @@ public void processEvent(ViewEvent anEvent)
         View superSelectedShape = editor.getSuperSelectedShape();
         ViewTool tool = editor.getTool(superSelectedShape);
         tool.processKeyEvent(superSelectedShape, anEvent);
+        if(anEvent.isConsumed())
+            return;
     }
     
     // Forward mouse pressed and released to official methods

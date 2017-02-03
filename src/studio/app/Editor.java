@@ -901,8 +901,8 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
 public Rect rootViewWillPaint(RootView aRV, Rect aRect)
 {
     Rect rect = parentToLocal(aRV, aRect).getBounds();
-    if(rect.intersects(getBoundsInside())) { rect.inset(-4); rect = localToParent(aRV, rect).getBounds(); }
-    return rect;
+    if(rect.intersects(getBoundsInside())) { rect.inset(-4); aRect = localToParent(aRV, rect).getBounds(); }
+    return aRect;
 }
 
 /**

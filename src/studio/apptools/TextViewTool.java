@@ -11,19 +11,22 @@ import snap.view.*;
 /**
  * This class provides UI editing for TextView.
  */
-public class TextViewTool <T extends TextView> extends ViewTool <T> implements PropChangeListener {
+public class TextViewTool <T extends TextView> extends ViewTool <T> {
     
     // The inspector TextView
-    TextView          _textView;
+    TextView            _textView;
     
     // The view hit by text tool on mouse down
-    View              _downView;
+    View                _downView;
     
     // Whether editor should resize TextView whenever text changes
-    boolean           _updatingSize = false;
+    boolean             _updatingSize = false;
     
     // The minimum height of the RMText when editor text editor is updating size
-    double            _updatingMinHeight = 0;
+    double              _updatingMinHeight = 0;
+    
+    // A PropChange listener to listen to selected TextView changes
+    PropChangeListener  _textPropLsner = pce -> textPropChange(pce);
 
 /**
  * Returns whether a given view is super-selectable.
@@ -36,7 +39,8 @@ public boolean isSuperSelectable(T aView)  { return true; }
 protected void initUI()
 {
     _textView = getView("TextView", TextView.class);
-    _textView.addPropChangeListener(pce -> textViewDidChange(pce), TextView.Selection_Prop);
+    _textView.addPropChangeListener(pce -> textViewPropChange(pce), TextView.Selection_Prop);
+    getEditor().addPropChangeListener(pce -> editorFocusedChange(), View.Focused_Prop);
 }
 
 /**
@@ -321,6 +325,7 @@ public void processEvent(T aText, ViewEvent anEvent)
         
     // Forward to TextView
     ViewUtils.processEvent(aText, anEvent); aText.repaint();
+    if(anEvent.isMouseRelease()) aText.setCaretAnim(isCaretAnimNeeded(aText));
 }
 
 /**
@@ -329,6 +334,16 @@ public void processEvent(T aText, ViewEvent anEvent)
 public void processKeyEvent(T aText, ViewEvent anEvent)
 {
     ViewUtils.processEvent(aText, anEvent);
+    if(anEvent.isKeyRelease()) aText.setCaretAnim(isCaretAnimNeeded(aText));
+}
+
+/**
+ * Returns whether caret anim is needed.
+ */
+protected boolean isCaretAnimNeeded(TextView aText)
+{
+    Editor editor = getEditor();
+    return editor.isFocused() && editor.isSuperSelected(aText) && aText.getSel().isEmpty();
 }
 
 /**
@@ -337,11 +352,9 @@ public void processKeyEvent(T aText, ViewEvent anEvent)
 public void didBecomeSuperSelected(T aText)
 {
     // Start listening to changes to TextView and RichText
-    aText.addPropChangeListener(this);
-    aText.getRichText().addPropChangeListener(this);
-    
-    // If UI is loaded, install string in text area
-    //if(isUISet()) _textArea.getTextEditor().setXString(text.getXString());
+    aText.addPropChangeListener(_textPropLsner);
+    aText.getRichText().addPropChangeListener(_textPropLsner);
+    aText.setCaretAnim(isCaretAnimNeeded(aText));
 }
 
 /**
@@ -356,15 +369,16 @@ public void willLoseSuperSelected(T aText)
     }
 
     // Stop listening to changes to TextShape RichText
-    aText.removePropChangeListener(this);
-    aText.getRichText().removePropChangeListener(this);
+    aText.removePropChangeListener(_textPropLsner);
+    aText.getRichText().removePropChangeListener(_textPropLsner);
+    aText.setCaretAnim(false);
     _updatingSize = false; _updatingMinHeight = 0;
 }
 
 /**
- * Handle changes to Selected TextView 
+ * Called when selected TextView has property changes.
  */
-public void propertyChange(PropChange aPC)
+public void textPropChange(PropChange aPC)
 {
     // Get Selected TextView
     TextView text = getSelectedShape(); if(text==null) return;
@@ -394,12 +408,21 @@ public void propertyChange(PropChange aPC)
 }
 
 /**
- * Called when TextView (in inspector) has property change.
+ * Called when TextView (in inspector) has property changes.
  */
-protected void textViewDidChange(PropChange aPC)
+protected void textViewPropChange(PropChange aPC)
 {
     TextView text = getSelectedShape();
     text.setSel(_textView.getSelStart(), _textView.getSelEnd());
+}
+
+/**
+ * Called when editor changes focus to update SelectedView (TextView) CaretAnim.
+ */
+protected void editorFocusedChange()
+{
+    TextView text = getSelectedShape(); if(text==null) return;
+    text.setCaretAnim(isCaretAnimNeeded(text));
 }
 
 /**

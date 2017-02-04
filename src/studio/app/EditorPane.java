@@ -465,7 +465,7 @@ public void runPopupMenu(ViewEvent anEvent)
 {
     // Get selected shape (just return if page is selected)
     Menu pmenu = new Menu();
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     //if(shape instanceof RMPage) return;
 
     // If RMTextShape, get copy of Format menu

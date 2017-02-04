@@ -52,7 +52,7 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get the current editor and selected shape (just return if null) and selected shapes
     View shape = getSelectedShape(); if(shape==null) return;
-    List <View> shapes = getEditor().getSelectedOrSuperSelectedShapes();
+    List <View> shapes = getEditor().getSelectedOrSuperSelectedViews();
     
     // Handle BindingsTable
     if(anEvent.equals("BindingsTable")) {
@@ -94,7 +94,7 @@ public void respondUI(ViewEvent anEvent)
 public View getSelectedShape()
 {
     Editor e = getEditor(); if(e==null) return null;
-    return e.getSelectedOrSuperSelectedShape();
+    return e.getSelectedOrSuperSelectedView();
 }
 
 /**

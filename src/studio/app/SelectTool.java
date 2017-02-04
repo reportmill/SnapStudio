@@ -60,10 +60,10 @@ public void mousePressed(ViewEvent anEvent)
     Editor editor = getEditor();
 
     // Call setNeedsRepaint on superSelectedShapes to wipe out handles
-    editor.getSuperSelectedShapes().forEach(i -> i.repaint());
+    editor.getSuperSelectedViews().forEach(i -> i.repaint());
 
     // See if tool wants to handle this one
-    ViewTool toolShared = editor.getTool(editor.getSelectedOrSuperSelectedShapes());
+    ViewTool toolShared = editor.getTool(editor.getSelectedOrSuperSelectedViews());
     if(toolShared!=null && toolShared.mousePressedSelection(anEvent)) {
         _dragMode = DragMode.None; return; }
     
@@ -87,21 +87,21 @@ public void mousePressed(ViewEvent anEvent)
 
         // If _selectedShape is superSelected, select it instead
         if(isSuperSelected(_viewHandle.view))
-            editor.setSelectedShape(_viewHandle.view);
+            editor.setSelectedView(_viewHandle.view);
 
         // Just return
         return;
     }
     
     // Get selected shape at event point
-    View selectedShape = editor.getShapeAtPoint(anEvent.getX(), anEvent.getY());
+    View selectedShape = editor.getViewAtPoint(anEvent.getX(), anEvent.getY());
     
     // If hit shape is super selected, then forward the event
     if(isSuperSelected(selectedShape)) {
 
         // If selectedShape isn't editor superSelectedShape, superSelect it (ie., pop the selection)
-        if(selectedShape != editor.getSuperSelectedShape())
-            editor.setSuperSelectedShape(selectedShape);
+        if(selectedShape != editor.getSuperSelectedView())
+            editor.setSuperSelectedView(selectedShape);
         
         // Set drag mode to select
         _dragMode = DragMode.Select;
@@ -109,7 +109,7 @@ public void mousePressed(ViewEvent anEvent)
 
     // If Multi-click and SelectedShape is super-selectable, super-select shape and redo with reduced clicks
     else if(anEvent.getClickCount()>1 && getTool(selectedShape).isSuperSelectable(selectedShape)) {
-        editor.setSuperSelectedShape(selectedShape);                               // Super select selectedShape
+        editor.setSuperSelectedView(selectedShape);                               // Super select selectedShape
         ViewEvent event = anEvent.copyForClickCount(anEvent.getClickCount()-1);  // Get event with reduced clicks
         mousePressed(event); return;                                               // Re-enter and return
     }
@@ -119,22 +119,22 @@ public void mousePressed(ViewEvent anEvent)
             
         // If mouse pressed shape is already selected, remove it and reset drag mode to none
         if(isSelected(selectedShape)) {
-            editor.removeSelectedShape(selectedShape); _dragMode = DragMode.None; }
+            editor.removeSelectedView(selectedShape); _dragMode = DragMode.None; }
         
         // If shape wasn't yet selected, add it to selected shapes
-        else { editor.addSelectedShape(selectedShape); _dragMode = DragMode.Move; }
+        else { editor.addSelectedView(selectedShape); _dragMode = DragMode.Move; }
     }
         
     // Otherwise, handle normal mouse press on shape
     else {
         if(!isSelected(selectedShape))                                    // If hit shape isn't selected then select it
-            editor.setSelectedShape(selectedShape);
+            editor.setSelectedView(selectedShape);
         _dragMode = !anEvent.isAltDown()? DragMode.Move : DragMode.Rotate;  // Set drag mode to move
     }
     
     // If a shape was selected whose parent childrenSuperSelectImmediately, go ahead and super select it
-    if(editor.getSelectedShape()!=null && editor.getSuperSelectedViewTool().childrenSuperSelectImmediately()) {
-        editor.setSuperSelectedShape(editor.getSelectedShape());     // Super select selected shape
+    if(editor.getSelectedView()!=null && editor.getSuperSelectedViewTool().childrenSuperSelectImmediately()) {
+        editor.setSuperSelectedView(editor.getSelectedView());     // Super select selected shape
         mousePressed(anEvent); return;                               // Re-enter mouse pressed and return
     }
     
@@ -142,7 +142,7 @@ public void mousePressed(ViewEvent anEvent)
     _lastMousePoint = getEventPointInSuperSelectedView(false);
     
     // Get editor super selected shape
-    View superSelectedShape = editor.getSuperSelectedShape();
+    View superSelectedShape = editor.getSuperSelectedView();
         
     // Call mouse pressed for superSelectedShape's tool
     getTool(superSelectedShape).processEvent(superSelectedShape, anEvent);
@@ -156,7 +156,7 @@ public void mousePressed(ViewEvent anEvent)
         _eventShape = superSelectedShape; _dragMode = DragMode.EventDispatch; return; }
     
     // Get the shape at the event point
-    View mousePressedShape = editor.getShapeAtPoint(anEvent.getX(), anEvent.getY());
+    View mousePressedShape = editor.getViewAtPoint(anEvent.getX(), anEvent.getY());
     
     // If mousePressedShape is the editor's selected shape, call mouse pressed on mousePressedShape's tool
     if(isSelected(mousePressedShape)) {
@@ -195,7 +195,7 @@ public void mouseDragged(ViewEvent anEvent)
             editor.undoerSetUndoTitle("Move");
             
             // Get SuperSelectedShape and disable ParentTracksBoundsOfChildren
-            ParentView parent = editor.getSuperSelectedParentShape();
+            ParentView parent = editor.getSuperSelectedParentView();
             
             // Get event point in super selected shape coords
             Point point = getEventPointInSuperSelectedView(false);
@@ -220,7 +220,7 @@ public void mouseDragged(ViewEvent anEvent)
             Point point2 = getEventPointInSuperSelectedView(false);
             
             // Iterate over selected shapes and update roll
-            for(View shape : editor.getSelectedShapes()) { //if(shape.isLocked()) continue;
+            for(View shape : editor.getSelectedViews()) { //if(shape.isLocked()) continue;
                 shape.setRotate(shape.getRotate() + point2.getY() - _lastMousePoint.getY()); }
 
             // Reset last point and break
@@ -253,12 +253,12 @@ public void mouseDragged(ViewEvent anEvent)
             editor.repaint(editor.getContent().localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
             
             // Get new _selectionRect and clear _whileSelectingSelectedShapes
-            _selectionRect = Rect.get(_downPoint, editor.convertToShape(null, anEvent.getX(), anEvent.getY()));
+            _selectionRect = Rect.get(_downPoint, editor.localToView(null, anEvent.getX(), anEvent.getY()));
             _whileSelectingSelectedShapes.clear();
 
             // If shift key was down, exclusive OR (xor) newShapes with selectedShapes
             if(anEvent.isShiftDown()) {
-                List xor = ListUtils.clone(editor.getSelectedShapes());
+                List xor = ListUtils.clone(editor.getSelectedViews());
                 ListUtils.xor(xor, newShapes);
                 _whileSelectingSelectedShapes.addAll(xor);
             }
@@ -303,15 +303,15 @@ public void mouseReleased(ViewEvent anEvent)
             // If shift key was down, exclusive OR (xor) newShapes with selectedShapes. Else select new shapes
             if(newShapes.size()>0) {
                 if(anEvent.isShiftDown()) {
-                    List xor = ListUtils.clone(editor.getSelectedShapes());
+                    List xor = ListUtils.clone(editor.getSelectedViews());
                     ListUtils.xor(xor, newShapes);
-                    editor.setSelectedShapes(xor);
+                    editor.setSelectedViews(xor);
                 }
-                else editor.setSelectedShapes(newShapes);
+                else editor.setSelectedViews(newShapes);
             }
             
             // If no shapes were selected, clear selectedShapes
-            else editor.setSuperSelectedShape(editor.getSuperSelectedShape());
+            else editor.setSuperSelectedView(editor.getSuperSelectedView());
 
             // Reset _whileSelectingSelectedShapes and _selectionRect since we don't need them anymore
             _whileSelectingSelectedShapes.clear();
@@ -345,8 +345,8 @@ public void mouseMoved(ViewEvent anEvent)
 {
     // Iterate over super selected shapes and forward mouseMoved for each shape
     Editor editor = getEditor();
-    for(int i=1, iMax=editor.getSuperSelectedShapeCount(); i<iMax && !anEvent.isConsumed(); i++) {
-        View shape = editor.getSuperSelectedShape(i);
+    for(int i=1, iMax=editor.getSuperSelectedViewCount(); i<iMax && !anEvent.isConsumed(); i++) {
+        View shape = editor.getSuperSelectedView(i);
         getTool(shape).mouseMoved(shape, anEvent);
     }
 }
@@ -357,12 +357,12 @@ public void mouseMoved(ViewEvent anEvent)
 private void moveShapes(Point fromPoint, Point toPoint)
 {
     // Iterate over selected shapes
-    for(int i=0, iMax=getEditor().getSelectedShapeCount(); i<iMax; i++) {
-        View shape = getEditor().getSelectedShape(i); //if(shape.isLocked()) continue;
+    for(int i=0, iMax=getEditor().getSelectedViewCount(); i<iMax; i++) {
+        View shape = getEditor().getSelectedView(i); //if(shape.isLocked()) continue;
         double fx = fromPoint.getX(), fy = fromPoint.getY(), tx = toPoint.getX(), ty = toPoint.getY();
         shape.setXY(shape.getX() + tx - fx, shape.getY() + ty - fy); // Was setFrameXY, getFrameX/Y
     }
-    View par = getEditor().getSuperSelectedShape();
+    View par = getEditor().getSuperSelectedView();
     if(par instanceof SpringView)
         ((SpringView)par).resetSpringInfo();
 }
@@ -374,7 +374,7 @@ private List <View> getHitShapes()
 {
     // Get selection path from rect around currentPoint and _downPoint
     Editor editor = getEditor(); View content = editor.getContent();
-    ParentView superShape = editor.getSuperSelectedParentShape(); if(superShape==null) return Collections.emptyList();
+    ParentView superShape = editor.getSuperSelectedParentView(); if(superShape==null) return Collections.emptyList();
     Point curPoint = getEventPointInDoc();
     Rect selRect = Rect.get(curPoint, _downPoint);
     Shape path = superShape.parentToLocal(editor, selRect);
@@ -383,14 +383,14 @@ private List <View> getHitShapes()
     while(superShape!=content &&
         !path.getBounds().intersectsEvenIfEmpty(getTool(superShape).getBoundsSuperSelected(superShape))) {
         ParentView parent = superShape.getParent();
-        editor.setSuperSelectedShape(parent);
+        editor.setSuperSelectedView(parent);
         path = superShape.parentToLocal(path);
         superShape = parent;
     }
 
     // Make sure page is worst case
     if(superShape==content && editor.getContentPage()!=null) { superShape = editor.getContentPage();
-        path = superShape.parentToLocal(selRect); editor.setSuperSelectedShape(superShape); }
+        path = superShape.parentToLocal(selRect); editor.setSuperSelectedView(superShape); }
 
     // Returns the children of the super-selected shape that intersect selection path
     return superShape.getChildrenAt(path);
@@ -418,13 +418,13 @@ public void paintTool(Painter aPntr)
 {
     // Iterate over super selected shapes and have tool paint SuperSelected
     Editor editor = getEditor();
-    for(int i=1, iMax=editor.getSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = editor.getSuperSelectedShape(i); ViewTool tool = getTool(shape);
+    for(int i=1, iMax=editor.getSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = editor.getSuperSelectedView(i); ViewTool tool = getTool(shape);
         tool.paintHandles(shape, aPntr, true);
     }
     
     // Get selected shapes
-    List <View> selectedShapes = editor.getSelectedShapes();
+    List <View> selectedShapes = editor.getSelectedViews();
     
     // If in mouse loop, substitute "while selecting shapes"
     if(editor.isMouseDown())
@@ -438,7 +438,7 @@ public void paintTool(Painter aPntr)
 
     // Draw SelectionRect: light gray rect with darker border (semi transparent)
     if(!_selectionRect.isEmpty()) {
-        Rect rect = editor.convertFromShape(null, _selectionRect).getBounds();
+        Rect rect = editor.viewToLocal(null, _selectionRect).getBounds();
         aPntr.setColor(new Color(.9,.5)); aPntr.fill(rect);
         aPntr.setStroke(Stroke.Stroke1); aPntr.setColor(new Color(.6,.6)); aPntr.draw(rect);
     }

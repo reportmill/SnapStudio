@@ -108,7 +108,7 @@ protected void respondUI(ViewEvent anEvent)
 public List <PropItem> getSelNodeItems()
 {
     List props = new ArrayList();
-    View selNode = getEditor().getSelectedOrSuperSelectedShape();
+    View selNode = getEditor().getSelectedOrSuperSelectedView();
     props.add(new PropItem(selNode, View.Name_Prop));
     props.add(new PropItem(selNode, View.GrowWidth_Prop));
     props.add(new PropItem(selNode, View.GrowHeight_Prop));
@@ -204,14 +204,14 @@ public Point getEventPointInSuperSelectedView(boolean snapToGrid, boolean snapEd
 public T getSelectedShape()
 {
     Editor e = getEditor(); if(e==null) return null;
-    View s = e.getSelectedOrSuperSelectedShape();
+    View s = e.getSelectedOrSuperSelectedView();
     return ClassUtils.getInstance(s, getViewClass());
 }
 
 /**
  * Returns the current selected views for the current editor.
  */
-public List <? extends View> getSelectedShapes()  { return getEditor().getSelectedOrSuperSelectedShapes(); }
+public List <? extends View> getSelectedShapes()  { return getEditor().getSelectedOrSuperSelectedViews(); }
 
 /**
  * Returns a tool for given object.
@@ -263,7 +263,7 @@ public boolean getAcceptsChildren(T aView)  { return aView instanceof ParentView
  */
 public boolean childrenSuperSelectImmediately()
 {
-    return childrenSuperSelectImmediately(getEditor().getSuperSelectedShape());
+    return childrenSuperSelectImmediately(getEditor().getSuperSelectedView());
 }
 
 /**
@@ -318,7 +318,7 @@ public void willLoseSuperSelected(T aView)  { }
 /**
  * Returns the bounds of the view in parent coords when super selected (same as getBoundsMarkedDeep by default).
  */
-public Rect getBoundsSuperSelected(T aView)  { return aView.getBoundsInside(); } //getBoundsMarkedDeep(); }
+public Rect getBoundsSuperSelected(T aView)  { return aView.getBoundsLocal(); } //getBoundsMarkedDeep(); }
 
 /**
  * Converts from view units to tool units.
@@ -500,9 +500,9 @@ public void mousePressed(ViewEvent anEvent)
     _view.setXY(_downPoint.x, _downPoint.y);
     
     // Add shape to superSelectedShape and select shape
-    ParentView parent = getEditor().getSuperSelectedParentShape(); ViewTool ptool = getTool(parent);
+    ParentView parent = getEditor().getSuperSelectedParentView(); ViewTool ptool = getTool(parent);
     ptool.addChild(parent, _view);
-    getEditor().setSelectedShape(_view);
+    getEditor().setSelectedView(_view);
 }
 
 /**
@@ -560,7 +560,7 @@ public void mouseReleased(T aView, ViewEvent anEvent)  { }
 public void mouseMoved(T aView, ViewEvent anEvent)
 {
     // Just return if view isn't the super-selected view
-    if(aView!=getEditor().getSuperSelectedShape()) return;
+    if(aView!=getEditor().getSuperSelectedView()) return;
     
     // Get ViewHandle
     ViewHandle viewHandle = getViewHandleAtPoint(anEvent.getPoint());
@@ -576,7 +576,7 @@ public void mouseMoved(T aView, ViewEvent anEvent)
     else {
         
         // Get mouse over view
-        View view = getEditor().getShapeAtPoint(anEvent.getX(),anEvent.getY());
+        View view = getEditor().getViewAtPoint(anEvent.getX(),anEvent.getY());
         View parent = view.getParent();
         
         // If shape isn't super selected and it's parent doesn't superselect children immediately, choose move cursor
@@ -666,7 +666,7 @@ public Pos getHandlePos(T aView, int anIndex)
 public Point getHandlePoint(T aView, Pos aHandle, boolean isSuperSelected)
 {
     // Get bounds of given shape
-    Rect bnds = isSuperSelected? getBoundsSuperSelected(aView).getInsetRect(-HandleWidth/2) : aView.getBoundsInside();
+    Rect bnds = isSuperSelected? getBoundsSuperSelected(aView).getInsetRect(-HandleWidth/2) : aView.getBoundsLocal();
     
     // Get point for given handle
     switch(aHandle) {
@@ -750,14 +750,14 @@ public ViewHandle getViewHandleAtPoint(Point aPoint)
     View view = null; Pos handle = null; ViewTool tool = null;
 
     // Check selected shapes for a selected handle index
-    for(int i=0, iMax=editor.getSelectedShapeCount(); handle==null && i<iMax; i++) {
-        view = editor.getSelectedShape(i); tool = getTool(view);
+    for(int i=0, iMax=editor.getSelectedViewCount(); handle==null && i<iMax; i++) {
+        view = editor.getSelectedView(i); tool = getTool(view);
         handle = tool.getHandleAtPoint(view, aPoint, false);
     }
 
     // Check super selected shapes for a selected handle index
-    for(int i=0, iMax=editor.getSuperSelectedShapeCount(); handle==null && i<iMax; i++) {
-        view = editor.getSuperSelectedShape(i); tool = getTool(view);
+    for(int i=0, iMax=editor.getSuperSelectedViewCount(); handle==null && i<iMax; i++) {
+        view = editor.getSuperSelectedView(i); tool = getTool(view);
         handle = tool.getHandleAtPoint(view, aPoint, true);
     }
 
@@ -843,7 +843,7 @@ public void dropString(T aView, ViewEvent anEvent)
    if(view instanceof Label)
        view.setText("Label");
     ((ChildView)aView).addChild(view);
-    getEditor().setSelectedShape(view);
+    getEditor().setSelectedView(view);
 }
 
 /**
@@ -898,7 +898,7 @@ private Point dropFile(T aView, File aFile, ViewEvent anEvent)
         double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
         iview.setBounds(x,y,w,h);
         ((ChildView)aView).addChild(iview);
-        getEditor().setSelectedShape(iview);
+        getEditor().setSelectedView(iview);
     }
 
     // If xml file, pass it to setDataSource()
@@ -947,7 +947,7 @@ public void dropImageFile(View aView, String aPath, Point aPoint) //private
     
     // Get parent to add image view to and drop point in parent coords
     ParentView parent = aView instanceof ParentView? (ParentView)aView : aView.getParent();
-    Point point = editor.convertToShape(parent, aPoint.x, aPoint.y);
+    Point point = editor.localToView(parent, aPoint.x, aPoint.y);
     
     // Create new image view
     //ImageView imageView = new ImageView(aPath);

@@ -90,14 +90,14 @@ public static void setIncludesSuperselectedShape(boolean aFlag)  { _includeSuper
 public static List <View> getCandidateShapes(Editor anEditor)
 {
     // Get super selected shape
-    ParentView parent = anEditor.getSuperSelectedShape();
+    ParentView parent = anEditor.getSuperSelectedView();
     if(parent.getChildCount()==0)
         return Collections.emptyList();
     
     // Get all peers of selected shapes
     List candidateShapes = ArrayUtils.asArrayList(parent.getChildren());
-    for(int i=0, iMax=anEditor.getSelectedShapeCount(); i<iMax; i++)
-        ListUtils.removeId(candidateShapes, anEditor.getSelectedShape(i));
+    for(int i=0, iMax=anEditor.getSelectedViewCount(); i<iMax; i++)
+        ListUtils.removeId(candidateShapes, anEditor.getSelectedView(i));
     
     // Optionally, also check against the bounds of the parent.
     // The "stepParent" is merely an empty shape whose bounds match the parent, but in the same coordinate
@@ -123,11 +123,11 @@ public static void createGuidelines(Editor anEditor)
         return;
     
     // If no selected shapes, just return
-    if(anEditor.getSelectedShapeCount()==0)
+    if(anEditor.getSelectedViewCount()==0)
         return;
     
     // Get parent of selected shapes (just return if structured table row)
-    View parent = anEditor.getSuperSelectedShape();
+    View parent = anEditor.getSuperSelectedView();
     
     // Get candidate shapes for editor
     List candidateShapes = getCandidateShapes(anEditor);
@@ -282,10 +282,10 @@ public static Point pointSnappedToProximityGuides(Editor anEditor, Point aPoint,
         return aPoint;
 
     // Get parent
-    View parent = anEditor.getSuperSelectedShape();
+    View parent = anEditor.getSuperSelectedView();
     
     // Get list of selected shapes
-    List selectedShapes = anEditor.getSelectedShapes();
+    List selectedShapes = anEditor.getSelectedViews();
     
     // Get list of candidate shapes
     List candidateShapes = getCandidateShapes(anEditor);

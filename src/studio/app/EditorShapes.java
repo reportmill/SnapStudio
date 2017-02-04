@@ -33,7 +33,7 @@ public static void groupShapes(Editor anEditor, List <? extends View> theShapes,
 {
     // If shapes not provided, use editor selected shapes
     if(theShapes==null)
-        theShapes = anEditor.getSelectedShapes();
+        theShapes = anEditor.getSelectedViews();
     
     // If there are less than 2 selected shapes play a beep (the user really should know better)
     if(theShapes.size()==0) { anEditor.beep(); return; }
@@ -45,7 +45,7 @@ public static void groupShapes(Editor anEditor, List <? extends View> theShapes,
     //aGroupShape = RMShapeUtils.groupShapes(theShapes, aGroupShape);
     
     // Select group shape
-    anEditor.setSelectedShape(aGroupShape);
+    anEditor.setSelectedView(aGroupShape);
 }
 
 /**
@@ -60,7 +60,7 @@ public static void ungroupShapes(Editor anEditor)
     anEditor.undoerSetUndoTitle("Ungroup");
 
     // See if any of the selected shapes can be ungrouped
-    for(View shape : anEditor.getSelectedShapes()) {
+    for(View shape : anEditor.getSelectedViews()) {
         
         // If shape cann't be ungrouped, skip
         if(!anEditor.getTool(shape).isUngroupable(shape)) continue;
@@ -88,7 +88,7 @@ public static void ungroupShapes(Editor anEditor)
 
     // If were some ungroupedShapes, select them (set selected objects for undo/redo)
     if(ungroupedShapes.size()>0)
-        anEditor.setSelectedShapes(ungroupedShapes);
+        anEditor.setSelectedViews(ungroupedShapes);
 
     // If no ungroupedShapes, beep at silly user
     else anEditor.beep();
@@ -99,8 +99,8 @@ public static void ungroupShapes(Editor anEditor)
  */
 public static void bringToFront(Editor anEditor)
 {
-    ParentView parent = anEditor.getSuperSelectedParentShape();
-    if(parent==null || anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    ParentView parent = anEditor.getSuperSelectedParentView();
+    if(parent==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Bring to Front");
     //parent.bringShapesToFront(anEditor.getSelectedShapes());
 }
@@ -110,8 +110,8 @@ public static void bringToFront(Editor anEditor)
  */
 public static void sendToBack(Editor anEditor)
 {
-    ParentView parent = anEditor.getSuperSelectedParentShape();
-    if(parent==null || anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    ParentView parent = anEditor.getSuperSelectedParentView();
+    if(parent==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Send to Back");
     //parent.sendShapesToBack(anEditor.getSelectedShapes());
 }
@@ -121,7 +121,7 @@ public static void sendToBack(Editor anEditor)
  */
 public static void makeRowTop(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Row Top");
     //double minY = anEditor.getSelectedShape().getFrameY();
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameY(minY);
@@ -132,7 +132,7 @@ public static void makeRowTop(Editor anEditor)
  */
 public static void makeRowCenter(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Row Center");
     //double midY = anEditor.getSelectedShape().getFrame().getMidY();
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameY(midY - shape.getHeight()/2);
@@ -143,7 +143,7 @@ public static void makeRowCenter(Editor anEditor)
  */
 public static void makeRowBottom(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Row Bottom");
     //double maxY = anEditor.getSelectedShape().getFrameMaxY();
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameY(maxY - shape.getHeight());
@@ -154,7 +154,7 @@ public static void makeRowBottom(Editor anEditor)
  */
 public static void makeColumnLeft(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Column Left");
     //double minX = anEditor.getSelectedShape().getFrameX();
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameX(minX);
@@ -165,7 +165,7 @@ public static void makeColumnLeft(Editor anEditor)
  */
 public static void makeColumnCenter(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Column Center");
     //double midX = anEditor.getSelectedShape().getFrame().getMidX();
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameX(midX - shape.getWidth()/2);
@@ -176,7 +176,7 @@ public static void makeColumnCenter(Editor anEditor)
  */
 public static void makeColumnRight(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Column Right");
     //double maxX = anEditor.getSelectedShape().getFrameMaxX();    
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameX(maxX - shape.getWidth());
@@ -187,9 +187,9 @@ public static void makeColumnRight(Editor anEditor)
  */
 public static void makeSameSize(Editor anEditor)
 {
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Same Size");
-    Size size = anEditor.getSelectedShape().getSize();
+    Size size = anEditor.getSelectedView().getSize();
     //for(RMShape shape : anEditor.getSelectedShapes()) shape.setSize(size.getWidth(), size.getHeight());
 }
 
@@ -199,16 +199,16 @@ public static void makeSameSize(Editor anEditor)
 public static void makeSameWidth(Editor anEditor)
 {
     // If no shapes, beep and return
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     
     // Register undo title
     anEditor.undoerSetUndoTitle("Make Same Width");
     
     // Get first selected shape width
-    double width = anEditor.getSelectedShape().getWidth();
+    double width = anEditor.getSelectedView().getWidth();
     
     // Iterate over selected shapes and set width
-    for(View shape : anEditor.getSelectedShapes())
+    for(View shape : anEditor.getSelectedViews())
         shape.setWidth(width);
 }
 
@@ -218,16 +218,16 @@ public static void makeSameWidth(Editor anEditor)
 public static void makeSameHeight(Editor anEditor)
 {
     // If no shapes, beep and return
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     
     // Register undo title
     anEditor.undoerSetUndoTitle("Make Same Height");
     
     // Get first selected shape height
-    double height = anEditor.getSelectedShape().getHeight();
+    double height = anEditor.getSelectedView().getHeight();
     
     // Iterate over selected shapes and set height
-    for(View shape : anEditor.getSelectedShapes())
+    for(View shape : anEditor.getSelectedViews())
         shape.setHeight(height);
 }
 
@@ -237,7 +237,7 @@ public static void makeSameHeight(Editor anEditor)
 public static void setSizeToFit(Editor anEditor)
 {
     // If no shapes, beep and return
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     
     // Register undo title
     anEditor.undoerSetUndoTitle("Size to Fit");
@@ -252,7 +252,7 @@ public static void setSizeToFit(Editor anEditor)
 public static void equallySpaceRow(Editor anEditor)
 {
     // If no selected shapes, beep and return
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     
     // Get selectedShapes sorted by minXInParentBounds
     /*List <View> shapes = RMSort.sortedList(anEditor.getSelectedShapes(), "getFrameX");
@@ -280,7 +280,7 @@ public static void equallySpaceRow(Editor anEditor)
 public static void equallySpaceColumn(Editor anEditor)
 {
     // If no selected shapes, beep and return
-    if(anEditor.getSelectedShapeCount()==0) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     
     // Get selectedShapes sorted by minXInParentBounds
     /*List <View> shapes = RMSort.sortedList(anEditor.getSelectedShapes(), "getFrameY");
@@ -308,7 +308,7 @@ public static void equallySpaceColumn(Editor anEditor)
 public static void combinePaths(Editor anEditor)
 {
     // If shapes less than 2, just beep and return
-    if(anEditor.getSelectedShapeCount()<2) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()<2) { anEditor.beep(); return; }
     
     // Get selected shapes and create CombinedShape
     /*List <RMShape> selectedShapes = ListUtils.clone(anEditor.getSelectedShapes());
@@ -330,7 +330,7 @@ public static void combinePaths(Editor anEditor)
 public static void subtractPaths(Editor anEditor)
 {
     // If shapes less than 2, just beep and return
-    if(anEditor.getSelectedShapeCount()<2) { anEditor.beep(); return; }
+    if(anEditor.getSelectedViewCount()<2) { anEditor.beep(); return; }
     
     // Get selected shapes and create SubtractedShape
     /*List <RMShape> selectedShapes = ListUtils.clone(anEditor.getSelectedShapes());
@@ -375,7 +375,7 @@ public static void moveRightOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Right One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedShapes().forEach(i -> i.setX(i.getX() + offset));
+    anEditor.getSelectedViews().forEach(i -> i.setX(i.getX() + offset));
 }
 
 /**
@@ -385,7 +385,7 @@ public static void moveLeftOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Left One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedShapes().forEach(i -> i.setX(i.getX() - offset));
+    anEditor.getSelectedViews().forEach(i -> i.setX(i.getX() - offset));
 }
 
 /**
@@ -395,7 +395,7 @@ public static void moveUpOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Up One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedShapes().forEach(i -> i.setY(i.getY() - offset));
+    anEditor.getSelectedViews().forEach(i -> i.setY(i.getY() - offset));
 }
 
 /**
@@ -405,7 +405,7 @@ public static void moveDownOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Down One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedShapes().forEach(i -> i.setX(i.getX() + offset));
+    anEditor.getSelectedViews().forEach(i -> i.setX(i.getX() + offset));
 }
 
 /**
@@ -414,7 +414,7 @@ public static void moveDownOnePoint(Editor anEditor)
 public static Color getSelectedColor(Editor anEditor)
 {
     // Get selected or super selected view
-    View view = anEditor.getSelectedOrSuperSelectedShape();
+    View view = anEditor.getSelectedOrSuperSelectedView();
     
     // If selected or super selected view is page that doesn't draw color, return "last color" (otherwise, reset it)
     if((view instanceof PageView || view instanceof DocView) && view.getFill()==null)
@@ -425,7 +425,7 @@ public static Color getSelectedColor(Editor anEditor)
     //if(anEditor.getTextEditor()!=null) return anEditor.getTextEditor().getColor();
         
     // Return selected shape's color
-    Paint p = anEditor.getSelectedOrSuperSelectedShape().getFill();
+    Paint p = anEditor.getSelectedOrSuperSelectedView().getFill();
     return p instanceof Color? (Color)p : Color.BLACK;
 }
 
@@ -435,7 +435,7 @@ public static Color getSelectedColor(Editor anEditor)
 public static void setSelectedColor(Editor anEditor, Color aColor)
 {
     // Get selected or super selected view
-    View view = anEditor.getSelectedOrSuperSelectedShape();
+    View view = anEditor.getSelectedOrSuperSelectedView();
         
     // If editor selected or super selected view is doc or page, set "last color" and return
     if(view instanceof PageView || view instanceof DocView) { _lastColor = aColor; return; }
@@ -462,7 +462,7 @@ public static void setSelectedColor(Editor anEditor, Color aColor)
  */
 public static void setColor(Editor anEditor, Color aColor)
 {
-    anEditor.getSelectedOrSuperSelectedShapes().forEach(i -> i.setFill(aColor));
+    anEditor.getSelectedOrSuperSelectedViews().forEach(i -> i.setFill(aColor));
 }
 
 /**
@@ -470,9 +470,9 @@ public static void setColor(Editor anEditor, Color aColor)
  */
 public static void setStrokeColor(Editor anEditor, Color aColor)
 {
-    Border bdr = anEditor.getSelectedOrSuperSelectedShape().getBorder();
+    Border bdr = anEditor.getSelectedOrSuperSelectedView().getBorder();
     double w = bdr!=null? bdr.getWidth() : 1;
-    anEditor.getSelectedOrSuperSelectedShapes().forEach(i -> i.setBorder(aColor,w));
+    anEditor.getSelectedOrSuperSelectedViews().forEach(i -> i.setBorder(aColor,w));
 }
 
 /**
@@ -480,7 +480,7 @@ public static void setStrokeColor(Editor anEditor, Color aColor)
  */
 public static void setTextColor(Editor anEditor, Color aColor)
 {
-    for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+    for(View view : anEditor.getSelectedOrSuperSelectedViews())
         if(view instanceof TextView) ((TextView)view).setTextFill(aColor);
 }
 
@@ -490,12 +490,12 @@ public static void setTextColor(Editor anEditor, Color aColor)
 public static Font getFont(Editor anEditor)
 {
     Font font = null;
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax && font==null; i++) {
-        View view = anEditor.getSelectedOrSuperSelectedShape(i); ViewTool tool = anEditor.getTool(view);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax && font==null; i++) {
+        View view = anEditor.getSelectedOrSuperSelectedView(i); ViewTool tool = anEditor.getTool(view);
         font = tool.getFont(anEditor, view);
     }
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax && font==null; i++) {
-        View view = anEditor.getSelectedOrSuperSelectedShape(i); ViewTool tool = anEditor.getTool(view);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax && font==null; i++) {
+        View view = anEditor.getSelectedOrSuperSelectedView(i); ViewTool tool = anEditor.getTool(view);
         font = tool.getFontDeep(anEditor, view);
     }
     return font!=null? font : new Font();//.getDefaultFont();
@@ -506,8 +506,8 @@ public static Font getFont(Editor anEditor)
  */
 public static void setFontFamily(Editor anEditor, Font aFont)
 {
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = anEditor.getSelectedOrSuperSelectedView(i);
         ViewTool tool = anEditor.getTool(shape);
         tool.setFontFamilyDeep(anEditor, shape, aFont);
     }
@@ -518,8 +518,8 @@ public static void setFontFamily(Editor anEditor, Font aFont)
  */
 public static void setFontName(Editor anEditor, Font aFont)
 {
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = anEditor.getSelectedOrSuperSelectedView(i);
         ViewTool tool = anEditor.getTool(shape);
         tool.setFontNameDeep(anEditor, shape, aFont);
     }
@@ -530,8 +530,8 @@ public static void setFontName(Editor anEditor, Font aFont)
  */
 public static void setFontSize(Editor anEditor, float aSize, boolean isRelative)
 {
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = anEditor.getSelectedOrSuperSelectedView(i);
         ViewTool tool = anEditor.getTool(shape);
         tool.setFontSizeDeep(anEditor, shape, aSize, isRelative);
     }
@@ -543,8 +543,8 @@ public static void setFontSize(Editor anEditor, float aSize, boolean isRelative)
 public static void setFontBold(Editor anEditor, boolean aFlag)
 {
     anEditor.undoerSetUndoTitle("Make Bold");
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = anEditor.getSelectedOrSuperSelectedView(i);
         ViewTool tool = anEditor.getTool(shape);
         tool.setFontBoldDeep(anEditor, shape, aFlag);
     }
@@ -556,8 +556,8 @@ public static void setFontBold(Editor anEditor, boolean aFlag)
 public static void setFontItalic(Editor anEditor, boolean aFlag)
 {
     anEditor.undoerSetUndoTitle("Make Italic");
-    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = anEditor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=anEditor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = anEditor.getSelectedOrSuperSelectedView(i);
         ViewTool tool = anEditor.getTool(shape);
         tool.setFontItalicDeep(anEditor, shape, aFlag);
     }
@@ -574,7 +574,7 @@ public static boolean isUnderlined(Editor anEdtr)  { return false; }//anEdtr.get
 public static void setUnderlined(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Make Underlined");
-    for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+    for(View view : anEditor.getSelectedOrSuperSelectedViews())
         if(view instanceof TextView) ((TextView)view).setUnderlined(!((TextView)view).isUnderlined());
 }
 
@@ -620,7 +620,7 @@ public static void setTextBorder(Editor anEditor, Border aBorder)
  */
 public static HPos getAlignX(Editor anEditor)
 {
-    View view = anEditor.getSelectedOrSuperSelectedShape();
+    View view = anEditor.getSelectedOrSuperSelectedView();
     if(view instanceof TextView)
         return ((TextView)view).getLineAlign();
     return view.getAlign().getHPos();
@@ -632,7 +632,7 @@ public static HPos getAlignX(Editor anEditor)
 public static void setAlignX(Editor anEditor, HPos anAlign)
 {
     anEditor.undoerSetUndoTitle("Alignment Change");
-    for(View view : anEditor.getSelectedOrSuperSelectedShapes()) {
+    for(View view : anEditor.getSelectedOrSuperSelectedViews()) {
         if(view instanceof TextView)
             ((TextView)view).setLineAlign(anAlign);
         else view.setAlign(anAlign);
@@ -644,7 +644,7 @@ public static void setAlignX(Editor anEditor, HPos anAlign)
  */
 public static boolean isJustify(Editor anEditor)
 {
-    View view = anEditor.getSelectedOrSuperSelectedShape();
+    View view = anEditor.getSelectedOrSuperSelectedView();
     return view instanceof TextView && ((TextView)view).isLineJustify();
 }
 
@@ -654,7 +654,7 @@ public static boolean isJustify(Editor anEditor)
 public static void setJustify(Editor anEditor, boolean aValue)
 {
     anEditor.undoerSetUndoTitle("Alignment Change");
-    for(View view : anEditor.getSelectedOrSuperSelectedShapes())
+    for(View view : anEditor.getSelectedOrSuperSelectedViews())
         if(view instanceof TextView) ((TextView)view).setLineJustify(aValue);
 }
 

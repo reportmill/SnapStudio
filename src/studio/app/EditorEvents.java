@@ -46,7 +46,7 @@ public void processEvent(ViewEvent anEvent)
     Editor editor = getEditor();
     boolean isKey = anEvent.isKeyEvent() && !anEvent.isConsumed();
     if(isKey) {
-        View superSelectedShape = editor.getSuperSelectedShape();
+        View superSelectedShape = editor.getSuperSelectedView();
         ViewTool tool = editor.getTool(superSelectedShape);
         tool.processKeyEvent(superSelectedShape, anEvent);
         if(anEvent.isConsumed())
@@ -74,13 +74,13 @@ public void mousePressed(ViewEvent anEvent)
     _editor._isMouseDown = true;
     
     // Set downpoint and last point to current event point in document coords
-    _downPoint = _editor.convertToShape(null, anEvent.getX(), anEvent.getY());
+    _downPoint = _editor.localToView(null, anEvent.getX(), anEvent.getY());
 
     // If current tool isn't select tool, see if super selected shape needs to be updated
     if(!_editor.isCurrentToolSelectTool()) {
-        View shape = _editor.firstSuperSelectedShapeThatAcceptsChildrenAtPoint(_downPoint);
-        if(shape!=_editor.getSuperSelectedShape())
-            _editor.setSuperSelectedShape(shape);
+        View shape = _editor.firstSuperSelectedViewThatAcceptsChildrenAtPoint(_downPoint);
+        if(shape!=_editor.getSuperSelectedView())
+            _editor.setSuperSelectedView(shape);
     }
 
     // Forward mouse pressed to current tool
@@ -195,7 +195,7 @@ public Point getEventPointInDoc()
  */
 public Point getEventPointInShape(boolean shouldSnap)
 {
-    Editor ed = getEditor(); View view = ed.getSuperSelectedShape();
+    Editor ed = getEditor(); View view = ed.getSuperSelectedView();
     return view.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
 }
 
@@ -204,7 +204,7 @@ public Point getEventPointInShape(boolean shouldSnap)
  */
 public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
 {
-    Editor ed = getEditor(); View view = ed.getSuperSelectedShape();
+    Editor ed = getEditor(); View view = ed.getSuperSelectedView();
     return view.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
 }
 
@@ -219,7 +219,7 @@ public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
 public Point getEventPointInDoc(boolean snapToGrid)
 {
     // Get current event point in doc coords, rounded to integers
-    Point point = _editor.convertToShape(null, _currentEvent.getX(), _currentEvent.getY());
+    Point point = _editor.localToView(null, _currentEvent.getX(), _currentEvent.getY());
     point.snap();
     
     // If shift key is down, constrain values to increments of 45 degrees from _downPoint

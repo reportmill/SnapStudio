@@ -13,7 +13,7 @@ public class ImagePaintTool extends FillTool {
 public void resetUI()
 {
     // Get currently selected shape (just return if null) and image fill (if none, use default instance)
-    View shape = getEditor().getSelectedOrSuperSelectedShape(); if(shape==null) return;
+    View shape = getEditor().getSelectedOrSuperSelectedView(); if(shape==null) return;
     ImagePaint fill = shape.getFill() instanceof ImagePaint? (ImagePaint)shape.getFill() : _imageFill;
     
     // Update TiledCheckBox
@@ -32,7 +32,7 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Get currently selected shape (just return if null) and image fill (if none, use default instance)
-    View shape = getEditor().getSelectedOrSuperSelectedShape(); if(shape==null) return;
+    View shape = getEditor().getSelectedOrSuperSelectedView(); if(shape==null) return;
     ImagePaint fill = shape.getFill() instanceof ImagePaint? (ImagePaint)shape.getFill() : _imageFill;
     
     // Handle TiledCheckBox

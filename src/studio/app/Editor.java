@@ -5,44 +5,41 @@ import snap.util.*;
 import snap.view.*;
 
 /**
- * This class subclasses RMViewer to support RMDocument editing.
+ * This class subclasses Viewer to support snp file editing.
  */
 public class Editor extends Viewer implements DeepChangeListener, RootView.Listener {
 
     // Whether we're really editing
-    boolean             _editing = true;
+    boolean            _editing = true;
     
-    // List of currently selected shapes
-    List <View>      _selectedShapes = new ArrayList();
+    // List of currently selected views
+    List <View>        _selectedViews = new ArrayList();
     
-    // List of super selected shapes (all ancestors of selected shapes)
-    List <ParentView>  _superSelectedShapes = new ArrayList();
+    // List of super selected views (all ancestors of selected views)
+    List <ParentView>  _superSelectedViews = new ArrayList();
     
-    // The last shape that was copied to the clipboard (used for smart paste)
-    View             _lastCopyShape;
+    // The last view that was copied to the clipboard (used for smart paste)
+    View               _lastCopyView;
     
-    // The last shape that was pasted from the clipboard (used for smart paste)
-    View             _lastPasteShape;
+    // The last view that was pasted from the clipboard (used for smart paste)
+    View               _lastPasteView;
     
     // An object to handle events
-    EditorEvents     _events = new EditorEvents(this);
-    
-    // A helper class providing utilities for shape
-    //EditorShapes      _shapesHelper = createShapesHelper();
+    EditorEvents       _events = new EditorEvents(this);
     
     // A helper class to handle drag and drop
-    EditorDnD         _dragHelper = createDragHelper();
+    EditorDnD          _dragHelper = createDragHelper();
     
     // A shape to be drawn if set to drag-over shape during drag and drop
-    Shape               _dragShape;
+    Shape              _dragView;
     
     // Whether editor is in mouse loop
-    boolean             _isMouseDown;
+    boolean            _isMouseDown;
     
     // The select tool
-    SelectTool        _selectTool;
+    SelectTool         _selectTool;
     
-    // Map of tool instances by shape class
+    // Map of tool instances by view class
     Map <Class, ViewTool> _tools = new HashMap();
     
     // The current editor tool
@@ -53,17 +50,14 @@ public class Editor extends Viewer implements DeepChangeListener, RootView.Liste
 
     // Constants for PropertyChanges
     public static final String CurrentTool_Prop = "CurrentTool";
-    public static final String SelectedShapes_Prop = "SelectedShapes";
-    public static final String SuperSelectedShape_Prop = "SuperSelectedShape";
+    public static final String SelectedViews_Prop = "SelectedViews";
+    public static final String SuperSelectedView_Prop = "SuperSelectedView";
     
 /**
  * Creates a new editor.
  */
 public Editor()
 {
-    // SuperSelect ViewerShape
-    //setSuperSelectedShape(getViewerShape());
-    
     // Enable Drag events
     enableEvents(DragEvents);
     
@@ -83,13 +77,13 @@ public EditorPane getEditorPane()  { return _ep!=null? _ep : (_ep=getOwner(Edito
 public EditorEvents getEvents()  { return _events; }
 
 /**
- * Sets the root shape that is the content of this viewer.
+ * Sets the root view that is the content of this viewer.
  */
 public void setContent(View aView)
 {
     // If already set, just return
     if(aView==getContent()) return; super.setContent(aView);
-    setSuperSelectedShape(aView);
+    setSuperSelectedView(aView);
 }
 
 /**
@@ -118,228 +112,209 @@ public ParentView getContentPage()
 public boolean isMouseDown()  { return _isMouseDown; }
 
 /**
- * Returns the text editor (or null if not editing).
- */
-public View getTextEditor()  { return null; }
-/*{
-    RMShape shp = getSuperSelectedShape();
-    return shp instanceof RMTextShape? ((RMTextShape)shp).getTextEditor() : null;
-}*/
-
-/**
- * Returns the shapes helper.
- */
-//public EditorShapes getShapesHelper()  { return _shapesHelper; }
-
-/**
- * Creates the shapes helper.
- */
-//protected EditorShapes createShapesHelper()  { return new EditorShapes(this); }
-
-/**
- * Creates the shapes helper.
+ * Creates the drag helper.
  */
 protected EditorDnD createDragHelper()  { return new EditorDnD(this); }
 
 /**
- * Returns the first selected shape.
+ * Returns the first selected view.
  */
-public View getSelectedShape()  { return getSelectedShapeCount()==0? null : getSelectedShape(0); }
+public View getSelectedView()  { return getSelectedViewCount()==0? null : getSelectedView(0); }
 
 /**
- * Selects the given shape.
+ * Selects the given view.
  */
-public void setSelectedShape(View aShape)  { setSelectedShapes(aShape==null? null : Arrays.asList(aShape)); }
+public void setSelectedView(View aView)  { setSelectedViews(aView==null? null : Arrays.asList(aView)); }
 
 /**
- * Returns the number of selected shapes.
+ * Returns the number of selected views.
  */
-public int getSelectedShapeCount()  { return _selectedShapes.size(); }
+public int getSelectedViewCount()  { return _selectedViews.size(); }
 
 /**
- * Returns the selected shape at the given index.
+ * Returns the selected view at the given index.
  */
-public View getSelectedShape(int anIndex)  { return ListUtils.get(_selectedShapes, anIndex); }
+public View getSelectedView(int anIndex)  { return ListUtils.get(_selectedViews, anIndex); }
 
 /**
- * Returns the selected shapes list.
+ * Returns the selected views list.
  */
-public List <View> getSelectedShapes()  { return _selectedShapes; }
+public List <View> getSelectedViews()  { return _selectedViews; }
 
 /**
- * Selects the shapes in the given list.
+ * Selects the views in given list.
  */
-public void setSelectedShapes(List <View> theViews)
+public void setSelectedViews(List <View> theViews)
 {
-    // If shapes already set, just return
-    if(ListUtils.equalsId(theViews, _selectedShapes)) return;
+    // If views already set, just return
+    if(ListUtils.equalsId(theViews, _selectedViews)) return;
     
-    // If shapes is null or empty super-select the selected page and return
+    // If views is null or empty super-select the selected page and return
     if(theViews==null || theViews.size()==0) {
-        setSuperSelectedShape(getContent()); return; }
+        setSuperSelectedView(getContent()); return; }
     
-    // Get the first view in given shapes list
+    // Get the first view in given views list
     View view = theViews.get(0);
     
-    // If shapes contains superSelectedShapes, superSelect last and return (hidden trick for undoSelectedObjects)
+    // If views contains superSelectedViews, superSelect last and return (hidden trick for undoSelectedObjects)
     if(theViews.size()>1 && view==getContent()) {
-        setSuperSelectedShape(theViews.get(theViews.size()-1)); return; }
+        setSuperSelectedView(theViews.get(theViews.size()-1)); return; }
     
     // Get the view parent
     View parent = view.getParent();
     
     // If parent is the content, super select view instead
     if(view==getContent()) {
-        setSuperSelectedShape(view); return; }
+        setSuperSelectedView(view); return; }
     
     // Super select parent
-    setSuperSelectedShape(parent);
+    setSuperSelectedView(parent);
     
-    // Add shapes to selected list
-    _selectedShapes.addAll(theViews);
+    // Add views to selected list
+    _selectedViews.addAll(theViews);
     
     // Fire PropertyChange
-    firePropChange(SelectedShapes_Prop, null, theViews);
+    firePropChange(SelectedViews_Prop, null, theViews);
 }
 
 /**
- * Add a shape to the selected shapes list.
+ * Add a view to the selected views list.
  */
-public void addSelectedShape(View aShape)
+public void addSelectedView(View aView)
 {
-    List list = new ArrayList(getSelectedShapes()); list.add(aShape);
-    setSelectedShapes(list);
+    List list = new ArrayList(getSelectedViews()); list.add(aView);
+    setSelectedViews(list);
 }
 
 /**
- * Remove a shape from the selected shapes list.
+ * Remove a view from the selected views list.
  */
-public void removeSelectedShape(View aShape)
+public void removeSelectedView(View aView)
 {
-    List list = new ArrayList(getSelectedShapes()); list.remove(aShape);
-    setSelectedShapes(list);
+    List list = new ArrayList(getSelectedViews()); list.remove(aView);
+    setSelectedViews(list);
 }
 
 /**
- * Returns the first super-selected shape.
+ * Returns the first super-selected view.
  */
-public ParentView getSuperSelectedShape()
+public ParentView getSuperSelectedView()
 {
-    return getSuperSelectedShapeCount()==0? null : getSuperSelectedShape(getSuperSelectedShapeCount()-1);
+    return getSuperSelectedViewCount()==0? null : getSuperSelectedView(getSuperSelectedViewCount()-1);
 }
 
 /**
- * Returns the first super selected shape, if parent shape.
+ * Returns the first super selected view, if parent view.
  */
-public ParentView getSuperSelectedParentShape()
+public ParentView getSuperSelectedParentView()
 {
-    View ss = getSuperSelectedShape(); return ss instanceof ParentView? (ParentView)ss : null;
+    View ss = getSuperSelectedView(); return ss instanceof ParentView? (ParentView)ss : null;
 }
 
 /**
- * Super select a shape.
+ * Super select a view.
  */
-public void setSuperSelectedShape(View aView)
+public void setSuperSelectedView(View aView)
 {
     // If given view is null, reset to selected page
     View view = aView!=null? aView : getContent();
     
     // Unselect selected views
-    _selectedShapes.clear();
+    _selectedViews.clear();
 
     // Remove current super-selected views that aren't an ancestor of given view   
-    if(getSuperSelectedShape()!=null)
-    while(view!=getSuperSelectedShape() && !view.isAncestor(getSuperSelectedShape())) {
-        View ssShape = getSuperSelectedShape();
-        getTool(ssShape).willLoseSuperSelected(ssShape);
-        ListUtils.removeLast(_superSelectedShapes);
+    if(getSuperSelectedView()!=null)
+    while(view!=getSuperSelectedView() && !view.isAncestor(getSuperSelectedView())) {
+        View ssView = getSuperSelectedView();
+        getTool(ssView).willLoseSuperSelected(ssView);
+        ListUtils.removeLast(_superSelectedViews);
     }
 
     // Add super selected view (recursively adds parents if missing)
-    if(view!=getSuperSelectedShape())
-        addSuperSelectedShape(view);
+    if(view!=getSuperSelectedView())
+        addSuperSelectedView(view);
     
     // Fire PropertyChange and repaint
-    firePropChange(SuperSelectedShape_Prop, null, view);
+    firePropChange(SuperSelectedView_Prop, null, view);
     repaint();
 }
 
 /**
- * Adds a super selected shape.
+ * Adds a super selected view.
  */
-private void addSuperSelectedShape(View aShape)
+private void addSuperSelectedView(View aView)
 {
     // If parent isn't super selected, add parent first
     View contentBox = getContent().getParent();
-    if(aShape.getParent()!=contentBox && !isSuperSelected(aShape.getParent()))
-        addSuperSelectedShape(aShape.getParent());
+    if(aView.getParent()!=contentBox && !isSuperSelected(aView.getParent()))
+        addSuperSelectedView(aView.getParent());
 
     // Add ancestor to super selected list
-    _superSelectedShapes.add((ParentView)aShape);
+    _superSelectedViews.add((ParentView)aView);
     
     // Notify tool
-    getTool(aShape).didBecomeSuperSelected(aShape);
+    getTool(aView).didBecomeSuperSelected(aView);
 
     // If ancestor is page but not document's selected page, make it the selected page
-    //if(aShape instanceof RMPage && aShape!=getDocument().getSelectedPage())
-    //    getDocument().setSelectedPage((RMPage)aShape);
+    //if(aView instanceof RMPage && aView!=getDocument().getSelectedPage())
+    //    getDocument().setSelectedPage((RMPage)aView);
 }
 
 /**
- * Returns whether a given shape is selected in the editor.
+ * Returns whether a given view is selected in the editor.
  */
-public boolean isSelected(View aShape)  { return ListUtils.containsId(_selectedShapes, aShape); }
+public boolean isSelected(View aView)  { return ListUtils.containsId(_selectedViews, aView); }
 
 /**
- * Returns whether a given shape is super-selected in the editor.
+ * Returns whether a given view is super-selected in the editor.
  */
-public boolean isSuperSelected(View aShape)  { return ListUtils.containsId(_superSelectedShapes, aShape); }
+public boolean isSuperSelected(View aView)  { return ListUtils.containsId(_superSelectedViews, aView); }
 
 /**
- * Returns the number of super-selected shapes.
+ * Returns the number of super-selected views.
  */
-public int getSuperSelectedShapeCount()  { return _superSelectedShapes.size(); }
+public int getSuperSelectedViewCount()  { return _superSelectedViews.size(); }
 
 /**
- * Returns the super-selected shape at the given index.
+ * Returns the super-selected view at the given index.
  */
-public ParentView getSuperSelectedShape(int anIndex)  { return _superSelectedShapes.get(anIndex); }
+public ParentView getSuperSelectedView(int anIndex)  { return _superSelectedViews.get(anIndex); }
 
 /**
- * Returns the super selected shape list.
+ * Returns the super selected view list.
  */
-public List <ParentView> getSuperSelectedShapes()  { return _superSelectedShapes; }
+public List <ParentView> getSuperSelectedViews()  { return _superSelectedViews; }
 
 /**
- * Returns the number of currently selected shapes or simply 1, if a shape is super-selected.
+ * Returns the number of currently selected views or simply 1, if a view is super-selected.
  */
-public int getSelectedOrSuperSelectedShapeCount()
+public int getSelectedOrSuperSelectedViewCount()
 {
-    return getSelectedShapeCount()>0? getSelectedShapeCount() : 1;
+    return getSelectedViewCount()>0? getSelectedViewCount() : 1;
 }
 
 /**
- * Returns the currently selected shape at the given index, or the super-selected shape.
+ * Returns the currently selected view at the given index, or the super-selected view.
  */
-public View getSelectedOrSuperSelectedShape(int anIndex)
+public View getSelectedOrSuperSelectedView(int anIndex)
 {
-    return getSelectedShapeCount()>0? getSelectedShape(anIndex) : getSuperSelectedShape();
+    return getSelectedViewCount()>0? getSelectedView(anIndex) : getSuperSelectedView();
 }
 
 /**
- * Returns the currently selected shape or, if none, the super-selected shape.
+ * Returns the currently selected view or, if none, the super-selected view.
  */
-public View getSelectedOrSuperSelectedShape()
+public View getSelectedOrSuperSelectedView()
 {
-    return getSelectedShapeCount()>0? getSelectedShape() : getSuperSelectedShape();
+    return getSelectedViewCount()>0? getSelectedView() : getSuperSelectedView();
 }
     
 /**
- * Returns the currently selected shapes or, if none, the super-selected shape in a list.
+ * Returns the currently selected views or, if none, the super-selected view in a list.
  */
-public List <View> getSelectedOrSuperSelectedShapes()
+public List <View> getSelectedOrSuperSelectedViews()
 {
-    return getSelectedShapeCount()>0? _selectedShapes : Arrays.asList(getSuperSelectedShape());
+    return getSelectedViewCount()>0? _selectedViews : Arrays.asList(getSuperSelectedView());
 }
 
 /**
@@ -347,109 +322,109 @@ public List <View> getSelectedOrSuperSelectedShapes()
  */
 public ViewTool getSuperSelectedViewTool()
 {
-    View view = getSuperSelectedShape();
+    View view = getSuperSelectedView();
     return getTool(view);
 }
     
 /**
- * Un-SuperSelect currently super selected shape.
+ * Un-SuperSelect currently super selected view.
  */
 public void popSelection()
 {
-    // If there are selected shapes, empty current selection
-    if(getSelectedShapeCount()>0)
-        setSuperSelectedShape(getSelectedShape().getParent());
+    // If there are selected views, empty current selection
+    if(getSelectedViewCount()>0)
+        setSuperSelectedView(getSelectedView().getParent());
 
-    // Otherwise select super-selected shape (or its parent if it has childrenSuperSelectImmediately)
-    else if(getSuperSelectedShapeCount()>1) {
-        View view = getSuperSelectedShape(), parent = view.getParent();
+    // Otherwise select super-selected view (or its parent if it has childrenSuperSelectImmediately)
+    else if(getSuperSelectedViewCount()>1) {
+        View view = getSuperSelectedView(), parent = view.getParent();
         if(view instanceof TextView)
-            setSelectedShape(view);
+            setSelectedView(view);
         else if(getTool(parent).childrenSuperSelectImmediately(parent))
-            setSuperSelectedShape(parent);
-        else setSelectedShape(view);
+            setSuperSelectedView(parent);
+        else setSelectedView(view);
     }
 }
 
 /**
- * Returns first shape hit by point given in View coords.
+ * Returns first view hit by point given in View coords.
  */
-public View getShapeAtPoint(double aX, double aY)  { return getShapeAtPoint(new Point(aX,aY)); }
+public View getViewAtPoint(double aX, double aY)  { return getViewAtPoint(new Point(aX,aY)); }
 
 /**
- * Returns first shape hit by point given in View coords.
+ * Returns first view hit by point given in View coords.
  */
-public View getShapeAtPoint(Point aPoint)
+public View getViewAtPoint(Point aPoint)
 {
-    // Get superSelectedShape
-    ParentView superSelView = getSuperSelectedShape();
+    // Get superSelectedView
+    ParentView superSelView = getSuperSelectedView();
     
-    // If superSelectedShape is document, start with page instead (maybe should go)
+    // If superSelectedView is document, start with page instead (maybe should go)
     if(superSelView==getContent() && getContentPage()!=null)
         superSelView = getContentPage();
 
-    // Get the point in superSelectedShape's coords
-    Point point = convertToShape(superSelView, aPoint.x, aPoint.y);
+    // Get the point in superSelectedView's coords
+    Point point = localToView(superSelView, aPoint.x, aPoint.y);
 
-    // Get child of superSelectedShape hit by point
-    View shapeAtPoint = getChildShapeAtPoint(superSelView, point);
+    // Get child of superSelectedView hit by point
+    View viewAtPoint = getChildViewAtPoint(superSelView, point);
     
-    // If no superSelectedShape child hit by point, find first superSelectedShape that is hit & set to shapeAtPoint
-    while(superSelView!=getContent() && shapeAtPoint==null) {
+    // If no superSelectedView child hit by point, find first superSelectedView that is hit & set to viewAtPoint
+    while(superSelView!=getContent() && viewAtPoint==null) {
         point = superSelView.localToParent(point.x, point.y);
         superSelView = superSelView.getParent();
-        shapeAtPoint = getChildShapeAtPoint(superSelView, point);
+        viewAtPoint = getChildViewAtPoint(superSelView, point);
     }
 
-    // See if point really hits an upper level shape that overlaps shapeAtPoint
-    if(shapeAtPoint!=null && shapeAtPoint!=getContent()) {
+    // See if point really hits an upper level view that overlaps viewAtPoint
+    if(viewAtPoint!=null && viewAtPoint!=getContent()) {
         
-        // Declare shape/point variables used to iterate up shape hierarchy
-        View ssShape = shapeAtPoint;
+        // Declare view/point variables used to iterate up view hierarchy
+        View ssView = viewAtPoint;
         Point pnt = point;
 
-        // Iterate up shape hierarchy
-        while(ssShape!=getContent() && ssShape.getParent()!=null) {
+        // Iterate up view hierarchy
+        while(ssView!=getContent() && ssView.getParent()!=null) {
             
             // Get child of parent hit point point
-            View hitChild = getChildShapeAtPoint(ssShape.getParent(), pnt);
+            View hitChild = getChildViewAtPoint(ssView.getParent(), pnt);
             
-            // If child not equal to original shape, change shapeAtPoint
-            if(hitChild != ssShape) {
-                superSelView = ssShape.getParent();
-                shapeAtPoint = hitChild; point = pnt;
+            // If child not equal to original view, change viewAtPoint
+            if(hitChild != ssView) {
+                superSelView = ssView.getParent();
+                viewAtPoint = hitChild; point = pnt;
             }
             
-            // Update loop shape/point variables
-            ssShape = ssShape.getParent();
-            pnt = ssShape.localToParent(pnt.x, pnt.y);
+            // Update loop view/point variables
+            ssView = ssView.getParent();
+            pnt = ssView.localToParent(pnt.x, pnt.y);
         }
     }
 
     // Make sure page is worst case
-    if(shapeAtPoint==null) shapeAtPoint = getContent();
-    if(shapeAtPoint==getContent() && getContentPage()!=null)
-        shapeAtPoint = getContentPage();
+    if(viewAtPoint==null) viewAtPoint = getContent();
+    if(viewAtPoint==getContent() && getContentPage()!=null)
+        viewAtPoint = getContentPage();
 
-    // Return shape at point
-    return shapeAtPoint;
+    // Return view at point
+    return viewAtPoint;
 }
 
 /**
- * Returns the child of the given shape hit by the given point.
+ * Returns the child of the given view hit by the given point.
  */
-public View getChildShapeAtPoint(ParentView aShape, Point aPoint)
+public View getChildViewAtPoint(ParentView aView, Point aPoint)
 {
-    // If given shape is null, return null
-    if(aShape==null) return null;
+    // If given view is null, return null
+    if(aView==null) return null;
     
-    // Iterate over shape children
-    for(int i=aShape.getChildCount(); i>0; i--) { View child = aShape.getChild(i-1);
+    // Iterate over view children
+    for(int i=aView.getChildCount(); i>0; i--) { View child = aView.getChild(i-1);
         
         // If not hittable, continue
         //if(!child.isHittable()) continue;
         
-        // Get given point in child shape coords
+        // Get given point in child view coords
         Point point = child.parentToLocal(aPoint.x, aPoint.y);
 
         // If child is super selected and point is in child super selected bounds, return child
@@ -467,15 +442,15 @@ public View getChildShapeAtPoint(ParentView aShape, Point aPoint)
 }
 
 /**
- * Returns the first SuperSelectedShape that accepts children.
+ * Returns the first SuperSelected view that accepts children.
  */
-public ParentView firstSuperSelectedShapeThatAcceptsChildren()
+public ParentView firstSuperSelectedViewThatAcceptsChildren()
 {
-    // Get super selected shape
-    View shape = getSuperSelectedShape();
-    ParentView parent = shape instanceof ChildView? (ChildView)shape : shape.getParent();
+    // Get super selected view
+    View view = getSuperSelectedView();
+    ParentView parent = view instanceof ChildView? (ChildView)view : view.getParent();
 
-    // Iterate up hierarchy until we find a shape that acceptsChildren
+    // Iterate up hierarchy until we find a view that acceptsChildren
     while(!getTool(parent).getAcceptsChildren(parent))
         parent = parent.getParent();
 
@@ -488,28 +463,28 @@ public ParentView firstSuperSelectedShapeThatAcceptsChildren()
 }
 
 /**
- * Returns the first SuperSelected shape that accepts children at a given point.
+ * Returns the first SuperSelected view that accepts children at a given point.
  */
-public ParentView firstSuperSelectedShapeThatAcceptsChildrenAtPoint(Point aPoint)
+public ParentView firstSuperSelectedViewThatAcceptsChildrenAtPoint(Point aPoint)
 {
-    // Go up chain of superSelectedShapes until one acceptsChildren and is hit by aPoint
-    View shape = getSuperSelectedShape();
-    ParentView parent = shape instanceof ParentView? (ParentView)shape : shape.getParent();
+    // Go up chain of superSelectedViews until one acceptsChildren and is hit by aPoint
+    View view = getSuperSelectedView();
+    ParentView parent = view instanceof ParentView? (ParentView)view : view.getParent();
 
-    // Iterate up shape hierarchy until we find a shape that is hit and accepts children
+    // Iterate up view hierarchy until we find a view that is hit and accepts children
     while(!getTool(parent).getAcceptsChildren(parent) ||
         !parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
 
-        // If shape childrenSuperSelImmd and shape hitByPt, see if any shape children qualify (otherwise use parent)
+        // If view childrenSuperSelImmd and view hitByPt, see if any view children qualify (otherwise use parent)
         if(getTool(parent).childrenSuperSelectImmediately(parent) &&
             parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
-            View childShape = parent.getChildAt(parent.parentToLocal(this,aPoint.x,aPoint.y));
-            if(childShape!=null && getTool(childShape).getAcceptsChildren(childShape))
-                parent = (ParentView)childShape;
+            View childView = parent.getChildAt(parent.parentToLocal(this,aPoint.x,aPoint.y));
+            if(childView!=null && getTool(childView).getAcceptsChildren(childView))
+                parent = (ParentView)childView;
             else parent = parent.getParent();
         }
 
-        // If shape's children don't superSelectImmediately or it is not hit by aPoint, just go up parent chain
+        // If view's children don't superSelectImmediately or it is not hit by aPoint, just go up parent chain
         else parent = parent.getParent();
     }
 
@@ -518,7 +493,7 @@ public ParentView firstSuperSelectedShapeThatAcceptsChildrenAtPoint(Point aPoint
     if(parent==getContent() && getContentPage()!=null)
         parent = getContentPage();
 
-    // Return shape
+    // Return view
     return parent;
 }
 
@@ -538,58 +513,54 @@ public void copy()  { EditorClipboard.copy(this); }
 public void paste()  { EditorClipboard.paste(this); }
 
 /**
- * Causes all the children of the current super selected shape to become selected.
+ * Causes all the children of the current super selected view to become selected.
  */
 public void selectAll()
 {
-    // If text editing, forward to text editor
-    //if(getTextEditor()!=null)
-    //    getTextEditor().selectAll();
-    
-    // Otherwise, select all children
-    /*else*/ if(getSuperSelectedShape().getChildCount()>0) {
+    // Select all children
+    if(getSuperSelectedView().getChildCount()>0) {
         
-        // Get list of all hittable children of super-selected shape
-        List shapes = new ArrayList();
-        for(View shape : getSuperSelectedShape().getChildren())
-                shapes.add(shape); //if(shape.isHittable())
+        // Get list of all hittable children of super-selected view
+        List views = new ArrayList();
+        for(View view : getSuperSelectedView().getChildren())
+                views.add(view); //if(view.isHittable())
         
-        // Select shapes
-        setSelectedShapes(shapes);
+        // Select views
+        setSelectedViews(views);
     }
 }
 
 /**
- * Deletes all the currently selected shapes.
+ * Deletes all the currently selected views.
  */
 public void delete()
 {
-    // Get copy of selected shapes (just beep and return if no selected shapes)
-    View shapes[] = _selectedShapes.toArray(new View[0]);
-    if(shapes.length==0) { if(getTextEditor()==null) beep(); return; }
+    // Get copy of selected views (just beep and return if no selected views)
+    View views[] = _selectedViews.toArray(new View[0]);
+    if(views.length==0) { beep(); return; }
 
-    // Get/superSelect parent of selected shapes
-    ParentView parent = getSelectedShape().getParent(); if(parent==null) return;
-    setSuperSelectedShape(parent);
+    // Get/superSelect parent of selected views
+    ParentView parent = getSelectedView().getParent(); if(parent==null) return;
+    setSuperSelectedView(parent);
 
     // Set undo title
-    undoerSetUndoTitle(getSelectedShapeCount()>1? "Delete Shapes" : "Delete Shape");
+    undoerSetUndoTitle(getSelectedViewCount()>1? "Delete Views" : "Delete View");
     
-    // Remove all shapes from their parent
-    for(View shape : shapes) {
-        ((ChildView)parent).removeChild(shape);
-        if(_lastPasteShape==shape) _lastPasteShape = null;
-        if(_lastCopyShape==shape) _lastCopyShape = null;
+    // Remove all views from their parent
+    for(View view : views) {
+        ((ChildView)parent).removeChild(view);
+        if(_lastPasteView==view) _lastPasteView = null;
+        if(_lastCopyView==view) _lastCopyView = null;
     }
 }
 
 /**
- * Adds shapes as children to given shape.
+ * Adds views as children to given view.
  */
-public void addShapesToShape(List <? extends View> theShapes, ParentView aShape, boolean withCorrection)
+public void addViewsToView(List <? extends View> theViews, ParentView aView, boolean withCorrection)
 {
-    // If no shapes, just return
-    if(theShapes.size()==0) return;
+    // If no views, just return
+    if(theViews.size()==0) return;
     
     // Declare variables for dx, dy, dr
     double dx = 0, dy = 0, dr = 0;
@@ -597,36 +568,36 @@ public void addShapesToShape(List <? extends View> theShapes, ParentView aShape,
     // Smart paste
     if(withCorrection) {
 
-        // If there is an last-copy-shape and new shapes will be it's peer, set offset
-        if(_lastCopyShape!=null && _lastCopyShape.getParent()==aShape) {
+        // If there is an last-copy-view and new views will be it's peer, set offset
+        if(_lastCopyView!=null && _lastCopyView.getParent()==aView) {
 
-            if(_lastPasteShape!=null) {
-                View firstShape = theShapes.get(0);
-                dx = 2*_lastPasteShape.getX() - _lastCopyShape.getX() - firstShape.getX(); // was x()
-                dy = 2*_lastPasteShape.getY() - _lastCopyShape.getY() - firstShape.getY(); // was y()
-                dr = 2*_lastPasteShape.getRotate() - _lastCopyShape.getRotate() - firstShape.getRotate();
+            if(_lastPasteView!=null) {
+                View firstView = theViews.get(0);
+                dx = 2*_lastPasteView.getX() - _lastCopyView.getX() - firstView.getX(); // was x()
+                dy = 2*_lastPasteView.getY() - _lastCopyView.getY() - firstView.getY(); // was y()
+                dr = 2*_lastPasteView.getRotate() - _lastCopyView.getRotate() - firstView.getRotate();
             }
 
-            else dx = dy = 9;//getViewerShape().getGridSpacing();
+            else dx = dy = 9;//getViewerView().getGridSpacing();
         }
     }
 
-    // Get each individual shape and add it to the superSelectedShape
-    for(int i=0, iMax=theShapes.size(); i<iMax; i++) { View shape = theShapes.get(i);
+    // Get each individual view and add it to the superSelectedView
+    for(int i=0, iMax=theViews.size(); i<iMax; i++) { View view = theViews.get(i);
         
-        // Add current loop shape to given parent shape
-        ((ChildView)aShape).addChild(shape);
+        // Add current loop view to given parent view
+        ((ChildView)aView).addChild(view);
 
         // Smart paste
         if(withCorrection) {
-            Rect parentShapeRect = aShape.getBoundsInside();
-            shape.setXY(shape.getX() + dx, shape.getY() + dy); // was x(), y()
-            shape.setRotate(shape.getRotate() + dr);
-            Rect rect = shape.getBounds(); // was getFrame()
+            Rect parentViewRect = aView.getBoundsLocal();
+            view.setXY(view.getX() + dx, view.getY() + dy); // was x(), y()
+            view.setRotate(view.getRotate() + dr);
+            Rect rect = view.getBounds(); // was getFrame()
             rect.width = Math.max(1, rect.width);
             rect.height = Math.max(1, rect.height);
-            if(!parentShapeRect.intersectsRect(rect))
-                shape.setXY(0, 0);
+            if(!parentViewRect.intersectsRect(rect))
+                view.setXY(0, 0);
         }
     }
 }
@@ -642,7 +613,7 @@ public SelectTool getSelectTool()
 }
 
 /**
- * Returns the specific tool for a list of shapes (if they have the same tool).
+ * Returns the specific tool for a list of views (if they have the same tool).
  */
 public ViewTool getTool(List aList)
 {
@@ -651,11 +622,11 @@ public ViewTool getTool(List aList)
 }
 
 /**
- * Returns the specific tool for a given shape.
+ * Returns the specific tool for a given view.
  */
 public ViewTool getTool(Object anObj)
 {
-    // Get the shape class and tool from tools map - if not there, find and set
+    // Get the view class and tool from tools map - if not there, find and set
     Class sclass = ClassUtils.getClass(anObj);
     ViewTool tool = _tools.get(sclass);
     if(tool==null) {
@@ -724,28 +695,28 @@ public void resetCurrentTool()
 }
 
 /**
- * Scrolls selected shapes to visible.
+ * Scrolls selected views to visible.
  */
-public Rect getSelectedShapesBounds()
+public Rect getSelectedViewsBounds()
 {
-    // Get selected/super-selected shape(s) and parent (just return if parent is null or document)
-    List <? extends View> shapes = getSelectedOrSuperSelectedShapes();
-    View parent = shapes.get(0).getParent();
+    // Get selected/super-selected view(s) and parent (just return if parent is null or document)
+    List <? extends View> views = getSelectedOrSuperSelectedViews();
+    View parent = views.get(0).getParent();
     //if(parent==null || parent instanceof RMDocument)
     //    return getDocBounds();
     
-    // Get select shapes rect in viewer coords and return
-    Rect sbounds = shapes.get(0).getBounds(); //RMShapeUtils.getBoundsOfChildren(parent, shapes);
+    // Get select views rect in viewer coords and return
+    Rect sbounds = views.get(0).getBounds(); //ViewUtils.getBoundsOfChildren(parent, views);
     sbounds = parent.localToParent(this, sbounds).getBounds();
     return sbounds;
 }
 
 /**
- * Override to have zoom focus on selected shapes rect.
+ * Override to have zoom focus on selected views rect.
  */
 public Rect getZoomFocusRect()
 {
-    Rect sbounds = getSelectedShapesBounds();
+    Rect sbounds = getSelectedViewsBounds();
     Rect vrect = getVisRect();
     sbounds.inset((sbounds.getWidth() - vrect.getWidth())/2, (sbounds.getHeight() - vrect.getHeight())/2);
     return sbounds;
@@ -773,8 +744,8 @@ public void paintAbove(Painter aPntr)
     EditorProxGuide.paintProximityGuides(this, aPntr);
     
     // Paint DragShape, if set
-    if(_dragShape!=null) {
-        aPntr.setColor(new Color(0,.6,1,.5)); aPntr.setStrokeWidth(3); aPntr.draw(_dragShape); }
+    if(_dragView!=null) {
+        aPntr.setColor(new Color(0,.6,1,.5)); aPntr.setStrokeWidth(3); aPntr.draw(_dragView); }
 }
 
 /**
@@ -798,9 +769,9 @@ protected void processEvent(ViewEvent anEvent)
         if(isZoomToFactor()) {
             if(!getSize().equals(getPrefSize()))
                 relayout();
-            if(!getVisRect().contains(getSelectedShapesBounds()) &&
+            if(!getVisRect().contains(getSelectedViewsBounds()) &&
                 getSelectTool().getDragMode()==SelectTool.DragMode.Move)
-                setVisRect(getSelectedShapesBounds());
+                setVisRect(getSelectedViewsBounds());
         }
         
         // If zoom to fit, update zoom to fit factor (just returns if unchanged)
@@ -823,7 +794,7 @@ protected void setShowing(boolean aValue)
  */
 public void undo()
 {
-    // If undoer exists, do undo, select shapes and repaint
+    // If undoer exists, do undo, select views and repaint
     if(getUndoer()!=null && getUndoer().getUndoSetLast()!=null) {
         UndoSet undoSet = getUndoer().undo();
         setUndoSelection(undoSet.getUndoSelection());
@@ -839,7 +810,7 @@ public void undo()
  */
 public void redo()
 {
-    // If undoer exists, do undo, select shapes and repaint
+    // If undoer exists, do undo, select views and repaint
     if(getUndoer()!=null && getUndoer().getRedoSetLast()!=null) {
         UndoSet redoSet = getUndoer().redo();
         setUndoSelection(redoSet.getRedoSelection());
@@ -857,7 +828,7 @@ protected void setUndoSelection(Object aSelection)
 {
     // Handle List <View>
     if(aSelection instanceof List)
-        setSelectedShapes((List)aSelection);
+        setSelectedViews((List)aSelection);
 }
 
 /**
@@ -875,7 +846,7 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
         
         // If no changes yet, set selected objects
         if(undoer.getActiveUndoSet().getChangeCount()==0)
-            undoer.setUndoSelection(new ArrayList(getSelectedOrSuperSelectedShapes()));
+            undoer.setUndoSelection(new ArrayList(getSelectedOrSuperSelectedViews()));
         
         // Add property change
         undoer.addPropertyChange(anEvent);
@@ -901,7 +872,7 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
 public Rect rootViewWillPaint(RootView aRV, Rect aRect)
 {
     Rect rect = parentToLocal(aRV, aRect).getBounds();
-    if(rect.intersects(getBoundsInside())) { rect.inset(-4); aRect = localToParent(aRV, rect).getBounds(); }
+    if(rect.intersects(getBoundsLocal())) { rect.inset(-4); aRect = localToParent(aRV, rect).getBounds(); }
     return aRect;
 }
 
@@ -917,17 +888,17 @@ protected void saveUndoerChanges()
     // Get undoer
     Undoer undoer = getUndoer(); if(undoer==null || !undoer.isEnabled()) return;
     
-    // Set undo selected-shapes
-    List shapes = getSelectedShapeCount()>0? getSelectedShapes() : getSuperSelectedShapes();
+    // Set undo selected-views
+    List views = getSelectedViewCount()>0? getSelectedViews() : getSuperSelectedViews();
     if(undoer.getRedoSelection()==null)
-        undoer.setRedoSelection(new ArrayList(shapes));
+        undoer.setRedoSelection(new ArrayList(views));
     
     // Save undo changes
     undoer.saveChanges();
     
     // Re-enable animator
-    //View shape = getSelectedOrSuperSelectedShape();
-    //if(shape.getAnimator()!=null) shape.getAnimator().setEnabled(true);
+    //View view = getSelectedOrSuperSelectedView();
+    //if(view.getAnimator()!=null) view.getAnimator().setEnabled(true);
 }
 
 /**

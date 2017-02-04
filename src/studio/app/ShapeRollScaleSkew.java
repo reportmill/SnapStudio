@@ -19,7 +19,7 @@ public ShapeRollScaleSkew(EditorPane anEP)  { super(anEP); }
 public void resetUI()
 {
     // Get currently selected shape
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     
     // Update RotationThumb and RotationText
     setViewValue("RotationThumb", shape.getRotate());
@@ -52,8 +52,8 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get currently selected shape and shapes
     Editor editor = getEditor();
-    View shape = editor.getSelectedOrSuperSelectedShape();
-    List <View> shapes = editor.getSelectedOrSuperSelectedShapes();
+    View shape = editor.getSelectedOrSuperSelectedView();
+    List <View> shapes = editor.getSelectedOrSuperSelectedViews();
     
     // Handle Rotation Thumb & Text
     if(anEvent.equals("RotationThumb") || anEvent.equals("RotationText")) {

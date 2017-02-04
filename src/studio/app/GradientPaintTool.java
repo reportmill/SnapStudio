@@ -14,7 +14,7 @@ public class GradientPaintTool extends FillTool {
 public void resetUI()
 {
     // Get currently selected shape and shape gradient fill (just return if null)
-    View shape = getEditor().getSelectedOrSuperSelectedShape(); if(shape==null) return;
+    View shape = getEditor().getSelectedOrSuperSelectedView(); if(shape==null) return;
     GradientPaint fill = getDefaultFill(shape);
     
     GradientStopPicker picker = getView("ColorStopPicker", GradientStopPicker.class);
@@ -47,7 +47,7 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Get currently selected shape and its fill (just return if null)
-    View shape = getEditor().getSelectedOrSuperSelectedShape(); if(shape==null) return;
+    View shape = getEditor().getSelectedOrSuperSelectedView(); if(shape==null) return;
     GradientPaint oldfill = getDefaultFill(shape), newFill = null;
     
     // Handle ColorStopPicker

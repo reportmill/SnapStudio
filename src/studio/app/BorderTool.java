@@ -24,7 +24,7 @@ private List <Border> createStrokes()
 {
     Editor editor = getEditor();
     List <Border> strokes = new ArrayList();
-    for(View shape : editor.getSelectedOrSuperSelectedShapes())
+    for(View shape : editor.getSelectedOrSuperSelectedViews())
         strokes.add(shape.getBorder()!=null? shape.getBorder() : Border.createLineBorder(Color.BLACK,1));
     return _strokes = strokes;
 }
@@ -44,7 +44,7 @@ public void processResetUI()
 public void resetUI()
 {
     // Get currently selected shape
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     Border stroke = shape.getBorder(); if(stroke==null) stroke = Border.createLineBorder(Color.BLACK,1);
     
     // Update StrokeColorWell, StrokeWidthText, StrokeWidthThumb, DashArrayText, DashPhaseSpinner
@@ -62,8 +62,8 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get editor selected shapes and selected shape
     Editor editor = getEditor();
-    List <View> shapes = editor.getSelectedOrSuperSelectedShapes();
-    View shape = editor.getSelectedOrSuperSelectedShape();
+    List <View> shapes = editor.getSelectedOrSuperSelectedViews();
+    View shape = editor.getSelectedOrSuperSelectedView();
     
     // Handle StrokeColorWell - get color and set in selected shapes
     if(anEvent.equals("StrokeColorWell")) {

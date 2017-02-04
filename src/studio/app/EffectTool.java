@@ -42,7 +42,7 @@ public Effect getEffect(int anIndex)  { return _effects[anIndex]; }
  */
 public Effect getSelectedEffect()
 {
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     return shape.getEffect();
 }
 
@@ -52,8 +52,8 @@ public Effect getSelectedEffect()
 public void setSelectedEffect(Effect anEffect)
 {
     Editor editor = getEditor();
-    for(int i=0, iMax=editor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = editor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=editor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = editor.getSelectedOrSuperSelectedView(i);
         shape.setEffect(anEffect);
     }
 }

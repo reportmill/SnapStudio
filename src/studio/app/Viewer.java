@@ -23,7 +23,7 @@ public class Viewer extends Box { //implements PropChangeListener {
     // The Source URL
     WebURL                   _url;
 
-    // The shape viewer uses to manage real root of shapes
+    // The view used to manage real root of views
     Box                      _cbox = new Box();
     
     // The Zoom mode
@@ -56,17 +56,17 @@ public Viewer()
 }
 
 /**
- * Returns the viewer shape.
+ * Returns the viewer view.
  */
 public Box getContentBox()  { return _cbox; }
 
 /**
- * Returns the root shape that is the content of this viewer.
+ * Returns the root view that is the content of this viewer.
  */
 public ParentView getContent()  { return (ParentView)_cbox.getContent(); }
 
 /**
- * Sets the root shape that is the content of this viewer.
+ * Sets the root view that is the content of this viewer.
  */
 public void setContent(View aView)
 {
@@ -103,36 +103,36 @@ public void setContent(Object aSource)
 public WebURL getSourceURL()  { return _url; }
 
 /**
- * Returns a point converted from viewer coords to the coordinate space of the given shape.
+ * Returns a point converted from viewer coords to the coordinate space of the given view.
  */
-public Point convertToShape(View aView, double aX, double aY)
+public Point localToView(View aView, double aX, double aY)
 {
     View view = aView!=null? aView : getContent().getParent();
     return view.parentToLocal(this, aX, aY);
 }
 
 /**
- * Returns a point converted from viewer coords to the coordinate space of the given shape.
+ * Returns a point converted from viewer coords to the coordinate space of the given view.
  */
-public Point convertFromShape(View aView, double aX, double aY)
-{
-    View view = aView!=null? aView : getContent().getParent();
-    return view.localToParent(this, aX, aY);
-}
-
-/**
- * Returns a point converted from viewer coords to the coordinate space of the given shape.
- */
-public Shape convertToShape(View aView, Shape aShape)
+public Shape localToView(View aView, Shape aShape)
 {
     View view = aView!=null? aView : getContent().getParent();
     return view.parentToLocal(this, aShape);
 }
 
 /**
- * Returns a point converted from viewer coords to the coordinate space of the given shape.
+ * Returns a point converted from viewer coords to the coordinate space of the given view.
  */
-public Shape convertFromShape(View aView, Shape aShape)
+public Point viewToLocal(View aView, double aX, double aY)
+{
+    View view = aView!=null? aView : getContent().getParent();
+    return view.localToParent(this, aX, aY);
+}
+
+/**
+ * Returns a point converted from viewer coords to the coordinate space of the given view.
+ */
+public Shape viewToLocal(View aView, Shape aShape)
 {
     View view = aView!=null? aView : getContent().getParent();
     return view.localToParent(this, aShape);
@@ -228,7 +228,7 @@ public double getZoomFactor(ZoomMode aMode)
 public void setZoomToFitFactor()  { setZoomFactorImpl(getZoomFactor(getZoomMode())); }
 
 /**
- * Returns zoom focus rect (just the visible rect by default, but overriden by editor to return selected shapes rect).
+ * Returns zoom focus rect (just the visible rect by default, but overriden by editor to return selected views rect).
  */
 public Rect getZoomFocusRect()  { return getVisRect(); }
 
@@ -253,25 +253,25 @@ public void setWidth(double aValue)  { super.setWidth(aValue); setZoomToFitFacto
 public void setHeight(double aValue)  { super.setHeight(aValue); setZoomToFitFactor(); }
 
 /**
- * Returns the content shape's X location in viewer.
+ * Returns the content view's X location in viewer.
  */
 public int getContentX()
 {
-    float align = .5f; //RMShapeUtils.getAutosizeAlignmentX(getContent());
+    float align = .5f; //ViewUtils.getAutosizeAlignmentX(getContent());
     return (int)Math.round(Math.max((getWidth()-getContent().getWidth()*getZoomFactor())*align, 0));
 }
 
 /**
- * Returns the content shape's Y location in viewer.
+ * Returns the content view's Y location in viewer.
  */
 public int getContentY()
 {
-    float align = .5f; //RMShapeUtils.getAutosizeAlignmentY(getContent());
+    float align = .5f; //ViewUtils.getAutosizeAlignmentY(getContent());
     return (int)Math.round(Math.max((getHeight()-getContent().getHeight()*getZoomFactor())*align, 0));
 }
 
 /**
- * Override to paint viewer shapes and page, margin, grid, etc.
+ * Override to paint viewer views and page, margin, grid, etc.
  */
 public void paintFront(Painter aPntr)
 {
@@ -279,7 +279,6 @@ public void paintFront(Painter aPntr)
     //RMShapePaintProps props = createShapePaintProps(); if(props!=null) aPntr.setProps(props);
     //RMShapeUtils.paintShape(aPntr, _vshape, bnds, scale);
     //if(props!=null) aPntr.setProps(null); //RMShapePainter spntr = getShapePainter(aPntr); spntr.paintShape(_vshape);
-    //getInputAdapter().paint(aPntr); // Have input adapter paint above
 }
 
 /**

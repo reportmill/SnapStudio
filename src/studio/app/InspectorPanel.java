@@ -68,7 +68,7 @@ public void resetUI()
 {
     // Get editor (and just return if null) and tool for selected shapes
     Editor editor = getEditor(); if(editor==null) return;
-    ViewTool tool = editor.getTool(editor.getSelectedOrSuperSelectedShapes());
+    ViewTool tool = editor.getTool(editor.getSelectedOrSuperSelectedViews());
     
     // If ShapeSpecificButton is selected, instal inspector for current selection
     if(getViewBoolValue("ShapeSpecificButton"))
@@ -195,7 +195,7 @@ public void resetSelectionPathMatrix()
 {
     // Get main editor, Selected/SuperSelected shape and shape that should be selected in selection path
     Editor editor = getEditor();
-    View selectedShape = editor.getSelectedOrSuperSelectedShape();
+    View selectedShape = editor.getSelectedOrSuperSelectedView();
     View shape = _deepestShape!=null && _deepestShape.isAncestor(selectedShape)? _deepestShape : selectedShape;
     
     // If the selectedShape has changed because of external forces, reset selectionPath to point to it
@@ -258,7 +258,7 @@ public void popSelection(int selectedIndex)
     Editor editor = getEditor(); if(editor==null || _deepestShape==null) return;
     
     // If user selected descendant of current selected shape, select on down to it
-    if(selectedIndex > getParentCount(editor.getSelectedOrSuperSelectedShape())) {
+    if(selectedIndex > getParentCount(editor.getSelectedOrSuperSelectedView())) {
         
         // Get current deepest shape
         View shape = _deepestShape;
@@ -270,18 +270,18 @@ public void popSelection(int selectedIndex)
         // If shape parent's childrenSuperSelectImmediately, superSelect shape
         View par = shape.getParent(); ViewTool tool = editor.getTool(par);
         if(tool.childrenSuperSelectImmediately(par))
-            editor.setSuperSelectedShape(shape);
+            editor.setSuperSelectedView(shape);
 
         // If shape shouldn't superSelect, just select it
-        editor.setSelectedShape(shape);
+        editor.setSelectedView(shape);
     }
 
     // If user selected ancestor of current shape, pop selection up to it
-    else while(selectedIndex != getParentCount(editor.getSelectedOrSuperSelectedShape()))
+    else while(selectedIndex != getParentCount(editor.getSelectedOrSuperSelectedView()))
         editor.popSelection();
 
     // Set selected shape to new editor selected shape
-    _selectedShape = editor.getSelectedOrSuperSelectedShape();
+    _selectedShape = editor.getSelectedOrSuperSelectedView();
     
     // Make sure shape specific inspector is selected
     if(!getViewBoolValue("ShapeSpecificButton"))

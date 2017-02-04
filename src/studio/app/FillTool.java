@@ -31,7 +31,7 @@ public FillTool()  { super(null); }
 public void resetUI()
 {
     // Get currently selected shape
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     
     // Update FillColorWell
     setViewValue("FillColorWell", shape.getFillColor());    
@@ -44,7 +44,7 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get the current editor and currently selected shape (just return if null)
     Editor editor = getEditor(); if(editor==null) return;
-    View shape = editor.getSelectedOrSuperSelectedShape(); if(shape==null) return;
+    View shape = editor.getSelectedOrSuperSelectedView(); if(shape==null) return;
     
     // Handle FillColorWell
     if(anEvent.equals("FillColorWell")) {
@@ -54,7 +54,7 @@ public void respondUI(ViewEvent anEvent)
         Color color = cwell.getColor();
         
         // Iterate over selected shapes and set color
-        for(View s : editor.getSelectedOrSuperSelectedShapes()) {
+        for(View s : editor.getSelectedOrSuperSelectedViews()) {
             
             // If command-click, set gradient fill
             if(ViewUtils.isMetaDown()) {
@@ -94,7 +94,7 @@ public Paint getFill(int anIndex)  { return _fills[anIndex]; }
  */
 public Border getSelectedStroke()
 {
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     return shape.getBorder();
 }
 
@@ -104,8 +104,8 @@ public Border getSelectedStroke()
 public void setSelectedStroke(Border aStroke)
 {
     Editor editor = getEditor();
-    for(int i=0, iMax=editor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = editor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=editor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = editor.getSelectedOrSuperSelectedView(i);
         shape.setBorder(aStroke);
     }
 }
@@ -115,7 +115,7 @@ public void setSelectedStroke(Border aStroke)
  */
 public Paint getSelectedFill()
 {
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     return shape.getFill();
 }
 
@@ -125,8 +125,8 @@ public Paint getSelectedFill()
 public void setSelectedFill(Paint aFill)
 {
     Editor editor = getEditor();
-    for(int i=0, iMax=editor.getSelectedOrSuperSelectedShapeCount(); i<iMax; i++) {
-        View shape = editor.getSelectedOrSuperSelectedShape(i);
+    for(int i=0, iMax=editor.getSelectedOrSuperSelectedViewCount(); i<iMax; i++) {
+        View shape = editor.getSelectedOrSuperSelectedView(i);
         shape.setFill(aFill);
     }
 }

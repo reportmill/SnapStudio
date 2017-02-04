@@ -51,7 +51,7 @@ protected void initUI()
 public void resetUI()
 {
     // Get currently selected view
-    View view = getEditor().getSelectedOrSuperSelectedShape();
+    View view = getEditor().getSelectedOrSuperSelectedView();
     int tabViewIndex = getViewSelectedIndex("TabView");
     
     // If Stroke tab is showing, ensure proper inspector is showing and forward on
@@ -115,8 +115,8 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get the current editor and currently selected view list (just return if null)
     Editor editor = getEditor(); if(editor==null) return;
-    View view = editor.getSelectedOrSuperSelectedShape(); if(view==null) return;
-    List <View> views = editor.getSelectedOrSuperSelectedShapes();
+    View view = editor.getSelectedOrSuperSelectedView(); if(view==null) return;
+    List <View> views = editor.getSelectedOrSuperSelectedViews();
     int tabViewIndex = getViewSelectedIndex("TabView");
     
     // If Stroke tab is showing, handle basic StrokePane stuff

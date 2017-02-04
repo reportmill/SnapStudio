@@ -19,7 +19,7 @@ public ShapeLocationSize(EditorPane anEP)  { super(anEP); }
 public void resetUI()
 {
     // Get currently selected shape
-    View shape = getEditor().getSelectedOrSuperSelectedShape();
+    View shape = getEditor().getSelectedOrSuperSelectedView();
     
     // Update XThumb & XText
     setViewValue("XThumb", getUnitsFromPoints(shape.getX()));
@@ -56,8 +56,8 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get currently selected editor, document and shapes
     Editor editor = getEditor();
-    View view = editor.getSelectedOrSuperSelectedShape();
-    List <View> views = editor.getSelectedOrSuperSelectedShapes();
+    View view = editor.getSelectedOrSuperSelectedView();
+    List <View> views = editor.getSelectedOrSuperSelectedViews();
     
     // Handle X ThumbWheel and Text
     if(anEvent.equals("XThumb") || anEvent.equals("XText")) {

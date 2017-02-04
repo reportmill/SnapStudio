@@ -201,8 +201,8 @@ public void respondUI(ViewEvent anEvent)
  */
 public void activateTool()
 {
-    if(getEditor().getSuperSelectedShape() instanceof TextView)
-        getEditor().setSuperSelectedShape(getEditor().getSuperSelectedShape().getParent());
+    if(getEditor().getSuperSelectedView() instanceof TextView)
+        getEditor().setSuperSelectedView(getEditor().getSuperSelectedView().getParent());
 }
 
 /**
@@ -215,7 +215,7 @@ public void mouseMoved(ViewEvent anEvent)  { getEditor().setCursor(Cursor.TEXT);
  */
 public void mouseMoved(T aText, ViewEvent anEvent)
 {
-    if(getEditor().getShapeAtPoint(anEvent.getPoint()) instanceof TextView) {
+    if(getEditor().getViewAtPoint(anEvent.getPoint()) instanceof TextView) {
         getEditor().setCursor(Cursor.TEXT); anEvent.consume(); }
 }
 
@@ -226,10 +226,10 @@ public void mousePressed(ViewEvent anEvent)
 {
     // Register all selectedShapes dirty because their handles will probably need to be wiped out
     Editor editor = getEditor();
-    editor.getSelectedShapes().forEach(i -> i.repaint());
+    editor.getSelectedViews().forEach(i -> i.repaint());
 
     // Get shape hit by down point
-    _downView = editor.getShapeAtPoint(anEvent.getX(),anEvent.getY());
+    _downView = editor.getViewAtPoint(anEvent.getX(),anEvent.getY());
     
     // Get _downPoint from editor
     _downPoint = getEditorEvents().getEventPointInShape(true);
@@ -240,9 +240,9 @@ public void mousePressed(ViewEvent anEvent)
     
     // Add shape to superSelectedShape (within an undo grouping) and superSelect
     editor.undoerSetUndoTitle("Add Text");
-    ParentView parent = editor.getSuperSelectedParentShape(); ViewTool ptool = getTool(parent);
+    ParentView parent = editor.getSuperSelectedParentView(); ViewTool ptool = getTool(parent);
     ptool.addChild(parent, _view);
-    editor.setSuperSelectedShape(_view);
+    editor.setSuperSelectedView(_view);
     _updatingSize = true;
 }
 
@@ -291,7 +291,7 @@ public void mouseReleased(ViewEvent anEvent)
         if(_downView instanceof TextView) {
             ParentView pview = _view.getParent(); ViewTool ptool = getTool(pview);
             ptool.removeChild(pview, _view);
-            getEditor().setSuperSelectedShape(_downView);
+            getEditor().setSuperSelectedView(_downView);
         }
         
         // If hit shape is Rectangle, Oval or Polygon, swap for RMText and return
@@ -519,7 +519,7 @@ public void convertToText(View aView, String aString)
         text.setText(aString);
     
     // Select new shape
-    getEditor().setSuperSelectedShape(text);
+    getEditor().setSuperSelectedView(text);
 }
 
 /**

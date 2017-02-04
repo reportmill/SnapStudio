@@ -54,7 +54,7 @@ public void dragOver(ViewEvent anEvent)
     anEvent.acceptDrag(); //DnDConstants.ACTION_COPY);
     
     // Get shape at drag point (or the page, if none there)
-    View overShape = _editor.getShapeAtPoint(anEvent.getPoint()); //true
+    View overShape = _editor.getViewAtPoint(anEvent.getPoint()); //true
     if(overShape==null)
         overShape = _editor.getContent();
     
@@ -73,7 +73,7 @@ public void dragOver(ViewEvent anEvent)
         _editor.getTool(overShape).dragEnter(overShape, anEvent);
         
         // Get bounds of over shape in editor coords
-        Rect bounds = overShape.getBoundsInside();
+        Rect bounds = overShape.getBoundsLocal();
         //_editor._dragShape = _editor.convertFromShape(bounds, overShape);
         _editor.repaint();
         
@@ -90,7 +90,7 @@ public void dragOver(ViewEvent anEvent)
  */
 public void dragExit(ViewEvent anEvent)
 {
-    _editor._dragShape = null; _editor.repaint();        // Clear DragShape
+    _editor._dragView = null; _editor.repaint();        // Clear DragShape
     EditorProxGuide.clearGuidelines(_editor);          // Reset proximity guide
 }
 
@@ -112,7 +112,7 @@ public void dragDrop(ViewEvent anEvent)
     anEvent.dropComplete();  //(true);
     
     // Clear DragShape (which may have been set during dragOver)
-    _editor._dragShape = null; _editor.repaint();
+    _editor._dragView = null; _editor.repaint();
 }
 
 }

@@ -168,7 +168,7 @@ protected ViewTool[] createToolBarTools()
     tools.add(editor.getTool(RectView.class));
     tools.add(editor.getTool(ArcView.class));
     tools.add(editor.getTool(TextView.class));
-    //tools.add(editor.getTool(RMPolygonShape.class));
+    tools.add(editor.getTool(PathView.class));
     //tools.add(new RMPolygonShapeTool.PencilTool());
     return tools.toArray(new ViewTool[0]);
 }

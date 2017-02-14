@@ -25,7 +25,7 @@ protected void initUI()  { }
 public void resetUI()
 {
     // Get selected rectangle (just return if null)
-    RectView rect = getSelectedShape(); if(rect==null) return;
+    RectView rect = getSelectedView(); if(rect==null) return;
     
     // Update RoundingThumb and RoundingText
     setViewValue("RoundingThumb", rect.getRadius());
@@ -38,8 +38,8 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Get the current rect view and rects list (just return if null)
-    RectView rect = getSelectedShape(); if(rect==null) return;
-    List <RectView> rects = (List)getSelectedShapes();
+    RectView rect = getSelectedView(); if(rect==null) return;
+    List <RectView> rects = (List)getSelectedViews();
 
     // Handle Rounding Radius Thumb & Text
     if(anEvent.equals("RoundingThumb") || anEvent.equals("RoundingText")) {

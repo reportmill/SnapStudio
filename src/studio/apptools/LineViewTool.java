@@ -135,7 +135,7 @@ protected void initUI()
 public void resetUI()
 {
     // Get selected line and arrow head
-    LineView line = getSelectedShape(); if(line==null) return;
+    LineView line = getSelectedView(); if(line==null) return;
     //LineView.ArrowHead ahead = line.getArrowHead();
     
     // Update ArrowsMenuButton
@@ -155,7 +155,7 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Get selected shape and arrow head
-    LineView line = getSelectedShape();
+    LineView line = getSelectedView();
     //LineView.ArrowHead arrowHead = line.getArrowHead();
 
     // Handle ScaleText and ScaleThumbWheel

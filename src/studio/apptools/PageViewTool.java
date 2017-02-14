@@ -36,7 +36,7 @@ protected void initUI()
 public void resetUI()
 {
     // Get currently selected page (just return if null)
-    PageView page = getSelectedShape(); if(page==null) return;
+    PageView page = getSelectedView(); if(page==null) return;
         
     // Update AddButton, RemoveButton, RenameButton, MergeButton enabled state
     //setViewEnabled("AddButton", page.getLayerCount()>0);
@@ -55,7 +55,7 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Get currently selected page (just return if null)
-    PageView page = getSelectedShape(); if(page==null) return;
+    PageView page = getSelectedView(); if(page==null) return;
 
     // Handle DatasetKeyText
     //if(anEvent.equals("DatasetKeyText") && anEvent.isDragDropEvent())
@@ -138,7 +138,7 @@ public void respondUI(ViewEvent anEvent)
 /*public void configureLayersTable(ListCell <RMPageLayer> aCell)
 {
     if(aCell.getCol()!=1) return;
-    RMPage page = getSelectedShape(); if(page==null) return; int index = aCell.getRow();
+    RMPage page = getSelectedView(); if(page==null) return; int index = aCell.getRow();
     RMPageLayer layer = index>=0 && index<page.getLayerCount()? page.getLayer(index) : null;
     int state = layer!=null? layer.getLayerState() : -1;
     if(state==RMPageLayer.StateVisible) aCell.setImage(_visibleIcon);

@@ -50,7 +50,7 @@ public void resetUI()
 {
     // Get editor and currently selected text
     Editor editor = getEditor();
-    TextView text = getSelectedShape(); if(text==null) return;
+    TextView text = getSelectedView(); if(text==null) return;
     
     // Get text style and line style
     TextStyle style = text.getRichText().getStyleAt(0);
@@ -113,8 +113,8 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get editor, currently selected text view and text views (just return if null)
     Editor editor = getEditor();
-    TextView text = getSelectedShape(); if(text==null) return;
-    List <TextView> texts = (List)getSelectedShapes();
+    TextView text = getSelectedView(); if(text==null) return;
+    List <TextView> texts = (List)getSelectedViews();
     
     // Register repaint for texts
     texts.forEach(i -> i.repaint());
@@ -383,7 +383,7 @@ public void willLoseSuperSelected(T aText)
 public void textPropChange(PropChange aPC)
 {
     // Get Selected TextView
-    TextView text = getSelectedShape(); if(text==null) return;
+    TextView text = getSelectedView(); if(text==null) return;
     String prop = aPC.getPropertyName();
     
     // If updating size, reset text width & height to accommodate text
@@ -400,7 +400,7 @@ public void textPropChange(PropChange aPC)
  */
 protected void textViewPropChange(PropChange aPC)
 {
-    TextView text = getSelectedShape();
+    TextView text = getSelectedView();
     text.setSel(_textView.getSelStart(), _textView.getSelEnd());
 }
 
@@ -409,7 +409,7 @@ protected void textViewPropChange(PropChange aPC)
  */
 protected void editorFocusedChange()
 {
-    TextView text = getSelectedShape(); if(text==null) return;
+    TextView text = getSelectedView(); if(text==null) return;
     text.setCaretAnim(isCaretAnimNeeded(text));
 }
 

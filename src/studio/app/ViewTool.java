@@ -201,17 +201,17 @@ public Point getEventPointInSuperSelectedView(boolean snapToGrid, boolean snapEd
 /**
  * Returns the current selected view for the current editor.
  */
-public T getSelectedShape()
+public T getSelectedView()
 {
     Editor e = getEditor(); if(e==null) return null;
-    View s = e.getSelectedOrSuperSelectedView();
-    return ClassUtils.getInstance(s, getViewClass());
+    View view = e.getSelectedOrSuperSelectedView();
+    return ClassUtils.getInstance(view, getViewClass());
 }
 
 /**
  * Returns the current selected views for the current editor.
  */
-public List <? extends View> getSelectedShapes()  { return getEditor().getSelectedOrSuperSelectedViews(); }
+public List <? extends View> getSelectedViews()  { return getEditor().getSelectedOrSuperSelectedViews(); }
 
 /**
  * Returns a tool for given object.

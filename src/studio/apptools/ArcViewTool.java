@@ -25,7 +25,7 @@ protected T newInstance()
  */
 public void resetUI()
 {    
-    ArcView arc = getSelectedShape(); if(arc==null) return;
+    ArcView arc = getSelectedView(); if(arc==null) return;
     setViewValue("StartThumb", arc.getStartAngle());
     setViewValue("StartText", arc.getStartAngle());
     setViewValue("SweepThumb", arc.getSweepAngle());
@@ -37,8 +37,8 @@ public void resetUI()
  */
 public void respondUI(ViewEvent anEvent)
 {
-    ArcView arc = getSelectedShape(); if(arc==null) return;
-    List <ArcView> arcs = (List)getSelectedShapes();
+    ArcView arc = getSelectedView(); if(arc==null) return;
+    List <ArcView> arcs = (List)getSelectedViews();
     
     // Handle StartThumb, StartText
     if(anEvent.equals("StartThumb") || anEvent.equals("StartText")) {

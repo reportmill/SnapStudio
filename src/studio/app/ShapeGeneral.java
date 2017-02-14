@@ -31,8 +31,8 @@ protected void initUI()
  */
 public void resetUI()
 {
-    // Get currently selected shape
-    View shape = getSelectedShape();
+    // Get currently selected view
+    View shape = getSelectedView();
 
     // Reset table model shape
     _bindingsTable.setItems(new String[] { "X", "Y", "Width", "Height" }); //shape.getPropNames());
@@ -50,8 +50,8 @@ public void resetUI()
  */
 public void respondUI(ViewEvent anEvent)
 {
-    // Get the current editor and selected shape (just return if null) and selected shapes
-    View shape = getSelectedShape(); if(shape==null) return;
+    // Get the current editor and selected view (just return if null) and selected shapes
+    View shape = getSelectedView(); if(shape==null) return;
     List <View> shapes = getEditor().getSelectedOrSuperSelectedViews();
     
     // Handle BindingsTable
@@ -89,9 +89,9 @@ public void respondUI(ViewEvent anEvent)
 }
 
 /**
- * Returns the current selected shape for the current editor.
+ * Returns the current selected view for the current editor.
  */
-public View getSelectedShape()
+public View getSelectedView()
 {
     Editor e = getEditor(); if(e==null) return null;
     return e.getSelectedOrSuperSelectedView();
@@ -104,8 +104,8 @@ private void configureBindingsTable(ListCell <String> aCell)
 {
     if(aCell.getCol()==0) return;
     String pname = aCell.getItem(); if(pname==null) return;
-    View shape = getSelectedShape(); if(shape==null) return;
-    Binding binding = getSelectedShape().getBinding(pname);
+    View shape = getSelectedView(); if(shape==null) return;
+    Binding binding = getSelectedView().getBinding(pname);
     aCell.setText(binding!=null? binding.getKey() : null);
 }
 

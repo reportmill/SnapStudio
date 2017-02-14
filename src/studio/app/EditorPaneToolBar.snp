@@ -35,7 +35,7 @@
     <ToggleButton Name="RectViewToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Rect Tool" image="/studio/apptools/pkg.images/RectView.png" Position="CENTER" ToggleGroup="bg1" />
     <ToggleButton Name="ArcViewToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Arc Tool" image="/studio/apptools/pkg.images/ArcView.png" Position="CENTER" ToggleGroup="bg1" />
     <ToggleButton Name="TextViewToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Text Tool" image="/studio/apptools/pkg.images/TextView.png" Position="CENTER" ToggleGroup="bg1" />
-    <ToggleButton Name="PolygonToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Polygon Tool" image="/studio/apptools/pkg.images/PolygonView.png" Position="CENTER" ToggleGroup="bg1" />
+    <ToggleButton Name="PathViewToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Path Tool" image="/studio/apptools/pkg.images/PolygonView.png" Position="CENTER" ToggleGroup="bg1" />
     <ToggleButton Name="PencilToolButton" PrefWidth="24" PrefHeight="24" ToolTip="Pencil Tool" image="/studio/apptools/pkg.images/PencilView.png" Position="CENTER_RIGHT" ToggleGroup="bg1" />
   </HBox>
   <Separator PrefWidth="16" PrefHeight="18" Vertical="true" />

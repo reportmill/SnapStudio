@@ -8,7 +8,7 @@ import snap.view.*;
 import static studio.apptools.PathViewUtils.*;
 
 /**
- * This class manages creation and editing of polygon shapes.
+ * This class manages creation and editing of PathViews.
  */
 public class PathViewTool <T extends PathView> extends ViewTool <T> {
     
@@ -49,10 +49,10 @@ public void respondUI(ViewEvent anEvent)
 /**
  * Returns the class that this tool is responsible for.
  */
-public Class getShapeClass()  { return PathView.class; }
+public Class getViewClass()  { return PathView.class; }
 
 /**
- * Returns a new instance of the shape class that this tool is responsible for.
+ * Returns a new instance of the view class that this tool is responsible for.
  */
 protected T newInstance()  { T view = super.newInstance(); view.setBorder(Color.BLACK,1); return view; }
 
@@ -69,7 +69,7 @@ public void mousePressed(ViewEvent anEvent)
     boolean smoothPath = getSmoothPath(); if(anEvent.isAltDown()) smoothPath = !smoothPath;
     Point point = getEditorEvents().getEventPointInDoc(!smoothPath);
 
-    // Register all selectedShapes dirty because their handles will probably need to be wiped out
+    // Register all selectedViews dirty because their handles will probably need to be wiped out
     getEditor().getSelectedViews().forEach(i -> i.repaint());
 
     // If this is the first mouseDown of a new path, create path and add moveTo. Otherwise add lineTo to current path
@@ -108,7 +108,7 @@ public void mouseReleased(ViewEvent anEvent)
 {
     if(_smoothPathOnMouseUp && _pointCountOnMouseDown<_path.getPointCount()) {
         getEditor().repaint();
-        //RMPathFitCurves.fitCurveFromPointIndex(_path, _pointCountOnMouseDown);
+        PathFitCurves.fitCurveFromPointIndex(_path, _pointCountOnMouseDown);
     }
 
     // Check to see if point landed in first point
@@ -150,7 +150,7 @@ public void mouseReleased(ViewEvent anEvent)
  */
 public void mouseMoved(T aPathView, ViewEvent anEvent)
 {
-    // Get the mouse down point in shape coords
+    // Get the mouse down point in view coords
     Point point = getEditor().localToView(aPathView, anEvent.getX(), anEvent.getY());
     
     // If control point is hit, change cursor to move
@@ -165,17 +165,17 @@ public void mouseMoved(T aPathView, ViewEvent anEvent)
 }
 
 /**
- * Event handling for shape editing.
+ * Event handling for view editing.
  */
 public void mousePressed(T aPathView, ViewEvent anEvent)
 {
-    // If shape isn't super selected, just return
+    // If view isn't super selected, just return
     if(!isSuperSelected(aPathView)) return;
     
-    // Get mouse down point in shape coords (but don't snap to the grid)
+    // Get mouse down point in view coords (but don't snap to the grid)
     Point point = getEditorEvents().getEventPointInShape(false);
     
-    // Register shape for repaint
+    // Register view for repaint
     aPathView.repaint();
     
     // check for degenerate path
@@ -198,7 +198,7 @@ public void mousePressed(T aPathView, ViewEvent anEvent)
 }
 
 /**
- * Event handling for shape editing.
+ * Event handling for view editing.
  */
 public void mouseDragged(T aPathView, ViewEvent anEvent)
 {
@@ -216,7 +216,7 @@ public void mouseDragged(T aPathView, ViewEvent anEvent)
 }
 
 /**
- * Actually creates a new polygon shape from the polygon tool's current path.
+ * Actually creates a new path view from the path tool's current path.
  */
 private void createPoly()
 {
@@ -228,11 +228,9 @@ private void createPoly()
         pview.setBorder(Color.BLACK, 1);
         pview.setPath(_path);
 
-        // Add shape to superSelectedShape (within an undo grouping).
+        // Add view to superSelectedView (within an undo grouping) and select
         getEditor().undoerSetUndoTitle("Add Polygon");
         getTool(parent).addChild(parent, pview);
-
-        // Select Shape
         getEditor().setSelectedView(pview);
     }
 
@@ -251,11 +249,11 @@ public void deactivateTool()  { createPoly(); }
 public void reactivateTool()  { createPoly(); }
 
 /**
- * Editor method - called when an instance of this tool's shape in de-super-selected.
+ * Editor method - called when an instance of this tool's view in de-super-selected.
  */
-public void willLoseSuperSelected(T aShape)
+public void willLoseSuperSelected(T aView)
 {
-    super.willLoseSuperSelected(aShape);
+    super.willLoseSuperSelected(aView);
     _selectedPointIndex = -1;
 }
 
@@ -276,11 +274,11 @@ public void paintTool(Painter aPntr)
 }
 
 /**
- * Returns the bounds for this shape when it's super-selected.
+ * Returns the bounds for this view when it's super-selected.
  */
 public Rect getBoundsSuperSelected(T aView) 
 {
-    // Get shape bounds and shape path bounds
+    // Get view bounds and view path bounds
     Rect bounds = aView.getBoundsLocal();
     Rect pathBounds = aView.getPath().getBounds();
 
@@ -368,10 +366,10 @@ public void runContextMenu(PathView aPathView, ViewEvent anEvent)
     
     // Otherwise if the path itself was hit, use 'add point'
     else {
-        // Convert event point to shape coords
+        // Convert event point to view coords
         _newPoint = getEditor().localToView(aPathView, anEvent.getX(), anEvent.getY());
         
-        // linewidth is probably in shape coords, and might need to get transformed to path coords here
+        // linewidth is probably in view coords, and might need to get transformed to path coords here
         if(path.intersects(_newPoint.getX(), _newPoint.getY(), Math.max(aPathView.getBorder().getWidth(),8))) {
             mtitle = "Add Anchor Point"; mname = "AddPointMenuItem"; }
     }
@@ -387,7 +385,7 @@ public void runContextMenu(PathView aPathView, ViewEvent anEvent)
 }
 
 /**
- * Delete the selected control point and readjust shape bounds
+ * Delete the selected control point and readjust view bounds
  */
 public void deleteSelectedPoint()
 {
@@ -404,9 +402,9 @@ public void deleteSelectedPoint()
     // delete the point from path in parent coords
     path.removeSeg(elementIndex);
 
-    // if all points have been removed, delete the shape itself
+    // if all points have been removed, delete the view itself
     if (path.getSegCount()==0) {
-        getEditor().undoerSetUndoTitle("Delete Shape");
+        getEditor().undoerSetUndoTitle("Delete PathView");
         pview.getParent().repaint();
         getTool(pview.getParent()).removeChild(pview.getParent(), pview); //pview.removeFromParent();
         getEditor().setSelectedView(null);

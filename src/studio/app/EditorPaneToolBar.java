@@ -4,6 +4,7 @@ import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
 import snap.viewx.ColorButton;
+import studio.apptools.PathViewTool;
 
 /**
  * Tool bar for EditorPane.
@@ -169,7 +170,7 @@ protected ViewTool[] createToolBarTools()
     tools.add(editor.getTool(ArcView.class));
     tools.add(editor.getTool(TextView.class));
     tools.add(editor.getTool(PathView.class));
-    //tools.add(new RMPolygonShapeTool.PencilTool());
+    tools.add(new PathViewTool.PencilTool(editor));
     return tools.toArray(new ViewTool[0]);
 }
 

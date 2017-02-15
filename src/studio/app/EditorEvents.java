@@ -21,8 +21,8 @@ public class EditorEvents {
     boolean      _overridePreview;
     
     // Constants for guide orientation
-    private static final byte GUIDE_HORIZONTAL = 0;
-    private static final byte GUIDE_VERTICAL = 1;
+    //private static final byte GUIDE_HORIZONTAL = 0;
+    //private static final byte GUIDE_VERTICAL = 1;
 
 /**
  * Creates a new EditorEvents.

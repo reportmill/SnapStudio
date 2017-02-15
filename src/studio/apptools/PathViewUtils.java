@@ -182,11 +182,6 @@ public static int getSegIndexForPointIndex(Path aPath, int index)
 }
 
 /**
- * Returns the total number of points associated with a given type of path element.
- */
-public static int pointCountForSeg(Seg aSeg)  { return aSeg.getCount(); }
-
-/**
  * Returns true of the point at pointIndex is on the path, and false if it is on the convex hull.
  */ 
 public static boolean pointOnPath(Path aPath, int pointIndex)

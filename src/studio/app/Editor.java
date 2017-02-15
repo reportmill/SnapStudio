@@ -468,8 +468,7 @@ public ParentView firstSuperSelectedViewThatAcceptsChildren()
 public ParentView firstSuperSelectedViewThatAcceptsChildrenAtPoint(Point aPoint)
 {
     // Go up chain of superSelectedViews until one acceptsChildren and is hit by aPoint
-    View view = getSuperSelectedView();
-    ParentView parent = view instanceof ParentView? (ParentView)view : view.getParent();
+    ParentView parent = getSuperSelectedView();
 
     // Iterate up view hierarchy until we find a view that is hit and accepts children
     while(!getTool(parent).getAcceptsChildren(parent) ||
@@ -489,7 +488,6 @@ public ParentView firstSuperSelectedViewThatAcceptsChildrenAtPoint(Point aPoint)
     }
 
     // Make sure page is worst case
-    if(parent==null) parent = getContent();
     if(parent==getContent() && getContentPage()!=null)
         parent = getContentPage();
 

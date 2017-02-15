@@ -734,7 +734,9 @@ public void moveViewHandle(ViewHandle <T> aViewHandle, Point toPoint)
     // If middle handles, constrain
     switch(handle) {
         case CENTER_LEFT: case CENTER_RIGHT: y = 0; h = view.getHeight(); break;
-        case BOTTOM_CENTER: case TOP_CENTER: x = 0; w = view.getWidth(); break; }
+        case BOTTOM_CENTER: case TOP_CENTER: x = 0; w = view.getWidth(); break;
+        default: break;
+    }
         
     // Set view bounds in local coords
     view.setBoundsLocal(x, y, w, h);

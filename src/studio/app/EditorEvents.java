@@ -59,9 +59,10 @@ public void processEvent(ViewEvent anEvent)
         case MousePress: mousePressed(anEvent); break;
         case MouseDrag: mouseDragged(anEvent); break;
         case MouseRelease: mouseReleased(anEvent); break;
-        case KeyPress: keyPressed(anEvent);
-        case KeyRelease: keyReleased(anEvent);
-        case KeyType: keyTyped(anEvent);
+        case KeyPress: keyPressed(anEvent); break;
+        case KeyRelease: keyReleased(anEvent); break;
+        case KeyType: keyTyped(anEvent); break;
+        default: break;
     }
 }
 
@@ -489,7 +490,7 @@ public Point getEventPointInDoc(boolean snapToGrid)
 /**
  * Returns the guide orientation for the given index.
  */
-private byte getGuideOrientation(int anIndex)  { return anIndex==0 || anIndex==1? GUIDE_VERTICAL : GUIDE_HORIZONTAL; }
+//private byte getGuideOrientation(int anIndex)  { return anIndex==0 || anIndex==1? GUIDE_VERTICAL : GUIDE_HORIZONTAL; }
 
 /**
  * Returns whether to override preview mode.

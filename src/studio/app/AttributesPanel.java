@@ -23,6 +23,7 @@ public class AttributesPanel extends EditorPane.SupportPane {
     public static final String COLOR = "Color";
     public static final String FONT = "Font";
     public static final String FORMAT = "Format";
+    public static final String CAST = "Cast";
 
 /**
  * Creates new AttributesPanel for EditorPane.
@@ -37,7 +38,7 @@ public String[] getInspectorNames()  { return _inspNames!=null? _inspNames : (_i
 /**
  * Creates the inspector names array.
  */
-public String[] createInspectorNames()  { return new String[] { GALLERY, COLOR, FONT }; }
+public String[] createInspectorNames()  { return new String[] { GALLERY, COLOR, FONT, CAST }; }
 
 /**
  * Returns the inspectors.
@@ -50,11 +51,12 @@ public ViewOwner[] getInspectors()  { return _insprs!=null? _insprs : (_insprs=c
 public ViewOwner[] createInspectors()
 {
     //KeysPanel keys = new KeysPanel(getEditorPane());
-    GalleryPane gallery = new GalleryPane();
+    GalleryPane gallery = new GalleryPane(getEditorPane());
     APColorPanel color = new APColorPanel();
     FontPanel font = new FontPanel(getEditorPane());
+    CastPane cast = new CastPane(getEditorPane());
     //FormatPanel format = new FormatPanel(getEditorPane());
-    return new ViewOwner[] { gallery, color, font };
+    return new ViewOwner[] { gallery, color, font, cast };
 }
 
 /**

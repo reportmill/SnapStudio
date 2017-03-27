@@ -806,11 +806,8 @@ public void dragOver(View aView, ViewEvent anEvent)  { }
  */
 public void drop(T aView, ViewEvent anEvent)
 {
-    // If a binding key drop, apply binding
-    //if(KeysPanel.getDragKey()!=null) KeysPanel.dropDragKey(aView, anEvent);
-
     // Handle String drop
-    /*else*/ if(anEvent.hasDragString())
+    if(anEvent.hasDragString())
         dropString(aView, anEvent);
 
     // Handle color panel drop
@@ -827,25 +824,19 @@ public void drop(T aView, ViewEvent anEvent)
  */
 public void dropString(T aView, ViewEvent anEvent)
 {
-    String str = anEvent.getDropString();
-    System.out.println("DropString: " + str);
-    if(!str.startsWith("GalleryPane: ")) return;
-    String cname = str.substring("GalleryPane: ".length());
-    Class cls = ClassUtils.getClass(cname);
-    View view = (View)ClassUtils.newInstance(cls);
-    Image img = Clipboard.getDrag().getDragImage();
-    Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
-    double w = img.getWidth(), h = img.getHeight();
-    double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
-    view.setBounds(x, y, w, h);
-    if(view instanceof ButtonBase)
-        view.setText(view.getClass().getSimpleName());
-    if(view instanceof RectView) {
-       view.setPrefSize(w,h); view.setFill(Color.PINK); view.setBorder(Color.BLACK,1); }
-   if(view instanceof Label)
-       view.setText("Label");
-    ((ChildView)aView).addChild(view);
-    getEditor().setSelectedView(view);
+    // If CastPane isDragging, forward on
+    if(CastPane.isDragging())
+        CastPane.get().dropActor(aView, anEvent);
+        
+    // If GalleryPane isDragging, forward on
+    else if(GalleryPane.isDragging())
+        GalleryPane.get().dropView(aView, anEvent);
+    
+    else if(aView instanceof ParentView) { ParentView pview = (ParentView)aView;
+        Clipboard cb = anEvent.getDragboard(); //Transferable transferable = anEvent.getTransferable();
+        getEditor().undoerSetUndoTitle("Drag and Drop Key");
+        EditorClipboard.paste(getEditor(), cb, pview, anEvent.getPoint());
+    }
 }
 
 /**

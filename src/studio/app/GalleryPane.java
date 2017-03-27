@@ -1,14 +1,26 @@
 package studio.app;
 import snap.gfx.*;
+import snap.util.ClassUtils;
 import snap.view.*;
 
 /**
  * A custom class.
  */
-public class GalleryPane extends ViewOwner {
+public class GalleryPane extends studio.app.EditorPane.SupportPane {
 
     // The UI
     VBox       _ui;
+
+    // The shared GalleryPane
+    static GalleryPane  _shared;
+    
+    // The currently dragging view
+    static View         _dragView;
+
+/**
+ * Creates a new GalleryPane.
+ */
+public GalleryPane(EditorPane anEP)  { super(anEP); _shared = this; }
 
 /**
  * Creates a new GalleryPane.
@@ -68,7 +80,7 @@ protected View createUI()
     //_ui.setFill(ViewUtils.getBackFill()); _ui.setEffect(new ShadowEffect());
     _ui.setBorder(Border.createCompoundBorder(Border.createLoweredBevelBorder(), Border.createEmptyBorder(8,8,8,12)));
     Box box = new Box(); box.setPadding(3,3,3,3); box.setContent(_ui); box.setFillWidth(true);
-    box.setAlign(Pos.TOP_CENTER); enableEvents(box, DragGesture);
+    box.setAlign(Pos.TOP_CENTER); enableEvents(box, DragGesture, ViewEvent.Type.DragSourceEnd);
     ScrollView sview = new ScrollView(box); sview.setFill(ViewUtils.getBackFill());
     sview.setGrowWidth(true); sview.setGrowHeight(true);
     return sview;
@@ -82,14 +94,18 @@ public void respondUI(ViewEvent anEvent)
     // Handle DragGesture
     if(anEvent.isDragGesture()) {
         ParentView view = anEvent.getView(ParentView.class); _ui.setPickable(true);
-        View view2 = ViewUtils.getDeepestChildAt(view, anEvent.getX(), anEvent.getY()); _ui.setPickable(false);
-        while(!(view2.getParent() instanceof ChildView))
-            view2 = view2.getParent();
+        _dragView = ViewUtils.getDeepestChildAt(view, anEvent.getX(), anEvent.getY()); _ui.setPickable(false);
+        while(!(_dragView.getParent() instanceof ChildView))
+            _dragView = _dragView.getParent();
         Clipboard dboard = anEvent.getDragboard();
-        dboard.setContent("GalleryPane: " + view2.getClass().getName());
-        Image img = ViewUtils.getImage(view2); dboard.setDragImage(img);
+        dboard.setContent("GalleryPane: " + _dragView.getClass().getName());
+        Image img = ViewUtils.getImage(_dragView); dboard.setDragImage(img);
         dboard.startDrag();
     }
+    
+    // Handle DragSource
+    if(anEvent.isDragSourceEnd())
+        _dragView = null;
 }
 
 /**
@@ -102,5 +118,48 @@ public void addItem(VBox aVBox, View aView)
     hbox.setChildren(label, aView);
     aVBox.addChild(hbox);
 }
+
+/**
+ * Drop a View.
+ */
+public void dropView(View aView, ViewEvent anEvent)
+{
+    String str = anEvent.getDropString();
+    
+    System.out.println("DropString: " + str);
+    if(!str.startsWith("GalleryPane: ")) return;
+    
+    //String cname = str.substring("GalleryPane: ".length());
+    Class cls = _dragView.getClass(); //ClassUtils.getClass(cname);
+    View view = (View)ClassUtils.newInstance(cls);
+    Image img = Clipboard.getDrag().getDragImage();
+    Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
+    double w = img.getWidth(), h = img.getHeight();
+    double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
+    view.setBounds(x, y, w, h);
+    if(view instanceof ButtonBase)
+        view.setText(view.getClass().getSimpleName());
+    if(view instanceof RectView) {
+       view.setPrefSize(w,h); view.setFill(Color.PINK); view.setBorder(Color.BLACK,1); }
+   if(view instanceof Label)
+       view.setText("Label");
+    ((ChildView)aView).addChild(view);
+    getEditor().setSelectedView(view);
+}
+
+/**
+ * Returns whether GalleryPane is dragging.
+ */
+public static boolean isDragging()  { return _dragView!=null; }
+
+/**
+ * Returns the current dragging view.
+ */
+public static View getDragView()  { return _dragView; }
+
+/**
+ * Returns the Shared GalleryPane.
+ */
+public static GalleryPane get()  { return _shared; }
 
 }

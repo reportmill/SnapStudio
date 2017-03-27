@@ -20,14 +20,4 @@ public Class <T> getViewClass()  { return (Class<T>)ParentView.class; }
  */
 public String getWindowTitle()  { return "Group Shape Inspector"; }
 
-/**
- * Called to handle dropping a string.
- */
-public void dropString(T aShape, ViewEvent anEvent)
-{
-    Clipboard cb = anEvent.getDragboard(); //Transferable transferable = anEvent.getTransferable();
-    getEditor().undoerSetUndoTitle("Drag and Drop Key");
-    EditorClipboard.paste(getEditor(), cb, aShape, anEvent.getPoint());    
-}
-
 }

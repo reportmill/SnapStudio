@@ -65,6 +65,9 @@ public Editor()
     // Enable ToolTips so getToolTip gets called and disable FocusKeys so tab doesn't leave editor
     setToolTipEnabled(true);
     setFocusKeysEnabled(false);
+    
+    // Listen for deep changes on ContentBox
+    getContentBox().addDeepChangeListener(this);
 }
 
 /**
@@ -84,9 +87,6 @@ public void setContent(View aView)
 {
     // If already set, just return
     if(aView==getContent()) return; super.setContent(aView);
-    
-    // Add deep change listener
-    aView.addDeepChangeListener(this);
     
     // Super-select new content
     setSuperSelectedView(aView);
@@ -110,6 +110,31 @@ public ParentView getContentPage()
     if(getTool(content).childrenSuperSelectImmediately(content) && content.getChildCount()>0)
         return (ParentView)content.getChild(0);
     return null;
+}
+
+/**
+ * The real save method.
+ */
+public void save() throws Exception
+{
+    // Get source file and save (update file might get called from here)
+    WebFile file = getSourceFile();
+    file.save();
+    
+    // Clear undoer
+    getUndoer().reset();
+}
+
+/**
+ * Updates the source file from editor.
+ */
+public void updateFile()
+{
+    WebFile file = getSourceFile();
+    if(file==null && getSourceURL()!=null) file = getSourceURL().createFile(false);
+    XMLElement xml = getContentXML();
+    byte bytes[] = xml.getBytes();
+    file.setBytes(bytes);
 }
 
 /**
@@ -876,7 +901,7 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
 }
 
 // A Shared updater to kick off save
-private WebFile.Updater _updr = file -> getEditorPane().save();
+private WebFile.Updater _updr = file -> updateFile();
 
 /**
  * RootView.Listener method.

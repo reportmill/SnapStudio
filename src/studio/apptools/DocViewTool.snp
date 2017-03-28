@@ -3,7 +3,7 @@
   <SpringView Name="BasicPanel" width="275" height="325" PrefWidth="275" PrefHeight="325">
     <TitleView x="2" width="170" height="150" Title="Paper Size">
       <SpringView width="170" height="150" PrefWidth="170" PrefHeight="150">
-        <View Name="PageSizeView" x="4" y="2" width="162" height="108" Class="com.reportmill.apptools.RMDocumentTool$PageSizeView" />
+        <View Name="PageSizeView" x="4" y="2" width="162" height="108" Class="studio.apptools.DocViewTool$PageSizeView" />
         <Label x="2" y="110" width="36" height="18" Align="CENTER_RIGHT" text="Width:" />
         <TextField Name="PageWidthText" x="38" y="110" width="44" height="18" Align="CENTER" />
         <Label x="84" y="110" width="36" height="18" Align="CENTER_RIGHT" text="Height:" />

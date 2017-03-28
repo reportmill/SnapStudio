@@ -367,7 +367,7 @@ public void save()
     //setEditing(true);
     
     // Do actual save - if exception, print stack trace and set error string
-    try { saveImpl(); }
+    try { getEditor().save(); }
     catch(Throwable e) {
         e.printStackTrace();
         String msg = "The file " + getSourceURL().getPath() + " could not be saved (" + e + ").";
@@ -376,24 +376,9 @@ public void save()
         return;
     }
     
-    // Add URL.String to RecentFilesMenu, clear undoer and reset UI
+    // Add URL.String to RecentFilesMenu and reset UI
     //if(getSourceURL()!=null) RecentFilesPanel.addRecentFile(getSourceURL().getString());
-    getEditor().getUndoer().reset();
     resetLater();
-}
-
-/**
- * The real save method.
- */
-protected void saveImpl() throws Exception
-{
-    WebURL url = getSourceURL();
-    WebFile file = url.getFile();
-    if(file==null) file = url.createFile(false);
-    XMLElement xml = getEditor().getContentXML();
-    byte bytes[] = xml.getBytes();
-    file.setBytes(bytes);
-    file.save();
 }
 
 /**

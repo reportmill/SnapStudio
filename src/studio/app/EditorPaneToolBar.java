@@ -49,8 +49,8 @@ protected void resetUI()
     
     // Update UndoButton, RedoButton
     Undoer undoer = editor.getUndoer();
-    setViewDisabled("UndoButton", undoer==null || undoer.getUndoSetLast()==null);
-    setViewEnabled("RedoButton", undoer==null || undoer.getRedoSetLast()==null);
+    setViewEnabled("UndoButton", undoer!=null && undoer.getUndoSetLast()!=null);
+    setViewEnabled("RedoButton", undoer!=null && undoer.getRedoSetLast()!=null);
     
     // Get selected tool button name and button - if found and not selected, select it
     String toolButtonName = editor.getCurrentTool().getClass().getSimpleName() + "Button";

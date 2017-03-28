@@ -2,7 +2,7 @@ package studio.app;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
-import snap.web.WebURL;
+import snap.web.*;
 
 /**
  * The RMViewer class is a JComponent subclass that can be used in Java client applications to display and/or print an
@@ -101,6 +101,11 @@ public void setContent(Object aSource)
  * Returns the source URL.
  */
 public WebURL getSourceURL()  { return _url; }
+
+/**
+ * Returns the source URL.
+ */
+public WebFile getSourceFile()  { return _url!=null? _url.getFile() : null; }
 
 /**
  * Returns a point converted from viewer coords to the coordinate space of the given view.

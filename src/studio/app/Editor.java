@@ -3,6 +3,7 @@ import java.util.*;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
+import snap.web.WebFile;
 
 /**
  * This class subclasses Viewer to support snp file editing.
@@ -83,6 +84,11 @@ public void setContent(View aView)
 {
     // If already set, just return
     if(aView==getContent()) return; super.setContent(aView);
+    
+    // Add deep change listener
+    aView.addDeepChangeListener(this);
+    
+    // Super-select new content
     setSuperSelectedView(aView);
 }
 
@@ -834,9 +840,12 @@ protected void setUndoSelection(Object aSelection)
  */
 public void deepChange(PropChangeListener aView, PropChange anEvent)
 {
-    // If deep change for TextView, just return since it registers Undo itself (with better coalesce)
-    Object src = anEvent.getSource();
-    if(aView instanceof TextView && src instanceof RichText) return;
+    // Get source and prop name (if not View, just return)
+    Object src = anEvent.getSource(); if(!(src instanceof View)) return;
+    String pname = anEvent.getPropertyName();
+    
+    // Ignore properties: Showing
+    if(pname==Showing_Prop) return;
     
     // If undoer exists, set selected objects and add property change
     Undoer undoer = getUndoer();
@@ -850,19 +859,24 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
         undoer.addPropertyChange(anEvent);
         
         // If adding child, add to child animator newborns
-        String pname = anEvent.getPropertyName();
-        if(pname.equals("Child") && anEvent.getNewValue()!=null) {
-            View parent = (View)src, child = (View)anEvent.getNewValue();
-            //if(parent.getChildAnimator()!=null) parent.getChildAnimator().addNewborn(child);
-        }
+        //String pname = anEvent.getPropertyName(); if(pname.equals("Child") && anEvent.getNewValue()!=null) {
+        //    View parent = (View)src, child = (View)anEvent.getNewValue();
+        //    if(parent.getChildAnimator()!=null) parent.getChildAnimator().addNewborn(child); }
         
         // Save UndoerChanges after delay
         saveUndoerChangesLater();
+        
+        // Set updator
+        WebFile file = getSourceFile();
+        if(file!=null) file.setUpdater(undoer.hasUndos()? _updr : null);
     }
     
     // Forward DeepChanges to EditorPane. Should have add/removeDeepChagneLister methods for this.
     EditorPane ep = getEditorPane(); if(ep!=null) ep.resetLater();
 }
+
+// A Shared updater to kick off save
+private WebFile.Updater _updr = file -> getEditorPane().save();
 
 /**
  * RootView.Listener method.

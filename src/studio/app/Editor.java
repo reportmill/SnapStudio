@@ -870,11 +870,15 @@ protected void setUndoSelection(Object aSelection)
 public void deepChange(PropChangeListener aView, PropChange anEvent)
 {
     // Get source and prop name (if not View, just return)
-    Object src = anEvent.getSource(); if(!(src instanceof View)) return;
+    Object src = anEvent.getSource();
+    View view = (View)aView, sview = src instanceof View? (View)src : null; if(view==null) return;
     String pname = anEvent.getPropertyName();
     
     // Ignore properties: Showing
     if(pname==Showing_Prop) return;
+    
+    // Ignore layout changes
+    if(view instanceof ParentView && ((ParentView)view).isInLayout()) return;
     
     // If undoer exists, set selected objects and add property change
     Undoer undoer = getUndoer();

@@ -90,6 +90,10 @@ public void setContent(View aView)
     
     // Super-select new content
     setSuperSelectedView(aView);
+    
+    // If SnapScene, show CastPane
+    if(aView instanceof snap.viewx.SnapScene)
+        getEditorPane().getAttributesPanel().setVisibleName(AttributesPanel.CAST);
 }
 
 /**

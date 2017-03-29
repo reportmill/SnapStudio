@@ -137,12 +137,12 @@ void addActorSource(String aName)
     // Create ActorFile text
     StringBuffer sb = new StringBuffer();
     sb.append("import snap.viewx.*;\n\n");
-    sb.append("/**\n * An Actor implementation.\n */\n");
+    sb.append("/**\n * An Actor implementation. SnapEdit=true.\n */\n");
     sb.append("public class " + aName + " extends SnapActor {\n\n");
-    sb.append("/**\n * Initialize Actor here.\n */\n");
+    sb.append("/**\n * Creates a new " + aName + " (constructor).\n */\n");
     sb.append("public " + aName + "()\n{\n}\n\n");
-    sb.append("/**\n * Initialize Actor here.\n */\n");
-    sb.append("public void main()\n{\n}\n\n");
+    //sb.append("/**\n * Initialize Actor here.\n */\n");
+    //sb.append("public void main()\n{\n}\n\n");
     sb.append("/**\n * Update Actor here.\n */\n");
     sb.append("public void act()\n{\n}\n\n}");
     

@@ -20,6 +20,12 @@ public class EditorPage extends SnapPage {
  */
 protected View createUI()
 {
+    // If SnapScene, go ahead and use editor
+    if(getFile().getProp("OpenInEditor")!=null) {
+        _epaneX = new PageEditorPane().open(getFile());
+        getFile().setProp("OpenInEditor", null);
+    }
+    
     // If EPaneUI available, return that
     if(_epaneX!=null) {
         _epane = _epaneX; _epaneX = null; //return epaneUI;
@@ -32,12 +38,13 @@ protected View createUI()
     }
     
     // Otherwise, create normal UI and wrap inbox with edit button and text button
-    Button ebtn = new Button(); ebtn.setText("Edit"); ebtn.setName("EditButton"); ebtn.setPrefWidth(100);
-    Button tbtn = new Button(); tbtn.setText("Text"); tbtn.setName("TextButton"); tbtn.setPrefWidth(100);
+    Button ebtn = new Button(); ebtn.setText("Edit"); ebtn.setName("EditButton"); ebtn.setPrefSize(110,24);
+    Button tbtn = new Button(); tbtn.setText("Text"); tbtn.setName("TextButton"); tbtn.setPrefSize(110,24);
     HBox hbox = new HBox(); hbox.setAlign(Pos.CENTER_RIGHT); hbox.setPadding(3,3,3,3);
-    hbox.setSpacing(5); hbox.addChild(ebtn); hbox.addChild(tbtn);
+    hbox.setSpacing(8); hbox.addChild(ebtn); hbox.addChild(tbtn);
     View superUI = super.createUI();
-    BorderView bpane = new BorderView(); bpane.setTop(hbox); bpane.setCenter(superUI);
+    BorderView bpane = new BorderView(); bpane.setTop(hbox); bpane.setCenter(superUI); bpane.setFont(Font.Arial12);
+    enableEvents(bpane, MouseRelease); // Bogus feature to make click anywhere open editor
     return bpane;
 }
 
@@ -47,7 +54,7 @@ protected View createUI()
 protected void respondUI(ViewEvent anEvent)
 {
     // Handle EditButton
-    if(anEvent.equals("EditButton")) {
+    if(anEvent.equals("EditButton") || anEvent.isMouseRelease()) {
         _epaneX = new PageEditorPane().open(getFile());
         getBrowser().reloadPage();
     }

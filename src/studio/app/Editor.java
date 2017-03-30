@@ -247,6 +247,14 @@ public ParentView getSuperSelectedParentView()
 }
 
 /**
+ * Returns the first super selected view, if child view.
+ */
+public ChildView getSuperSelectedChildView()
+{
+    View ss = getSuperSelectedView(); return ss instanceof ChildView? (ChildView)ss : null;
+}
+
+/**
  * Super select a view.
  */
 public void setSuperSelectedView(View aView)

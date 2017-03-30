@@ -264,12 +264,11 @@ public void paintTool(Painter aPntr)
 {
     if(_path!=null) {
         View page = getEditor().getContentPage(); if(page==null) page = getEditor().getContent();
-        Rect pbounds = page.localToParent(getEditor(), page.getBoundsLocal()).getBounds();
-        aPntr.translate(pbounds.getX(), pbounds.getY());
+        aPntr.translate(page.getX(), page.getY());
         aPntr.scale(getEditor().getZoomFactor(), getEditor().getZoomFactor());
         aPntr.setColor(Color.BLACK); aPntr.setStroke(Stroke.Stroke1); aPntr.draw(_path);
         aPntr.scale(1/getEditor().getZoomFactor(), 1/getEditor().getZoomFactor());
-        aPntr.translate(-pbounds.getX(), -pbounds.getY());
+        aPntr.translate(-page.getX(), -page.getY());
     }
 }
 

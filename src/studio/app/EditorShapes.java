@@ -99,10 +99,10 @@ public static void ungroupShapes(Editor anEditor)
  */
 public static void bringToFront(Editor anEditor)
 {
-    ParentView parent = anEditor.getSuperSelectedParentView();
+    ChildView parent = anEditor.getSuperSelectedChildView();
     if(parent==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Bring to Front");
-    //parent.bringShapesToFront(anEditor.getSelectedShapes());
+    parent.bringViewsToFront(anEditor.getSelectedViews());
 }
 
 /**
@@ -110,10 +110,10 @@ public static void bringToFront(Editor anEditor)
  */
 public static void sendToBack(Editor anEditor)
 {
-    ParentView parent = anEditor.getSuperSelectedParentView();
+    ChildView parent = anEditor.getSuperSelectedChildView();
     if(parent==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Send to Back");
-    //parent.sendShapesToBack(anEditor.getSelectedShapes());
+    parent.sendViewsToBack(anEditor.getSelectedViews());
 }
 
 /**

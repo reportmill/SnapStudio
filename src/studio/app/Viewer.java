@@ -112,6 +112,7 @@ public WebFile getSourceFile()  { return _url!=null? _url.getFile() : null; }
  */
 public Point localToView(View aView, double aX, double aY)
 {
+    if(aView==null) return new Point(aX, aY); // Bogus
     View view = aView!=null? aView : getContent().getParent();
     return view.parentToLocal(this, aX, aY);
 }
@@ -121,6 +122,7 @@ public Point localToView(View aView, double aX, double aY)
  */
 public Shape localToView(View aView, Shape aShape)
 {
+    if(aView==null) return aShape; // Bogus
     View view = aView!=null? aView : getContent().getParent();
     return view.parentToLocal(this, aShape);
 }
@@ -130,6 +132,7 @@ public Shape localToView(View aView, Shape aShape)
  */
 public Point viewToLocal(View aView, double aX, double aY)
 {
+    if(aView==null) return new Point(aX, aY); // Bogus
     View view = aView!=null? aView : getContent().getParent();
     return view.localToParent(this, aX, aY);
 }
@@ -139,6 +142,7 @@ public Point viewToLocal(View aView, double aX, double aY)
  */
 public Shape viewToLocal(View aView, Shape aShape)
 {
+    if(aView==null) return aShape; // Bogus
     View view = aView!=null? aView : getContent().getParent();
     return view.localToParent(this, aShape);
 }

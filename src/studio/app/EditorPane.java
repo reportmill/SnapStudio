@@ -115,7 +115,13 @@ protected void initUI()
     
     // Enable Mouse Events for editor
     enableEvents(getEditor(), MousePress, MouseRelease);
-    
+}
+
+/**
+ * Override to configure Window.
+ */
+protected void initRootView()
+{
     // Set RootView MenuBar
     getRootView().setMenuBar(getMenuBar().getUI());
 

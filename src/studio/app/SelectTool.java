@@ -250,10 +250,10 @@ public void mouseDragged(ViewEvent anEvent)
             
             // Repaint selected views and SelectionRect
             _whileSelectingSelectedShapes.forEach(i -> i.repaint());
-            editor.repaint(editor.getContent().localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
+            editor.repaint(content.localToParent(editor, _selectionRect.getInsetRect(-2)).getBounds());
             
             // Get new _selectionRect and clear _whileSelectingSelectedShapes
-            _selectionRect = Rect.get(_downPoint, editor.localToView(null, anEvent.getX(), anEvent.getY()));
+            _selectionRect = Rect.get(_downPoint, content.parentToLocal(editor, anEvent.getX(), anEvent.getY()));
             _whileSelectingSelectedShapes.clear();
 
             // If shift key was down, exclusive OR (xor) newShapes with selectedShapes
@@ -268,7 +268,7 @@ public void mouseDragged(ViewEvent anEvent)
 
             // Repaint selected views and SelectionRect
             _whileSelectingSelectedShapes.forEach(i -> i.repaint());
-            editor.repaint(editor.getContent().localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
+            editor.repaint(content.localToParent(editor,_selectionRect.getInsetRect(-2)).getBounds());
 
             // break
             break;
@@ -374,26 +374,26 @@ private List <View> getHitShapes()
 {
     // Get selection path from rect around currentPoint and _downPoint
     Editor editor = getEditor(); View content = editor.getContent();
-    ParentView superShape = editor.getSuperSelectedParentView(); if(superShape==null) return Collections.emptyList();
+    ParentView superView = editor.getSuperSelectedParentView(); if(superView==null) return Collections.emptyList();
     Point curPoint = getEventPointInDoc();
     Rect selRect = Rect.get(curPoint, _downPoint);
-    Shape path = superShape.parentToLocal(editor, selRect);
+    Shape path = selRect; if(superView!=content) path = superView.parentToLocal(content, path);
 
     // If selection rect is outside super selected shape, move up shape hierarchy
-    while(superShape!=content &&
-        !path.getBounds().intersectsEvenIfEmpty(getTool(superShape).getBoundsSuperSelected(superShape))) {
-        ParentView parent = superShape.getParent();
+    while(superView!=content &&
+        !path.getBounds().intersectsEvenIfEmpty(getTool(superView).getBoundsSuperSelected(superView))) {
+        ParentView parent = superView.getParent();
         editor.setSuperSelectedView(parent);
-        path = superShape.parentToLocal(path);
-        superShape = parent;
+        path = superView.parentToLocal(path);
+        superView = parent;
     }
 
     // Make sure page is worst case
-    if(superShape==content && editor.getContentPage()!=null) { superShape = editor.getContentPage();
-        path = superShape.parentToLocal(selRect); editor.setSuperSelectedView(superShape); }
+    if(superView==content && editor.getContentPage()!=null) { superView = editor.getContentPage();
+        path = superView.parentToLocal(selRect); editor.setSuperSelectedView(superView); }
 
     // Returns the children of the super-selected shape that intersect selection path
-    return superShape.getChildrenAt(path);
+    return superView.getChildrenAt(path);
 }
 
 /**
@@ -417,7 +417,7 @@ public void setRedoMousePressed(boolean aFlag)  { _redoMousePressed = aFlag; }
 public void paintTool(Painter aPntr)
 {
     // Iterate over super selected shapes and have tool paint SuperSelected
-    Editor editor = getEditor();
+    Editor editor = getEditor(); View content = editor.getContent();
     for(int i=1, iMax=editor.getSuperSelectedViewCount(); i<iMax; i++) {
         View shape = editor.getSuperSelectedView(i); ViewTool tool = getTool(shape);
         tool.paintHandles(shape, aPntr, true);
@@ -438,7 +438,7 @@ public void paintTool(Painter aPntr)
 
     // Draw SelectionRect: light gray rect with darker border (semi transparent)
     if(!_selectionRect.isEmpty()) {
-        Rect rect = editor.viewToLocal(null, _selectionRect).getBounds();
+        Rect rect = content.localToParent(editor, _selectionRect).getBounds();
         aPntr.setColor(new Color(.9,.5)); aPntr.fill(rect);
         aPntr.setStroke(Stroke.Stroke1); aPntr.setColor(new Color(.6,.6)); aPntr.draw(rect);
     }

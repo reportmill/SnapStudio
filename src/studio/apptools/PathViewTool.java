@@ -66,11 +66,12 @@ public boolean getSmoothPath()  { return false; }
  */
 public void mousePressed(ViewEvent anEvent)
 {
+    Editor editor = getEditor(); View content = editor.getContent();
     boolean smoothPath = getSmoothPath(); if(anEvent.isAltDown()) smoothPath = !smoothPath;
     Point point = getEditorEvents().getEventPointInDoc(!smoothPath);
 
     // Register all selectedViews dirty because their handles will probably need to be wiped out
-    getEditor().getSelectedViews().forEach(i -> i.repaint());
+    editor.getSelectedViews().forEach(i -> i.repaint());
 
     // If this is the first mouseDown of a new path, create path and add moveTo. Otherwise add lineTo to current path
     if(_path==null) { _path = new Path(); _path.moveTo(point.x, point.y); }
@@ -81,8 +82,8 @@ public void mousePressed(ViewEvent anEvent)
     _pointCountOnMouseDown = _path.getPointCount();
 
     Rect rect = _path.getBounds().getInsetRect(-10);
-    rect = getEditor().viewToLocal(null, rect).getBounds();
-    getEditor().repaint(rect);
+    rect = content.localToParent(editor, rect).getBounds();
+    editor.repaint(rect);
 }
 
 /**
@@ -90,6 +91,7 @@ public void mousePressed(ViewEvent anEvent)
  */
 public void mouseDragged(ViewEvent anEvent)
 {
+    Editor editor = getEditor(); View content = editor.getContent();
     Point point = getEditorEvents().getEventPointInDoc(!_smoothPathOnMouseUp);
     Rect rect = _path.getBounds();
 
@@ -97,8 +99,8 @@ public void mouseDragged(ViewEvent anEvent)
     else _path.setPoint(_path.getPointCount()-1, point.x, point.y);
 
     rect.union(_path.getBounds()); rect.inset(-10, -10);
-    rect = getEditor().viewToLocal(null, rect).getBounds();
-    getEditor().repaint(rect);
+    rect = content.localToParent(editor, rect).getBounds();
+    editor.repaint(rect);
 }
 
 /**
@@ -151,7 +153,7 @@ public void mouseReleased(ViewEvent anEvent)
 public void mouseMoved(T aPathView, ViewEvent anEvent)
 {
     // Get the mouse down point in view coords
-    Point point = getEditor().localToView(aPathView, anEvent.getX(), anEvent.getY());
+    Point point = aPathView.parentToLocal(getEditor(), anEvent.getX(), anEvent.getY());
     
     // If control point is hit, change cursor to move
     Path path = aPathView.getPath(); Size size = new Size(9,9);
@@ -221,17 +223,19 @@ public void mouseDragged(T aPathView, ViewEvent anEvent)
 private void createPoly()
 {
     if(_path!=null && _path.getPointCount()>2) {
-        ParentView parent = getEditor().getSuperSelectedParentView();
+        Editor editor = getEditor(); View content = editor.getContent();
+        ParentView parent = editor.getSuperSelectedParentView();
         PathView pview = new PathView();
-        Rect pbounds = parent.parentToLocal(getEditor(), _path.getBounds()).getBounds();
+        Rect pbounds = _path.getBounds();
+        if(parent!=content) pbounds = parent.parentToLocal(content, pbounds).getBounds();
         pview.setBounds(pbounds); //pview.setFrame(pbounds);
         pview.setBorder(Color.BLACK, 1);
         pview.setPath(_path);
 
         // Add view to superSelectedView (within an undo grouping) and select
-        getEditor().undoerSetUndoTitle("Add Polygon");
+        editor.undoerSetUndoTitle("Add Polygon");
         getTool(parent).addChild(parent, pview);
-        getEditor().setSelectedView(pview);
+        editor.setSelectedView(pview);
     }
 
     // Reset path
@@ -262,14 +266,10 @@ public void willLoseSuperSelected(T aView)
  */
 public void paintTool(Painter aPntr)
 {
-    if(_path!=null) {
-        View page = getEditor().getContentPage(); if(page==null) page = getEditor().getContent();
-        aPntr.translate(page.getX(), page.getY());
-        aPntr.scale(getEditor().getZoomFactor(), getEditor().getZoomFactor());
-        aPntr.setColor(Color.BLACK); aPntr.setStroke(Stroke.Stroke1); aPntr.draw(_path);
-        aPntr.scale(1/getEditor().getZoomFactor(), 1/getEditor().getZoomFactor());
-        aPntr.translate(-page.getX(), -page.getY());
-    }
+    if(_path==null) return;
+    Editor editor = getEditor(); View content = editor.getContent();
+    Shape path = content.localToParent(editor, _path);
+    aPntr.setColor(Color.BLACK); aPntr.setStroke(Stroke.Stroke1); aPntr.draw(path);
 }
 
 /**
@@ -366,7 +366,7 @@ public void runContextMenu(PathView aPathView, ViewEvent anEvent)
     // Otherwise if the path itself was hit, use 'add point'
     else {
         // Convert event point to view coords
-        _newPoint = getEditor().localToView(aPathView, anEvent.getX(), anEvent.getY());
+        _newPoint = aPathView.parentToLocal(getEditor(), anEvent.getX(), anEvent.getY());
         
         // linewidth is probably in view coords, and might need to get transformed to path coords here
         if(path.intersects(_newPoint.getX(), _newPoint.getY(), Math.max(aPathView.getBorder().getWidth(),8))) {

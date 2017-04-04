@@ -940,7 +940,7 @@ public void dropImageFile(View aView, String aPath, Point aPoint) //private
     
     // Get parent to add image view to and drop point in parent coords
     ParentView parent = aView instanceof ParentView? (ParentView)aView : aView.getParent();
-    Point point = editor.localToView(parent, aPoint.x, aPoint.y);
+    Point point = parent.parentToLocal(editor, aPoint.x, aPoint.y);
     
     // Create new image view
     //ImageView imageView = new ImageView(aPath);

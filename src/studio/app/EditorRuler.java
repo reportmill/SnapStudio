@@ -95,9 +95,10 @@ protected void paintFront(Painter aPntr)
 protected void paintHor(Painter aPntr)
 {
     // Get ruler bounds in doc coords
+    View content = getContent();
     Rect vrect = _editor.getVisRect();
     Rect bnds = new Rect(vrect.getX()-_rulerWidth, 0, getWidth(), _rulerWidth);
-    bnds = _editor.localToView(getContent(), bnds).getBounds();
+    bnds = content.parentToLocal(_editor, bnds).getBounds();
     
     // Scale and translate ruler to doc coords
     aPntr.save();
@@ -119,13 +120,13 @@ protected void paintHor(Painter aPntr)
         x += dx;
     }
     
-    // Paint shape position
-    Rect bounds = getShapeBounds();
+    // Paint selected view position
+    Rect bounds = getSelViewBounds();
     if(bounds!=null) {
         aPntr.setColor(new Color(1,.5)); aPntr.fillRect(bounds.getX(), 0, bounds.getWidth(), getHeight()); }
         
     // Paint mouse position
-    Point mp = _editor.localToView(getContent(), _mouse.x, _mouse.y);
+    Point mp = content.parentToLocal(_editor, _mouse.x, _mouse.y);
     aPntr.setColor(Color.BLACK); aPntr.setStroke(_mouseStroke);
     aPntr.drawLine(mp.getX(), 0, mp.getX(), getHeight());
     aPntr.restore();
@@ -137,9 +138,10 @@ protected void paintHor(Painter aPntr)
 protected void paintVer(Painter aPntr)
 {
     // Get ruler bounds in doc coords
+    View content = getContent();
     Rect vrect = _editor.getVisRect();
     Rect bnds = new Rect(0, vrect.getY(), _rulerWidth, getHeight());
-    //bnds = _editor.convertToShape(bnds, getContent()).getBounds();
+    bnds = content.parentToLocal(_editor, bnds).getBounds();
     
     // Scale ruler to doc coords
     aPntr.save();
@@ -161,25 +163,25 @@ protected void paintVer(Painter aPntr)
         y += dy;
     }
     
-    // Paint shape position
-    Rect bounds = getShapeBounds();
+    // Paint selected view position
+    Rect bounds = getSelViewBounds();
     if(bounds!=null) {
         aPntr.setColor(new Color(1,.5)); aPntr.fillRect(0, bounds.getY(), getWidth(), bounds.getHeight()); }
         
     // Paint mouse position
-    Point mp = _editor.localToView(getContent(), _mouse.x, _mouse.y);
+    Point mp = content.parentToLocal(_editor, _mouse.x, _mouse.y);
     aPntr.setColor(Color.BLACK); aPntr.setStroke(_mouseStroke);
     aPntr.drawLine(0, mp.getY(), getWidth(), mp.getY());
     aPntr.restore();
 }
 
-/** Returns the current shape bounds. */
-private Rect getShapeBounds()
+/** Returns the current selected view bounds. */
+private Rect getSelViewBounds()
 {
-    View shape = _editor.getSelectedOrSuperSelectedView();
-    if(shape==null) return null;// || shape instanceof RMDocument || shape instanceof RMPage) return null;
-    Rect sbnds = shape.getBoundsLocal(); //shape.convertRectToShape(sbnds, null); return sbnds;
-    return shape.localToParent(getContent(), sbnds).getBounds();
+    View sv = _editor.getSelectedOrSuperSelectedView();
+    if(sv==null) return null;// || shape instanceof RMDocument || shape instanceof RMPage) return null;
+    Rect sbnds = sv.getBoundsLocal(); //shape.convertRectToShape(sbnds, null); return sbnds;
+    return sv.localToParent(getContent(), sbnds).getBounds();
 }
 
 }

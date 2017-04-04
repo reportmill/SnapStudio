@@ -75,11 +75,12 @@ public void mousePressed(ViewEvent anEvent)
     _editor._isMouseDown = true;
     
     // Set downpoint and last point to current event point in document coords
-    _downPoint = _editor.localToView(null, anEvent.getX(), anEvent.getY());
+    View content = _editor.getContent();
+    _downPoint = content.parentToLocal(_editor, anEvent.getX(), anEvent.getY());
 
     // If current tool isn't select tool, see if super selected shape needs to be updated
     if(!_editor.isCurrentToolSelectTool()) {
-        View shape = _editor.firstSuperSelectedViewThatAcceptsChildrenAtPoint(_downPoint);
+        View shape = _editor.firstSuperSelectedViewThatAcceptsChildrenAtPoint(anEvent.getPoint()); // Was _downPoint
         if(shape!=_editor.getSuperSelectedView())
             _editor.setSuperSelectedView(shape);
     }
@@ -220,7 +221,8 @@ public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
 public Point getEventPointInDoc(boolean snapToGrid)
 {
     // Get current event point in doc coords, rounded to integers
-    Point point = _editor.localToView(null, _currentEvent.getX(), _currentEvent.getY());
+    View content = _editor.getContent();
+    Point point = content.parentToLocal(_editor, _currentEvent.getX(), _currentEvent.getY());
     point.snap();
     
     // If shift key is down, constrain values to increments of 45 degrees from _downPoint

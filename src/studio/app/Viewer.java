@@ -108,46 +108,6 @@ public WebURL getSourceURL()  { return _url; }
 public WebFile getSourceFile()  { return _url!=null? _url.getFile() : null; }
 
 /**
- * Returns a point converted from viewer coords to the coordinate space of the given view.
- */
-public Point localToView(View aView, double aX, double aY)
-{
-    if(aView==null) return new Point(aX, aY); // Bogus
-    View view = aView!=null? aView : getContent().getParent();
-    return view.parentToLocal(this, aX, aY);
-}
-
-/**
- * Returns a point converted from viewer coords to the coordinate space of the given view.
- */
-public Shape localToView(View aView, Shape aShape)
-{
-    if(aView==null) return aShape; // Bogus
-    View view = aView!=null? aView : getContent().getParent();
-    return view.parentToLocal(this, aShape);
-}
-
-/**
- * Returns a point converted from viewer coords to the coordinate space of the given view.
- */
-public Point viewToLocal(View aView, double aX, double aY)
-{
-    if(aView==null) return new Point(aX, aY); // Bogus
-    View view = aView!=null? aView : getContent().getParent();
-    return view.localToParent(this, aX, aY);
-}
-
-/**
- * Returns a point converted from viewer coords to the coordinate space of the given view.
- */
-public Shape viewToLocal(View aView, Shape aShape)
-{
-    if(aView==null) return aShape; // Bogus
-    View view = aView!=null? aView : getContent().getParent();
-    return view.localToParent(this, aShape);
-}
-
-/**
  * Returns the viewer's zoom factor (1 by default).
  */
 public double getZoomFactor()  { return _zoomFactor; }

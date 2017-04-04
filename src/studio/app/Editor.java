@@ -407,7 +407,7 @@ public View getViewAtPoint(Point aPoint)
         superSelView = getContentPage();
 
     // Get the point in superSelectedView's coords
-    Point point = localToView(superSelView, aPoint.x, aPoint.y);
+    Point point = superSelView.parentToLocal(this, aPoint.x, aPoint.y);
 
     // Get child of superSelectedView hit by point
     View viewAtPoint = getChildViewAtPoint(superSelView, point);
@@ -887,6 +887,7 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
     
     // Ignore layout changes
     if(view instanceof ParentView && ((ParentView)view).isInLayout()) return;
+    if(sview instanceof ParentView && ((ParentView)sview).isInLayout()) return;
     
     // If undoer exists, set selected objects and add property change
     Undoer undoer = getUndoer();

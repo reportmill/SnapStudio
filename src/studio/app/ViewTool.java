@@ -55,8 +55,8 @@ protected View createUI()
         return ui;
         
     TableView table = new TableView(); table.setName("PropTable");
-    TableCol c1 = new TableCol(); c1.setHeaderValue("Key"); c1.setItemKey("Key"); c1.setPrefWidth(120);
-    TableCol c2 = new TableCol(); c2.setHeaderValue("Value"); c2.setItemKey("ValueString"); c2.setGrowWidth(true);
+    TableCol c1 = new TableCol(); c1.setItemKey("Key"); c1.setPrefWidth(120);
+    TableCol c2 = new TableCol(); c2.setItemKey("ValueString"); c2.setGrowWidth(true);
     table.addCol(c1); table.addCol(c2);
     ScrollView sview = new ScrollView(table); sview.setPrefHeight(300);
     VBox box = new VBox(); box.setFillWidth(true); box.setPadding(8,4,4,4); box.setSpacing(4);

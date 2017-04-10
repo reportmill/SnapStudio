@@ -159,7 +159,7 @@ void addActorImage(String aName, Image anImg)
 {
     WebFile sfile = getEditor().getSourceURL().getFile();
     WebFile sdir = sfile.getParent();
-    String path = sdir.getDirPath() + "pkg.images/" + aName + '.' + anImg.getType();
+    String path = sdir.getDirPath() + aName + '.' + anImg.getType();
     WebFile ifile = sdir.getSite().getFile(path); if(ifile!=null) return;
     ifile = sdir.getSite().createFile(path, false);
     ifile.setBytes(anImg.getBytes());

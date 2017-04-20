@@ -882,8 +882,9 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
     View view = (View)aView, sview = src instanceof View? (View)src : null; if(view==null) return;
     String pname = anEvent.getPropertyName();
     
-    // Ignore properties: Showing
+    // Ignore properties: Showing, NeedsLayout
     if(pname==Showing_Prop) return;
+    if(pname==NeedsLayout_Prop) return;
     
     // Ignore layout changes
     if(view instanceof ParentView && ((ParentView)view).isInLayout()) return;

@@ -309,8 +309,8 @@ private int getParentCount(View aView)
 
 /** View to render SelectionPath separator. */
 private static class Sep extends View {
-    public double getPrefWidthImpl(double aH)  { return 5; }
-    public double getPrefHeightImpl(double aW)  { return 40; }
+    protected double getPrefWidthImpl(double aH)  { return 5; }
+    protected double getPrefHeightImpl(double aW)  { return 40; }
     protected void paintFront(Painter aPntr)  { aPntr.setColor(Color.DARKGRAY); aPntr.fill(_arrow); }
     static Polygon _arrow = new Polygon(0, 15, 5, 20, 0, 25);
 }

@@ -6,17 +6,17 @@
     <HBox PrefWidth="250" Spacing="5">
       <Label text="Name:" />
       <TextField Name="NameText" GrowWidth="true">
-        <binding aspect="Text" key="SelectedShapes.Name" />
+        <binding aspect="Text" key="SelectedViews.Name" />
       </TextField>
     </HBox>
     <CheckBox Name="LockedCheckBox" text="Locked">
-      <binding aspect="Selected" key="SelectedShapes.Locked" />
+      <binding aspect="Selected" key="SelectedViews.Locked" />
     </CheckBox>
     <VBox LeanY="BOTTOM">
       <Label text="URL:" />
       <ScrollView PrefWidth="250" PrefHeight="136">
         <TextView Name="UrlText" SendActionOnReturn="true">
-          <binding aspect="Text" key="SelectedShapes.URL" />
+          <binding aspect="Text" key="SelectedViews.URL" />
         </TextView>
       </ScrollView>
     </VBox>

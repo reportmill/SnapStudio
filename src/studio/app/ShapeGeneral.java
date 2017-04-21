@@ -1,4 +1,5 @@
 package studio.app;
+import java.util.Collections;
 import java.util.List;
 import snap.view.*;
 
@@ -95,6 +96,15 @@ public View getSelectedView()
 {
     Editor e = getEditor(); if(e==null) return null;
     return e.getSelectedOrSuperSelectedView();
+}
+
+/**
+ * Returns the current selected shape for the current editor.
+ */
+public List <? extends View> getSelectedViews()
+{
+    Editor e = getEditor(); if(e==null) return Collections.EMPTY_LIST;
+    return e.getSelectedOrSuperSelectedViews();
 }
 
 /**

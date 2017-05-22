@@ -266,8 +266,7 @@ public void setSuperSelectedView(View aView)
     _selectedViews.clear();
 
     // Remove current super-selected views that aren't an ancestor of given view   
-    if(getSuperSelectedView()!=null)
-    while(view!=getSuperSelectedView() && !view.isAncestor(getSuperSelectedView())) {
+    while(view!=getSuperSelectedView() && getSuperSelectedView()!=null && !view.isAncestor(getSuperSelectedView())) {
         View ssView = getSuperSelectedView();
         getTool(ssView).willLoseSuperSelected(ssView);
         ListUtils.removeLast(_superSelectedViews);

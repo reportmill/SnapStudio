@@ -806,8 +806,16 @@ public void dragOver(View aView, ViewEvent anEvent)  { }
  */
 public void drop(T aView, ViewEvent anEvent)
 {
+    // If CastPane isDragging, forward on
+    if(CastPane.isDragging())
+        CastPane.get().dropActor(aView, anEvent);
+        
+    // If GalleryPane isDragging, forward on
+    else if(GalleryPane.isDragging())
+        GalleryPane.get().dropView(aView, anEvent);
+    
     // Handle String drop
-    if(anEvent.hasDragString())
+    else if(anEvent.hasDragString())
         dropString(aView, anEvent);
 
     // Handle color panel drop
@@ -824,15 +832,7 @@ public void drop(T aView, ViewEvent anEvent)
  */
 public void dropString(T aView, ViewEvent anEvent)
 {
-    // If CastPane isDragging, forward on
-    if(CastPane.isDragging())
-        CastPane.get().dropActor(aView, anEvent);
-        
-    // If GalleryPane isDragging, forward on
-    else if(GalleryPane.isDragging())
-        GalleryPane.get().dropView(aView, anEvent);
-    
-    else if(aView instanceof ParentView) { ParentView pview = (ParentView)aView;
+    if(aView instanceof ParentView) { ParentView pview = (ParentView)aView;
         Clipboard cb = anEvent.getDragboard(); //Transferable transferable = anEvent.getTransferable();
         getEditor().undoerSetUndoTitle("Drag and Drop Key");
         EditorClipboard.paste(getEditor(), cb, pview, anEvent.getPoint());

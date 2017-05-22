@@ -48,8 +48,6 @@ protected View createUI()
     ThumbWheel twh = new ThumbWheel(); twh.setPrefSize(100,16); twh.setType(ThumbWheel.TYPE_RADIAL);
     ProgressBar pbar = new ProgressBar(); pbar.setPrefSize(100,20);
     
-    // Create HBox, VBox, BorderView, StackView, SpringView
-    
     // Create ListView, TableView, TreeView, BrowserView
     
     // Create ScrollView, SplitView
@@ -65,10 +63,14 @@ protected View createUI()
     
     // Create DocView, PageView
     
+    // Create HBox, VBox, BorderView, StackView, SpringView
+    HBox hbox = new HBox(); hbox.setBorder(Color.LIGHTGRAY,1); hbox.setPrefSize(100,25);
+    VBox vbox = new VBox(); vbox.setBorder(Color.LIGHTGRAY,1); vbox.setPrefSize(100,25);
+    
     // Add nodes
     View nodes[] = { lbl, btn, tbtn, cbtn, rbtn, sep, tfd, spnr, cbox, mbtn, sldr, twh, pbar };
     for(View n : nodes) addItem(_ui, n);
-    View nodes2[] = { tab, ttlp , txtv };
+    View nodes2[] = { tab, ttlp , txtv, hbox, vbox };
     for(View n : nodes2) addItem(_ui, n);
     //Box box2 = new Box(); box2.setPadding(4,4,4,4); box2.setContent(_ui); //box2.setFill(ViewUtils.getBackDarkFill());
     //_ui.setFill(ViewUtils.getBackFill()); _ui.setEffect(new ShadowEffect());
@@ -118,27 +120,47 @@ public void addItem(VBox aVBox, View aView)
  */
 public void dropView(View aView, ViewEvent anEvent)
 {
-    String str = anEvent.getDropString();
+    // Get new view to add
+    View view = createDragView(aView, anEvent);
     
-    System.out.println("DropString: " + str);
-    if(!str.startsWith("GalleryPane: ")) return;
+    // If drop point not in content and view is ChildView, make it content
+    Editor editor = getEditor();
+    if(!aView.contains(anEvent.getX(), anEvent.getY()) && view instanceof ChildView) {
+        ChildView cview = (ChildView)view;
+        View content = editor.getContent();
+        editor.setContent(cview);
+        cview.addChild(content);
+    }
     
-    //String cname = str.substring("GalleryPane: ".length());
+    // Otherwise, if view is child view, just add
+    else if(aView instanceof ChildView) { ChildView cview = (ChildView)aView;
+        cview.addChild(view); }
+        
+    // Select view
+    editor.setSelectedView(view);
+}
+
+/**
+ * Creates a new View for drag.
+ */
+public View createDragView(View aView, ViewEvent anEvent)
+{
+    // Create new view from drag view class
     Class cls = _dragView.getClass(); //ClassUtils.getClass(cname);
     View view = (View)ClassUtils.newInstance(cls);
+    
+    // Set bounds using drag image
     Image img = Clipboard.getDrag().getDragImage();
     Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
     double w = img.getWidth(), h = img.getHeight();
     double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
     view.setBounds(x, y, w, h);
-    if(view instanceof ButtonBase)
-        view.setText(view.getClass().getSimpleName());
-    if(view instanceof RectView) {
-       view.setPrefSize(w,h); view.setFill(Color.PINK); view.setBorder(Color.BLACK,1); }
-   if(view instanceof Label)
-       view.setText("Label");
-    ((ChildView)aView).addChild(view);
-    getEditor().setSelectedView(view);
+    
+    // Special cases
+    if(view instanceof ButtonBase) view.setText(view.getClass().getSimpleName());
+    if(view instanceof RectView) { view.setPrefSize(w,h); view.setFill(Color.PINK); view.setBorder(Color.BLACK,1); }
+    if(view instanceof Label) view.setText("Label");
+    return view;
 }
 
 /**

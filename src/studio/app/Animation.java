@@ -22,7 +22,7 @@ public class Animation extends EditorPane.SupportPane {
     boolean             _update = true;
     
     // The list of key frames
-    List <Integer>      _keyFrames;
+    Integer             _keyFrames[];
     
     // The list of key frames for selected shapes
     List <Integer>      _selectedShapesKeyFrames;
@@ -85,11 +85,12 @@ public void resetUI()
     
     // Get ViewAnim
     ViewAnim anim = shape.getAnim(0);
+    int time = getTime();
     
     // Update TimeText, TimeSlider and TimeSlider Maximum
-    setViewValue("TimeText", format(anim.getTime()));
-    setViewValue("TimeSlider", Math.round(anim.getTime()*getFrameRate(anim)));
-    getView("TimeSlider", Slider.class).setMax(Math.round(anim.getMaxTime()*getFrameRate(anim)));
+    setViewValue("TimeText", time); //format(time));
+    setViewValue("TimeSlider", time); //Math.round(anim.getTime()*getFrameRate(anim)));
+    getView("TimeSlider", Slider.class).setMax(anim.getMaxTime()); //Math.round(anim.getMaxTime()*getFrameRate(anim)));
     
     // Update LoopCheckBox
     setViewValue("LoopCheckBox", anim.getLoopCount()>10);
@@ -107,13 +108,13 @@ public void resetUI()
     //animator.addAnimatorListener(this);
     
     // Get animator key frames
-    //_keyFrames = animator.getKeyFrameTimes();
+    _keyFrames = anim.getKeyFrameTimes();
     
     // Get selected shapes key frames
     //_selectedShapesKeyFrames = shape.isRoot()? null : animator.getKeyFrameTimes(shapes, true);
     
     // Reset KeyFrameList KeyFrames
-    setViewItems(_keyFramesList, _keyFrames);
+    _keyFramesList.setItems(_keyFrames);
 
     // Get animator selected frame indices (start and end)
     //int frameStartIndex = _keyFrames.indexOf(animator.getScopeTime());
@@ -124,6 +125,7 @@ public void resetUI()
         
     // If KeyFramesList and animator still don't match, reset keyFrameList
     //_keyFramesList.setSelectionInterval(frameStartIndex, frameEndIndex);
+    _keyFramesList.setSelectedItem(time);
     
     // Clear list of changes
     _changes.clear();
@@ -185,6 +187,7 @@ public void respondUI(ViewEvent anEvent)
     Editor editor = getEditor();
     View view = editor.getSelectedOrSuperSelectedView();
     ViewAnim anim = view.getAnim(0);
+    int time = getTime();
     
     // Handle TimeSlider or TimeTextField
     if(anEvent.equals("TimeSlider"))
@@ -206,11 +209,11 @@ public void respondUI(ViewEvent anEvent)
     
     // Handle StepButton
     if(anEvent.equals("StepButton"))
-        setTime(anim.getTime() + getInterval(anim));
+        setTime(time + getInterval(anim));
     
     // Handle BackButton
     if(anEvent.equals("BackButton"))
-        setTime(anim.getTime() - getInterval(anim));
+        setTime(time - getInterval(anim));
     
     // Handle LoopCheckBox
     if(anEvent.equals("LoopCheckBox"))
@@ -239,7 +242,6 @@ public void respondUI(ViewEvent anEvent)
     /*if(anEvent.equals("ShiftFramesMenuItem")) {
         
         // Run option panel
-        int time = animator.getTime();
         String msg = "Shift key frames from time " + time/1000f + " to end by time:";
         DialogBox dbox = new DialogBox("Shift Key Frames"); dbox.setQuestionMessage(msg);
         String shiftString = dbox.showInputDialog(getUI(), "0.0");
@@ -296,12 +298,12 @@ public void respondUI(ViewEvent anEvent)
 /**
  * Returns the number of key frames for the current animator.
  */
-private int getKeyFrameCount()  { return _keyFrames==null? 0 : _keyFrames.size(); }
+private int getKeyFrameCount()  { return _keyFrames==null? 0 : _keyFrames.length; }
 
 /**
  * Returns the float time value of the key frame at the given index.
  */
-private Integer getKeyFrame(int anIndex)  { return anIndex>=0? _keyFrames.get(anIndex) : null; }
+private Integer getKeyFrame(int anIndex)  { return _keyFrames[anIndex]; }
 
 /**
  * Returns the float time value of the key frame at the given index as a formatted string.
@@ -318,14 +320,32 @@ public boolean isFreezableFrame()  { return true; }
 }*/
 
 /**
+ * Returns the current time (in milliseconds).
+ */
+public int getTime()
+{
+    Editor editor = getEditor(); View content = editor.getContent();
+    return content.getAnim(0).getTime();
+}
+
+/**
  * Sets the time of the current animator to the given time.
  */
 public void setTime(int aTime)  //{ setTimeForScopedKeyFrame(aTime, null); }
 {
-    Editor editor = getEditor();
-    View view = editor.getSelectedOrSuperSelectedView();
-    ViewAnim anim = view.getAnim(0);
-    anim.setTime(aTime);
+    Editor editor = getEditor(); View content = editor.getContent();
+    setTimeDeep(content, aTime);
+}
+
+/**
+ * Sets the time on all anims.
+ */
+protected void setTimeDeep(View aView, int aTime)
+{
+    aView.getAnim(0).setTime(aTime);
+    if(aView instanceof ParentView) { ParentView par = (ParentView)aView;
+        for(View child : par.getChildren())
+            setTimeDeep(child, aTime); }
 }
 
 /**

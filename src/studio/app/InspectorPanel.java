@@ -24,7 +24,7 @@ public class InspectorPanel extends EditorPane.SupportPane {
     ShapeGeneral         _shapeGeneral = new ShapeGeneral(getEditorPane());
     
     // The inspector for shape animation
-    //Animation            _animation = new Animation(getEditorPane());
+    Animation            _animation = new Animation(getEditorPane());
     
     // The inspector to show view hierarchy
     ViewTree             _viewTree = new ViewTree(getEditorPane());
@@ -110,7 +110,7 @@ public void respondUI(ViewEvent anEvent)
         setInspector(_shapeGeneral);
     
     // Handle AnimationButton
-    //if(anEvent.equals("AnimationButton")) setInspector(_animation);
+    if(anEvent.equals("AnimationButton")) setInspector(_animation);
     
     // Handle UndoAction
     if(anEvent.equals("UndoAction"))

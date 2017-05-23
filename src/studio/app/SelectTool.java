@@ -3,6 +3,7 @@ import java.util.*;
 import snap.gfx.*;
 import snap.util.ListUtils;
 import snap.view.*;
+import studio.app.ViewTool.ViewHandle;
 
 /**
  * This class handles mouse selection and manipulation of shapes, including:
@@ -194,16 +195,12 @@ public void mouseDragged(ViewEvent anEvent)
             // Set undo title
             editor.undoerSetUndoTitle("Move");
             
-            // Get SuperSelectedShape and disable ParentTracksBoundsOfChildren
-            ParentView parent = editor.getSuperSelectedParentView();
-            
-            // Get event point in super selected shape coords
+            // Get event point in super selected view coords and move views once to event point without SnapToGrid
             Point point = getEventPointInSuperSelectedView(false);
-
-            // Move shapes once to event point without SnapToGrid
-            moveShapes(_lastMousePoint, point); _lastMousePoint = point;
+            moveViews(_lastMousePoint, point); _lastMousePoint = point;
             
             // Get event point snapped to grid & edges, since SnapEdges will now be valid
+            //ParentView parent = editor.getSuperSelectedParentView();
             //Point pointSnapped = getEventPointInShape(shouldSnap, shouldSnap);
             //Point pointSnappedDoc = parent.localToParent(content, pointSnapped.x, pointSnapped.y);
             
@@ -217,14 +214,10 @@ public void mouseDragged(ViewEvent anEvent)
 
             // Set Undo title
             editor.undoerSetUndoTitle("Rotate");
-            Point point2 = getEventPointInSuperSelectedView(false);
             
-            // Iterate over selected shapes and update roll
-            for(View shape : editor.getSelectedViews()) { //if(shape.isLocked()) continue;
-                shape.setRotate(shape.getRotate() + point2.getY() - _lastMousePoint.getY()); }
-
-            // Reset last point and break
-            _lastMousePoint = point2;
+            // Get event point in super selected view coords and rotate views
+            Point point2 = getEventPointInSuperSelectedView(false);
+            rotateViews(point2.getY() - _lastMousePoint.getY()); _lastMousePoint = point2;
             break;
 
         // Handle DragModeResize
@@ -233,11 +226,9 @@ public void mouseDragged(ViewEvent anEvent)
             // Register undo title "Resize"
             editor.undoerSetUndoTitle("Resize");
             
-            // Get event point in super selected shape coords snapped to grid 
+            // Get event point in super selected shape coords and move handle 
             Point resizePoint = getEventPointInSuperSelectedView(shouldSnap);
-            
-            // Move handle to current point and break
-            _viewHandle.tool.moveViewHandle(_viewHandle, resizePoint);
+            moveViewHandle(_viewHandle, resizePoint);
             break;
 
         // Handle DragModeSelect
@@ -350,15 +341,66 @@ public void mouseMoved(ViewEvent anEvent)
 }
 
 /**
- * Moves the currently selected shapes from a point to a point.
+ * Moves the currently selected views from a point to a point.
  */
-private void moveShapes(Point fromPoint, Point toPoint)
+private void moveViews(Point fromPoint, Point toPoint)
 {
-    // Iterate over selected shapes
-    for(int i=0, iMax=getEditor().getSelectedViewCount(); i<iMax; i++) {
-        View shape = getEditor().getSelectedView(i); //if(shape.isLocked()) continue;
+    // Iterate over selected view
+    Editor editor = getEditor(); int time = editor.getTime();
+    for(int i=0, iMax=editor.getSelectedViewCount(); i<iMax; i++) { View view = editor.getSelectedView(i);
         double fx = fromPoint.getX(), fy = fromPoint.getY(), tx = toPoint.getX(), ty = toPoint.getY();
-        shape.setXY(shape.getX() + tx - fx, shape.getY() + ty - fy); // Was setFrameXY, getFrameX/Y
+        double x0 = view.getX(), y0 = view.getY(), x1 = x0 + tx - fx, y1 = y0 + ty - fy;
+        view.setXY(x1, y1); // Was setFrameXY, getFrameX/Y
+        if(time!=0 || !view.getAnim(0).isEmpty()) {
+            ViewAnim anim = view.getAnim(time);
+            if(!anim.isStartValSet(View.X_Prop))
+                anim.setStartVal(View.X_Prop, x0);
+            if(!anim.isStartValSet(View.Y_Prop))
+                anim.setStartVal(View.Y_Prop, y0);
+            anim.setX(x1).setY(y1);
+        }
+    }
+}
+
+/**
+ * Moves the currently selected views from a point to a point.
+ */
+private void rotateViews(double anAngle)
+{
+    // Iterate over selected view
+    Editor editor = getEditor(); int time = editor.getTime();
+    for(int i=0, iMax=editor.getSelectedViewCount(); i<iMax; i++) { View view = editor.getSelectedView(i);
+        double r0 = view.getRotate(), r1 = r0 + anAngle;
+        view.setRotate(r1);
+        if(time!=0 || !view.getAnim(0).isEmpty()) {
+            ViewAnim anim = view.getAnim(time);
+            if(!anim.isStartValSet(View.Rotate_Prop))
+                anim.setStartVal(View.Rotate_Prop, r0);
+            anim.setRotate(r1);
+        }
+    }
+}
+
+/**
+ * Resizes view for given handle to given point.
+ */
+public void moveViewHandle(ViewHandle aHandle, Point toPoint)
+{
+    // Get view and current bounds
+    View view = aHandle.view; Rect bounds = view.getBounds();
+    
+    // Move handle
+    aHandle.tool.moveViewHandle(aHandle, toPoint);
+    
+    // Get View
+    Editor editor = getEditor(); int time = editor.getTime();
+    if(time!=0 || !aHandle.view.getAnim(0).isEmpty()) {
+        ViewAnim anim = view.getAnim(time);
+        if(!anim.isStartValSet(View.Width_Prop))
+            anim.setStartVal(View.Width_Prop, bounds.getWidth());
+        if(!anim.isStartValSet(View.Height_Prop))
+            anim.setStartVal(View.Height_Prop, bounds.getHeight());
+        anim.setWidth(view.getWidth()).setHeight(view.getHeight());
     }
 }
 

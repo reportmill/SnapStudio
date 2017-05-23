@@ -48,6 +48,9 @@ public class Editor extends Viewer implements DeepChangeListener, RootView.Liste
     
     // The undoer
     Undoer                _undoer = new Undoer();
+    
+    // The current time
+    int                   _time;
 
     // Constants for PropertyChanges
     public static final String CurrentTool_Prop = "CurrentTool";
@@ -766,6 +769,32 @@ public Rect getZoomFocusRect()
  * Override to return Undoer.
  */
 public Undoer getUndoer()  { return _undoer; }
+
+/**
+ * Returns the current time (in milliseconds).
+ */
+public int getTime()  { return _time; }
+
+/**
+ * Sets the time of the current animator to the given time.
+ */
+public void setTime(int aTime)  //{ setTimeForScopedKeyFrame(aTime, null); }
+{
+    if(aTime==_time) return;
+    firePropChange("Time", _time, _time = aTime);
+    setTimeDeep(getContent(), _time);
+}
+
+/**
+ * Sets the time on all anims.
+ */
+protected void setTimeDeep(View aView, int aTime)
+{
+    aView.getAnim(0).setTime(aTime);
+    if(aView instanceof ParentView) { ParentView par = (ParentView)aView;
+        for(View child : par.getChildren())
+            setTimeDeep(child, aTime); }
+}
 
 /**
  * Override to paint handles, margin, grid, etc.

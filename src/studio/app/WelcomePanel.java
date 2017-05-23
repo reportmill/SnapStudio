@@ -166,6 +166,7 @@ protected void newFile()
 {
     EditorPane epane = new EditorPane().newDocument();
     epane.setWindowVisible(true);
+    hide();
 }
 
 /**

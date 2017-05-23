@@ -90,7 +90,7 @@ public void resetUI()
     // Update TimeText, TimeSlider and TimeSlider Maximum
     setViewValue("TimeText", time); //format(time));
     setViewValue("TimeSlider", time); //Math.round(anim.getTime()*getFrameRate(anim)));
-    getView("TimeSlider", Slider.class).setMax(anim.getMaxTime()); //Math.round(anim.getMaxTime()*getFrameRate(anim)));
+    getView("TimeSlider", Slider.class).setMax(getMaxTime()); //Math.round(anim.getMaxTime()*getFrameRate(anim)));
     
     // Update LoopCheckBox
     setViewValue("LoopCheckBox", anim.getLoopCount()>10);
@@ -99,7 +99,7 @@ public void resetUI()
     setViewValue("FrameRateText", getFrameRate(anim));
     
     // Update MaxTimeText
-    setViewValue("MaxTimeText", anim.getMaxTime());
+    setViewValue("MaxTimeText", getMaxTime());
     
     // If there wasn't really an animator, just return
     //if(getAnimator(false)==null) return;
@@ -322,31 +322,17 @@ public boolean isFreezableFrame()  { return true; }
 /**
  * Returns the current time (in milliseconds).
  */
-public int getTime()
-{
-    Editor editor = getEditor(); View content = editor.getContent();
-    return content.getAnim(0).getTime();
-}
+public int getTime()  { return getEditor().getTime(); }
 
 /**
  * Sets the time of the current animator to the given time.
  */
-public void setTime(int aTime)  //{ setTimeForScopedKeyFrame(aTime, null); }
-{
-    Editor editor = getEditor(); View content = editor.getContent();
-    setTimeDeep(content, aTime);
-}
+public void setTime(int aTime)  { getEditor().setTime(aTime); } //{ setTimeForScopedKeyFrame(aTime, null); }
 
 /**
- * Sets the time on all anims.
+ * Returns the max time.
  */
-protected void setTimeDeep(View aView, int aTime)
-{
-    aView.getAnim(0).setTime(aTime);
-    if(aView instanceof ParentView) { ParentView par = (ParentView)aView;
-        for(View child : par.getChildren())
-            setTimeDeep(child, aTime); }
-}
+public int getMaxTime()  { return 5000; }
 
 /**
  * Sets the time of the current animator to the given time.

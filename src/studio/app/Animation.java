@@ -424,6 +424,35 @@ private void getKeyFrameTimes(View aView, Set aSet)
 }
 
 /**
+ * Returns the anim for given view at given time.
+ */
+public static ViewAnim getAnim(View aView, int aTime)  { return getAnim(aView.getAnim(0), aTime, true); }
+
+/**
+ * Returns the anim for given view at given time.
+ */
+public static ViewAnim getAnim(ViewAnim theAnim, int aTime, boolean doCreate)
+{
+    if(theAnim.getEnd()==aTime)
+        return theAnim;
+    if(theAnim.getEnd()>aTime)
+        return null;
+    for(ViewAnim child : theAnim.getAnims()) {
+        ViewAnim anim = getAnim(child, aTime, false);
+        if(anim!=null)
+            return anim;
+    }
+    if(!doCreate)
+        return null;
+    if(theAnim.getAnims().size()>0) {
+        ViewAnim anim = getAnim(theAnim.getAnims().get(0), aTime, true);
+        if(anim!=null)
+            return anim;
+    }
+    return theAnim.getAnim(aTime);
+}
+
+/**
  * Returns the name for this inspector.
  */
 public String getWindowTitle()  { return "Animation"; }

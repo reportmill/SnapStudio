@@ -462,7 +462,17 @@ public static void setSelectedColor(Editor anEditor, Color aColor)
  */
 public static void setColor(Editor anEditor, Color aColor)
 {
-    anEditor.getSelectedOrSuperSelectedViews().forEach(i -> i.setFill(aColor));
+    int time = anEditor.getTime();
+    for(View view : anEditor.getSelectedOrSuperSelectedViews()) {
+        Paint orig = view.getFill();
+        view.setFill(aColor);
+        if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
+            ViewAnim anim = Animation.getAnim(view, time);
+            if(!anim.isStartValSet(View.Fill_Prop))
+                anim.setStartVal(View.Fill_Prop, orig!=null? orig : Color.CLEAR);
+            anim.setFill(aColor);
+        }
+    }
 }
 
 /**

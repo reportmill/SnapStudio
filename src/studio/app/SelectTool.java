@@ -351,8 +351,8 @@ private void moveViews(Point fromPoint, Point toPoint)
         double fx = fromPoint.getX(), fy = fromPoint.getY(), tx = toPoint.getX(), ty = toPoint.getY();
         double x0 = view.getX(), y0 = view.getY(), x1 = x0 + tx - fx, y1 = y0 + ty - fy;
         view.setXY(x1, y1); // Was setFrameXY, getFrameX/Y
-        if(time!=0 || !view.getAnim(0).isEmpty()) {
-            ViewAnim anim = view.getAnim(time);
+        if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
+            ViewAnim anim = Animation.getAnim(view, time);
             if(!anim.isStartValSet(View.X_Prop))
                 anim.setStartVal(View.X_Prop, x0);
             if(!anim.isStartValSet(View.Y_Prop))
@@ -372,8 +372,8 @@ private void rotateViews(double anAngle)
     for(int i=0, iMax=editor.getSelectedViewCount(); i<iMax; i++) { View view = editor.getSelectedView(i);
         double r0 = view.getRotate(), r1 = r0 + anAngle;
         view.setRotate(r1);
-        if(time!=0 || !view.getAnim(0).isEmpty()) {
-            ViewAnim anim = view.getAnim(time);
+        if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
+            ViewAnim anim = Animation.getAnim(view, time);
             if(!anim.isStartValSet(View.Rotate_Prop))
                 anim.setStartVal(View.Rotate_Prop, r0);
             anim.setRotate(r1);
@@ -394,8 +394,8 @@ public void moveViewHandle(ViewHandle aHandle, Point toPoint)
     
     // Get View
     Editor editor = getEditor(); int time = editor.getTime();
-    if(time!=0 || !aHandle.view.getAnim(0).isEmpty()) {
-        ViewAnim anim = view.getAnim(time);
+    if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
+        ViewAnim anim = Animation.getAnim(view, time);
         if(!anim.isStartValSet(View.Width_Prop))
             anim.setStartVal(View.Width_Prop, bounds.getWidth());
         if(!anim.isStartValSet(View.Height_Prop))

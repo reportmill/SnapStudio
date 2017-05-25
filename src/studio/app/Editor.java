@@ -790,7 +790,8 @@ public void setTime(int aTime)  //{ setTimeForScopedKeyFrame(aTime, null); }
  */
 protected void setTimeDeep(View aView, int aTime)
 {
-    aView.getAnim(0).setTime(aTime);
+    ViewAnim anim = aView.getAnim(-1);
+    if(anim!=null) anim.setTime(aTime);
     if(aView instanceof ParentView) { ParentView par = (ParentView)aView;
         for(View child : par.getChildren())
             setTimeDeep(child, aTime); }

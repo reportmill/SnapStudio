@@ -24,8 +24,8 @@ public class Animation extends EditorPane.SupportPane {
     // The list of key frames
     Integer             _keyFrames[];
     
-    // The list of key frames for selected shapes
-    List <Integer>      _selectedShapesKeyFrames;
+    // The list of key frames for selected views
+    Integer             _viewKeyFrames[];
     
     // The list of changes (keys) for key frame and selected shape
     List <String>       _changes = new Vector();
@@ -80,11 +80,11 @@ public void resetUI()
     //if(animator.isRunning()) return;
     
     // Get the currently selected view and views
-    View shape = editor.getSelectedOrSuperSelectedView();
-    List <View> shapes = editor.getSelectedOrSuperSelectedViews();
+    View view = editor.getSelectedOrSuperSelectedView();
+    List <View> views = editor.getSelectedOrSuperSelectedViews();
     
     // Get ViewAnim
-    ViewAnim anim = shape.getAnim(0);
+    ViewAnim anim = view.getAnim(-1);
     int time = getTime();
     
     // Update TimeText, TimeSlider and TimeSlider Maximum
@@ -93,7 +93,7 @@ public void resetUI()
     getView("TimeSlider", Slider.class).setMax(getMaxTime()); //Math.round(anim.getMaxTime()*getFrameRate(anim)));
     
     // Update LoopCheckBox
-    setViewValue("LoopCheckBox", anim.getLoopCount()>10);
+    setViewValue("LoopCheckBox", anim!=null && anim.getLoopCount()>10);
     
     // Update FrameRateText
     setViewValue("FrameRateText", getFrameRate(anim));
@@ -108,10 +108,10 @@ public void resetUI()
     //animator.addAnimatorListener(this);
     
     // Get animator key frames
-    _keyFrames = anim.getKeyFrameTimes();
+    _keyFrames = getKeyFrameTimes();
     
-    // Get selected shapes key frames
-    //_selectedShapesKeyFrames = shape.isRoot()? null : animator.getKeyFrameTimes(shapes, true);
+    // Get selected view key frames
+    _viewKeyFrames = anim!=null? anim.getKeyFrameTimes() : new Integer[0];
     
     // Reset KeyFrameList KeyFrames
     _keyFramesList.setItems(_keyFrames);
@@ -186,7 +186,7 @@ public void respondUI(ViewEvent anEvent)
     // Get Editor, View and Anim
     Editor editor = getEditor();
     View view = editor.getSelectedOrSuperSelectedView();
-    ViewAnim anim = view.getAnim(0);
+    ViewAnim anim = view.getAnim(-1);
     int time = getTime();
     
     // Handle TimeSlider or TimeTextField
@@ -198,14 +198,14 @@ public void respondUI(ViewEvent anEvent)
         setTimeSeconds(anEvent.getIntValue());
 
     // Handle PlayButton
-    if(anEvent.equals("PlayButton")) {
+    if(anEvent.equals("PlayButton") && anim!=null) {
         //animator.setResetTimeOnStop(true);
-        anim.play();
+        editor.getContent().playAnimDeep();
     }
     
     // Handle StopButton
-    if(anEvent.equals("StopButton"))
-        anim.stop();
+    if(anEvent.equals("StopButton") && anim!=null)
+        editor.getContent().stopAnimDeep();
     
     // Handle StepButton
     if(anEvent.equals("StepButton"))
@@ -226,13 +226,14 @@ public void respondUI(ViewEvent anEvent)
     //if(anEvent.equals("MaxTimeText")) anim.setMaxTimeSeconds(anEvent.getFloatValue());
 
     // Handle KeyFrameList
-    if(anEvent.getView()==_keyFramesList) {
+    if(anEvent.equals(_keyFramesList)) {
+        Integer ntime = _keyFramesList.getSelectedItem(); if(ntime==null) return;
+        setTime(ntime);
         /*int index = _keyFramesList.getSelectedIndexMax();
         if(index>=0 && index<getKeyFrameCount()) {
             if(index!=_keyFramesList.getSelectedIndexMin())
                 setTimeForScopedKeyFrame(getKeyFrame(index), getKeyFrame(_keyFramesList.getSelectedIndexMin()));
-            else setTime(getKeyFrame(index));
-        }*/
+            else setTime(getKeyFrame(index)); }*/
     }
 
     // Handle freezeFrameButton
@@ -376,7 +377,7 @@ private void configureKeyFrameList(ListCell <Integer> aCell)
     String str = format(item/1000f); aCell.setText(str);
     
     // If not relevant to selected shape make brighter
-    if(!aCell.isSelected() && !ListUtils.contains(_selectedShapesKeyFrames, item))
+    if(!aCell.isSelected() && !ArrayUtils.contains(_viewKeyFrames, item))
         aCell.setTextFill(Color.LIGHTGRAY);
 }
 
@@ -394,6 +395,33 @@ private void configureKeyFrameList(ListCell <Integer> aCell)
         setViewValue("TimeText", format(anAnimator.getTimeSeconds()));
     }
 }*/
+
+/**
+ * Returns the KeyFrame times for all anims.
+ */
+public Integer[] getKeyFrameTimes()
+{
+    Set <Integer> timesSet = new HashSet(); timesSet.add(0); timesSet.add(getTime());
+    getKeyFrameTimes(getEditor().getContent(), timesSet);
+    Integer times[] = timesSet.toArray(new Integer[timesSet.size()]);
+    Arrays.sort(times);
+    return times;
+}
+
+/**
+ * Gets key frame times for view.
+ */
+private void getKeyFrameTimes(View aView, Set aSet)
+{
+    ViewAnim anim = aView.getAnim(-1);
+    if(anim!=null && !anim.isEmpty()) {
+        Integer times[] = anim.getKeyFrameTimes();
+        Collections.addAll(aSet, times);
+    }
+    if(aView instanceof ParentView) { ParentView par = (ParentView)aView;
+        for(View child : par.getChildren())
+            getKeyFrameTimes(child, aSet); }
+}
 
 /**
  * Returns the name for this inspector.

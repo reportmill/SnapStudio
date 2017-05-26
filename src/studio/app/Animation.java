@@ -84,8 +84,8 @@ public void resetUI()
     List <View> views = editor.getSelectedOrSuperSelectedViews();
     
     // Get ViewAnim
-    ViewAnim anim = view.getAnim(-1);
     int time = getTime();
+    ViewAnim animRoot = view.getAnim(-1), animNow = animRoot!=null? getAnim(animRoot, time, false) : null;
     
     // Update TimeText, TimeSlider and TimeSlider Maximum
     setViewValue("TimeText", time); //format(time));
@@ -93,10 +93,10 @@ public void resetUI()
     getView("TimeSlider", Slider.class).setMax(getMaxTime()); //Math.round(anim.getMaxTime()*getFrameRate(anim)));
     
     // Update LoopCheckBox
-    setViewValue("LoopCheckBox", anim!=null && anim.getLoopCount()>10);
+    setViewValue("LoopCheckBox", animNow!=null && animNow.getLoopCount()>10);
     
     // Update FrameRateText
-    setViewValue("FrameRateText", getFrameRate(anim));
+    setViewValue("FrameRateText", getFrameRate(animRoot));
     
     // Update MaxTimeText
     setViewValue("MaxTimeText", getMaxTime());
@@ -111,7 +111,7 @@ public void resetUI()
     _keyFrames = getKeyFrameTimes();
     
     // Get selected view key frames
-    _viewKeyFrames = anim!=null? anim.getKeyFrameTimes() : new Integer[0];
+    _viewKeyFrames = animRoot!=null? animRoot.getKeyFrameTimes() : new Integer[0];
     
     // Reset KeyFrameList KeyFrames
     _keyFramesList.setItems(_keyFrames);
@@ -129,8 +129,8 @@ public void resetUI()
     
     // Clear list of changes
     _changes.clear();
-    if(anim!=null)
-        for(String key : anim.getKeys())
+    if(animNow!=null)
+        for(String key : animNow.getKeys())
             _changes.add(key);
     
     // Get currently selected shape timeline and key frame

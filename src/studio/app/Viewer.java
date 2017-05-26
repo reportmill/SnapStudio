@@ -103,9 +103,20 @@ public void setContent(Object aSource)
 public WebURL getSourceURL()  { return _url; }
 
 /**
+ * Sets the source URL.
+ */
+public void setSourceURL(WebURL aURL)  { _url = aURL; }
+
+/**
  * Returns the source URL.
  */
-public WebFile getSourceFile()  { return _url!=null? _url.getFile() : null; }
+public WebFile getSourceFile(boolean doCreate)
+{
+    if(_url==null) return null;
+    WebFile file = _url.getFile();
+    if(file==null && doCreate) file = _url.createFile(false);
+    return file;
+}
 
 /**
  * Returns the viewer's zoom factor (1 by default).

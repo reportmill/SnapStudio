@@ -88,6 +88,11 @@ public ParentView getContent()  { return getViewer().getContent(); }
 protected WebURL getSourceURL()  { return getViewer().getSourceURL(); }
 
 /**
+ * Sets the source URL.
+ */
+public void setSourceURL(WebURL aURL)  { getViewer().setSourceURL(aURL); }
+
+/**
  * Returns the top controls.
  */
 public ViewOwner getTopToolBar()  { return _topToolBar!=null? _topToolBar : (_topToolBar=createTopToolBar()); }

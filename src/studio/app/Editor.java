@@ -125,7 +125,8 @@ public ParentView getContentPage()
 public void save() throws Exception
 {
     // Get source file and save (update file might get called from here)
-    WebFile file = getSourceFile();
+    updateFile();
+    WebFile file = getSourceFile(true);
     file.save();
     
     // Clear undoer
@@ -137,8 +138,7 @@ public void save() throws Exception
  */
 public void updateFile()
 {
-    WebFile file = getSourceFile();
-    if(file==null && getSourceURL()!=null) file = getSourceURL().createFile(false);
+    WebFile file = getSourceFile(true);
     XMLElement xml = getContentXML();
     byte bytes[] = xml.getBytes();
     file.setBytes(bytes);
@@ -939,7 +939,7 @@ public void deepChange(PropChangeListener aView, PropChange anEvent)
         saveUndoerChangesLater();
         
         // Set updator
-        WebFile file = getSourceFile();
+        WebFile file = getSourceFile(false);
         if(file!=null) file.setUpdater(undoer.hasUndos()? _updr : null);
     }
     

@@ -16,7 +16,7 @@ public class Animation extends EditorPane.SupportPane {
     ListView <Integer>  _keyFramesList;
     
     // The changes JList
-    ListView            _changesList;
+    ListView <String>   _changesList;
     
     // Whether to allow update to time slider/text
     boolean             _update = true;
@@ -129,21 +129,21 @@ public void resetUI()
     
     // Clear list of changes
     _changes.clear();
+    if(anim!=null)
+        for(String key : anim.getKeys())
+            _changes.add(key);
     
     // Get currently selected shape timeline and key frame
     //RMTimeline timeline = shape.getTimeline();
     //RMKeyFrame keyFrame = timeline!=null? timeline.getKeyFrameAt(animator.getTime()) : null;
-    
     // If frame isn't empty, set changes to attributes at time
-    //if(keyFrame!=null)
-    //    for(RMKeyValue kval : keyFrame.getKeyValues())
-    //        _changes.add(kval.getKey());
+    //if(keyFrame!=null) for(RMKeyValue kval : keyFrame.getKeyValues()) _changes.add(kval.getKey());
     
     // Update ChangesList Changes
-    setViewItems(_changesList, _changes);
+    _changesList.setItems(_changes);
         
     // Get selected change
-    String change = getViewStringValue(_changesList);
+    String change = _changesList.getSelectedItem();
     
     // Get key/value for change
     //RMKeyValue keyValue = keyFrame!=null && change!=null? keyFrame.getKeyValue(shape, change) : null;

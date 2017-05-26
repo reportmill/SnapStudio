@@ -348,17 +348,18 @@ private void moveViews(Point fromPoint, Point toPoint)
     // Iterate over selected view
     Editor editor = getEditor(); int time = editor.getTime();
     for(int i=0, iMax=editor.getSelectedViewCount(); i<iMax; i++) { View view = editor.getSelectedView(i);
+    
+        // Calculate new location
         double fx = fromPoint.getX(), fy = fromPoint.getY(), tx = toPoint.getX(), ty = toPoint.getY();
-        double x0 = view.getX(), y0 = view.getY(), x1 = x0 + tx - fx, y1 = y0 + ty - fy;
-        view.setXY(x1, y1); // Was setFrameXY, getFrameX/Y
+        double nx = view.getX() + tx - fx, ny = view.getY() + ty - fy;
+        
+        // Set Anim value (do this first so Anim.StartVal can be initialized if needed)
         if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
             ViewAnim anim = Animation.getAnim(view, time);
-            if(!anim.isStartValSet(View.X_Prop))
-                anim.setStartVal(View.X_Prop, x0);
-            if(!anim.isStartValSet(View.Y_Prop))
-                anim.setStartVal(View.Y_Prop, y0);
-            anim.setX(x1).setY(y1);
-        }
+            anim.setX(nx).setY(ny); }
+        
+        // Set view location
+        view.setXY(nx, ny); // Was setFrameXY, getFrameX/Y
     }
 }
 
@@ -370,14 +371,15 @@ private void rotateViews(double anAngle)
     // Iterate over selected view
     Editor editor = getEditor(); int time = editor.getTime();
     for(int i=0, iMax=editor.getSelectedViewCount(); i<iMax; i++) { View view = editor.getSelectedView(i);
-        double r0 = view.getRotate(), r1 = r0 + anAngle;
-        view.setRotate(r1);
+        double rot = view.getRotate() + anAngle;
+        
+        // Set Anim value (do this first so Anim.StartVal can be initialized if needed)
         if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
             ViewAnim anim = Animation.getAnim(view, time);
-            if(!anim.isStartValSet(View.Rotate_Prop))
-                anim.setStartVal(View.Rotate_Prop, r0);
-            anim.setRotate(r1);
-        }
+            anim.setRotate(rot); }
+            
+        // Set view rotation
+        view.setRotate(rot);
     }
 }
 
@@ -389,18 +391,20 @@ public void moveViewHandle(ViewHandle aHandle, Point toPoint)
     // Get view and current bounds
     View view = aHandle.view; Rect bounds = view.getBounds();
     
-    // Move handle
-    aHandle.tool.moveViewHandle(aHandle, toPoint);
-    
-    // Get View
+    // Set Anim values (do this first so Anim.StartVal can be initialized if needed)
     Editor editor = getEditor(); int time = editor.getTime();
     if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
         ViewAnim anim = Animation.getAnim(view, time);
-        if(!anim.isStartValSet(View.Width_Prop))
-            anim.setStartVal(View.Width_Prop, bounds.getWidth());
-        if(!anim.isStartValSet(View.Height_Prop))
-            anim.setStartVal(View.Height_Prop, bounds.getHeight());
-        anim.setWidth(view.getWidth()).setHeight(view.getHeight());
+        anim.setX(view.getX()).setY(view.getY()).setWidth(view.getWidth()).setHeight(view.getHeight());
+    }
+    
+    // Move handle
+    aHandle.tool.moveViewHandle(aHandle, toPoint);
+    
+    // Update Anim values (now that new bounds has been set)
+    if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
+        ViewAnim anim = Animation.getAnim(view, time);
+        anim.setX(view.getX()).setY(view.getY()).setWidth(view.getWidth()).setHeight(view.getHeight());
     }
 }
 

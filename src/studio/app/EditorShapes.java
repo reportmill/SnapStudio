@@ -464,14 +464,14 @@ public static void setColor(Editor anEditor, Color aColor)
 {
     int time = anEditor.getTime();
     for(View view : anEditor.getSelectedOrSuperSelectedViews()) {
-        Paint orig = view.getFill();
-        view.setFill(aColor);
+
+        // Set Anim value (do this first so Anim.StartVal can be initialized if needed)
         if(time!=0 || (view.getAnim(-1)!=null && !view.getAnim(0).isEmpty())) {
             ViewAnim anim = Animation.getAnim(view, time);
-            if(!anim.isStartValSet(View.Fill_Prop))
-                anim.setStartVal(View.Fill_Prop, orig!=null? orig : Color.CLEAR);
-            anim.setFill(aColor);
-        }
+            anim.setFill(aColor); }
+            
+        // Set view fill
+        view.setFill(aColor);
     }
 }
 

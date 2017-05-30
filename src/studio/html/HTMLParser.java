@@ -105,24 +105,25 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
             _part.addElement((XMLElement)aNode.getCustomNode());
             
             // Read more content
-            HTMLTokenizer xt = (HTMLTokenizer)aNode.getParser().getTokenizer();
-            String content = xt.getContent();
-            if(content!=null) {
-                content = content.trim();
-                if(content.length()>0) {
-                    String nval = _part.getValue();
-                    if(nval==null) nval = content; else nval += content;
-                    _part.setValue(nval);
-                }
-            }
+            XMLElement htext = getHTMLText(aNode);
+            if(htext!=null) _part.addElement(htext);
         }
             
         // Handle close: On first close, check for content
         else if(anId==">" && !_checkedContent) {
-            HTMLTokenizer xt = (HTMLTokenizer)aNode.getParser().getTokenizer();
-            String content = xt.getContent(); _checkedContent = true;
-            _part.setValue(content);
+            XMLElement htext = getHTMLText(aNode);
+            if(htext!=null) _part.addElement(htext);
         }
+    }
+    
+    /** Returns an XML element for extra text. */
+    XMLElement getHTMLText(ParseNode aNode)
+    {
+        HTMLTokenizer xt = (HTMLTokenizer)aNode.getParser().getTokenizer();
+        String content = xt.getContent(); if(content==null) return null;
+        content = content.trim(); if(content.length()==0) return null;
+        XMLElement txml = new XMLElement("html_text"); txml.setValue(content);
+        return txml;
     }
 }
 

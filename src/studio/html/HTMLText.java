@@ -1,23 +1,14 @@
 package studio.html;
-import snap.gfx.Color;
 import snap.util.XMLElement;
-import snap.view.ViewLayout;
+import snap.view.*;
 
 /**
- * A HTMLElement subclass for HTML table data.
+ * A HTMLElement subclass for HTML text.
  */
-public class HTMLTableData extends HTMLElement {
+public class HTMLText extends HTMLElement {
 
     // The layout
-    ViewLayout  _layout = new ViewLayout.VBoxLayout(this);
-
-/**
- * Creates a new HTMLTableData.
- */
-public HTMLTableData()
-{
-    setBorder(Color.PINK,1);
-}
+    ViewLayout  _layout = new ViewLayout.BoxLayout(this);
 
 /**
  * Returns the preferred width.
@@ -42,7 +33,10 @@ public void readHTML(XMLElement aXML, HTMLDoc aDoc)
     // Do normal version
     super.readHTML(aXML, aDoc);
     
-    System.out.println("TableData: " + aXML.getValue());
+    // Read text and create text view
+    String text = aXML.getValue();
+    TextView tview = new TextView(); tview.setFill(null); tview.setText(text);
+    addChild(tview);
 }
 
 }

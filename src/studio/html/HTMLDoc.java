@@ -35,7 +35,7 @@ public HTMLDoc(Object aSource)
     XMLElement xml = null;
     try { xml = new HTMLParser().parseXML(surl); }
     catch(Exception e) { throw new RuntimeException(e); }
-    readHTML(xml);
+    readHTML(xml, this);
     
     setPrefSize(800,800);
     setFill(Color.WHITE);
@@ -81,9 +81,9 @@ protected void layoutImpl()  { _layout.layoutChildren(); }
 /**
  * Reads HTML.
  */
-public void readHTML(XMLElement aXML)
+public void readHTML(XMLElement aXML, HTMLDoc aDoc)
 {
-    super.readHTML(aXML);
+    super.readHTML(aXML, aDoc);
 }
 
 }

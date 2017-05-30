@@ -35,26 +35,30 @@ public void setSource(String aSrc)
 /**
  * Returns the image.
  */
-public Image getImage()
+public Image getImage()  { return _img; }
+
+/**
+ * Sets the image.
+ */
+public void setImage(Image anImage)
 {
-    if(_img!=null || _src==null) return _img;
-    HTMLDoc doc = getDoc(); if(doc==null) return null;
-    WebURL surl = doc.getSourceURL(_src); if(surl==null) return null;
-    Image img = Image.get(surl);
-    return _img = img;
+    _img = anImage;
+    ImageView iview = getChildCount()>0? (ImageView)getChild(0) : null;
+    if(iview==null)
+        addChild(iview = new ImageView(anImage));
+    else iview.setImage(anImage);
 }
 
 /**
- * Override to set image.
+ * Loads the image.
  */
-protected void setShowing(boolean aValue)
+protected void loadImage(HTMLDoc aDoc)
 {
-    super.setShowing(aValue);
-    if(aValue && getChildCount()==0) {
-        Image img = getImage();
-        if(img!=null)
-            addChild(new ImageView(img));
-    }
+    WebURL surl = aDoc.getSourceURL(_src);
+    if(surl==null) { System.err.println("HTMLImage.loadImage: Can't find image for source: " + _src); return; }
+    Image img = Image.get(surl);
+    if(img!=null)
+        setImage(img);
 }
 
 /**
@@ -75,17 +79,17 @@ protected void layoutImpl()  { _layout.layoutChildren(); }
 /**
  * Reads HTML.
  */
-public void readHTML(XMLElement aXML)
+public void readHTML(XMLElement aXML, HTMLDoc aDoc)
 {
     // Read src
     String src = aXML.getAttributeValue("src");
-    if(src!=null)
+    if(src!=null) {
         setSource(src);
+        loadImage(aDoc);
+    }
 
     // Do normal version
-    super.readHTML(aXML);
+    super.readHTML(aXML, aDoc);
 }
-
-
 
 }

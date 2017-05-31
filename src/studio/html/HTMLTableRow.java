@@ -12,7 +12,7 @@ public class HTMLTableRow extends HTMLElement {
  */
 public HTMLTableRow()
 {
-    setBorder(Color.GREEN,1);
+    setBorder(Color.GREEN.brighter().brighter().brighter().brighter(),1);
 }
 
 /**

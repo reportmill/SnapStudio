@@ -1,5 +1,6 @@
 package studio.html;
 import java.util.List;
+import snap.gfx.Color;
 import snap.util.XMLAttribute;
 import snap.util.XMLElement;
 import snap.view.*;
@@ -16,6 +17,19 @@ public class HTMLElement extends ChildView {
  * Returns the doc.
  */
 public HTMLDoc getDoc()  { return getParent(HTMLDoc.class); }
+
+/**
+ * Returns the layout.
+ */
+public ViewLayout getLayout()  { return _layout; }
+
+/**
+ * Returns the layout.
+ */
+public <T extends ViewLayout> T getLayout(Class <T> aClass)
+{
+    return (T)_layout;
+}
 
 /**
  * Creates the layout.
@@ -53,6 +67,7 @@ public void readHTML(XMLElement aXML, HTMLDoc aDoc)
         switch(name) {
             case "width": setPrefWidth(attr.getDoubleValue()); break;
             case "height": setPrefHeight(attr.getDoubleValue()); break;
+            case "bgcolor": setFill(Color.get(attr.getValue())); break;
         }
         //System.out.println(getClass().getSimpleName() + " read " + name + " = " + attr.getValue());
     }

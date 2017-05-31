@@ -13,7 +13,8 @@ public class HTMLTableData extends HTMLElement {
  */
 public HTMLTableData()
 {
-    setBorder(Color.PINK,1);
+    setBorder(Color.PINK.brighter().brighter(),1);
+    setGrowWidth(true);
 }
 
 /**
@@ -28,8 +29,6 @@ public void readHTML(XMLElement aXML, HTMLDoc aDoc)
 {
     // Do normal version
     super.readHTML(aXML, aDoc);
-    
-    System.out.println("TableData: " + aXML.getValue());
 }
 
 }

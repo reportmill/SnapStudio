@@ -12,8 +12,8 @@ public class HTMLTable extends HTMLElement {
  */
 public HTMLTable()
 {
-    setBorder(Color.LIGHTGRAY,1);
-    setFill(Color.CYAN);
+    setBorder(Color.LIGHTBLUE.brighter().brighter().brighter(),1);
+    getLayout(ViewLayout.VBoxLayout.class).setFillWidth(true);
 }
 
 /**

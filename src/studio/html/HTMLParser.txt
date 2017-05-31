@@ -9,12 +9,13 @@ Element { "<" Name Attribute* ("/>" | (">" Content "</" Name ">")) }
 
 Attribute { Name "=" String }
 
-Content { Element* }
+Content { (Element | Comment)* }
 
 Name { "[a-zA-Z0-9_-]*" }
 
 String { "\"[^\"]*\"" }
 
+Comment { "<!--" }  // Text and terminator handled in handler
 
 
 //Document { Prolog? Misc* Element Misc* }

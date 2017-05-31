@@ -20,6 +20,7 @@ public HTMLParser()
     getRule("Prolog").setHandler(new PrologHandler());
     getRule("Element").setHandler(new ElementHandler());
     getRule("Attribute").setHandler(new AttributeHandler());
+    getRule("Comment").setHandler(new CommentHandler());
 }
     
 /**
@@ -89,8 +90,9 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
     {
         // Handle Name
         if(anId=="Name") {
-            if(_part==null) { _part = new XMLElement(aNode.getString()); _checkedContent = false; }
-            else if(!_part.getName().equals(aNode.getString())) {
+            String name = aNode.getString();
+            if(_part==null) { _part = new XMLElement(name); _checkedContent = false; }
+            else if(!_part.getName().equals(name)) {
                 System.err.println("XMLParser: Expected closing tag " + _part.getName());
                 throw new ParseException(aNode.getParser(), aNode.getRule());
             }
@@ -111,8 +113,16 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
             
         // Handle close: On first close, check for content
         else if(anId==">" && !_checkedContent) { _checkedContent = true;
-            XMLElement htext = getHTMLText(aNode);
-            if(htext!=null) _part.addElement(htext);
+        
+            // Handle Script: Read script chars into part
+            if(_part.getName().equalsIgnoreCase("script"))
+                getScriptText(aNode);
+            
+            // Handle normal element
+            else {
+                XMLElement htext = getHTMLText(aNode);
+                if(htext!=null) _part.addElement(htext);
+            }
         }
     }
     
@@ -126,6 +136,35 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
         content = decodeXMLString(content);
         XMLElement txml = new XMLElement("html_text"); txml.setValue(content);
         return txml;
+    }
+    
+    /** Returns an XML element for extra text. */
+    void getScriptText(ParseNode aNode)
+    {
+        HTMLTokenizer xt = (HTMLTokenizer)aNode.getParser().getTokenizer();
+        String script = xt.getScript();
+        _part.setValue(script);
+    }
+}
+
+/**
+ * Comment Handler.
+ */
+public static class CommentHandler extends ParseHandler <XMLElement> {
+    
+    /** Returns the part class. */
+    protected Class <XMLElement> getPartClass()  { return XMLElement.class; }
+
+    /** ParseHandler method. */
+    public void parsedOne(ParseNode aNode, String anId)
+    {
+        // Handle prefix: Gobble content of comment and terminator
+        if(anId=="Comment") {     // Not sure why id isn't: "<!--"
+            _part = new XMLElement("COMMENT");
+            HTMLTokenizer xt = (HTMLTokenizer)aNode.getParser().getTokenizer();
+            String str = xt.getComment();
+            _part.setValue(str);
+        }
     }
 }
 
@@ -189,13 +228,13 @@ private static class HTMLTokenizer extends Tokenizer {
         // Mark content start and skip to next element-start char
         int start = _charIndex;
         while(!isNext("<") && _charIndex<length())
-            _charIndex++;
+            eatChar();
         
         // Handle CDATA: Gobble until close and return string
         if(isNext("<![CDATA[")) {
-            _charIndex += "<![CDATA[".length(); if(Character.isWhitespace(_charIndex)) _charIndex++;
+            _charIndex += "<![CDATA[".length(); if(Character.isWhitespace(_charIndex)) eatChar();
             start = _charIndex;
-            while(!isNext("]]>")) _charIndex++;
+            while(!isNext("]]>")) eatChar();
             String str = getInput().subSequence(start, _charIndex).toString();
             _charIndex += "]]>".length();
             return str;
@@ -211,13 +250,43 @@ private static class HTMLTokenizer extends Tokenizer {
         return decodeXMLString(str);
     }
 
+    /** Called to return the content of a comment and update char index. */
+    protected String getComment()
+    {
+        // Mark content start and skip to next element-start char
+        int start = _charIndex;
+        while(!isNext("-->") && hasChar())
+            eatChar();
+        
+        // Return string for content
+        String str = getInput().subSequence(start, _charIndex).toString(); _charIndex += 3;
+        return str.trim();
+    }
+
+    /** Called to return the content of a script and update char index. */
+    protected String getScript()
+    {
+        // Mark content start and skip to next element-start char
+        int start = _charIndex;
+        while(!isNext("</script>", true) && hasChar())
+            eatChar();
+        
+        // Return string for content
+        String str = getInput().subSequence(start, _charIndex).toString();
+        return str.trim();
+    }
+
     /** Returns whether the given string is up next. */
-    public boolean isNext(String aStr)
+    public boolean isNext(String aStr)  { return isNext(aStr, false); }
+
+    /** Returns whether the given string is up next. */
+    public boolean isNext(String aStr, boolean ignoreCase)
     {
         if(_charIndex+aStr.length()>length()) return false;
-        for(int i=0,iMax=aStr.length();i<iMax;i++)
-            if(charAt(_charIndex+i)!=aStr.charAt(i))
-                return false;
+        for(int i=0,iMax=aStr.length();i<iMax;i++) { char c1 = charAt(_charIndex+i), c2 = aStr.charAt(i);
+            if(ignoreCase) c1 = Character.toLowerCase(c1);
+            if(c1!=c2)
+                return false; }
         return true;
     }
 }

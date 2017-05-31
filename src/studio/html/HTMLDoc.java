@@ -1,5 +1,6 @@
 package studio.html;
 import snap.gfx.Color;
+import snap.util.StringUtils;
 import snap.util.XMLElement;
 import snap.view.ViewLayout;
 import snap.web.PathUtils;
@@ -67,6 +68,8 @@ public void setTitle(String aTitle)  { _title = aTitle; }
 public WebURL getSourceURL(String aPath)
 {
     if(_srcURL==null) return null;
+    if(StringUtils.startsWithIC(aPath,"http"))
+        return WebURL.getURL(aPath);
     String spath = _srcURL.getPath();
     String path = PathUtils.getRelative(spath, aPath);
     WebSite site = _srcURL.getSite();
@@ -95,6 +98,17 @@ public void readHTML(XMLElement aXML, HTMLDoc aDoc)
     
     // Do normal version
     super.readHTML(aXML, aDoc);
+}
+
+/**
+ * Returns an HTML doc for given source object.
+ */
+public static HTMLDoc getDoc(Object aSource)
+{
+    if(aSource instanceof HTMLDoc)
+        return (HTMLDoc)aSource;
+    try { return new HTMLDoc(aSource); }
+    catch(Exception e) { System.err.println("HTMLDoc.getDoc: Error reading source: " + e); return null; }
 }
 
 }

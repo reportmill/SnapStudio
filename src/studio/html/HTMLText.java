@@ -1,4 +1,5 @@
 package studio.html;
+import snap.gfx.*;
 import snap.util.XMLElement;
 import snap.view.*;
 
@@ -23,6 +24,42 @@ public void setText(String aStr)
 {
     TextView tview = getTextView();
     if(tview!=null) tview.setText(aStr);
+}
+
+/**
+ * Returns the text fill.
+ */
+public Paint getTextFill()
+{
+    TextView tview = getTextView();
+    return tview!=null? tview.getTextFill() : null;
+}
+
+/**
+ * Sets the text fill.
+ */
+public void setTextFill(Paint aFill)
+{
+    TextView tview = getTextView();
+    if(tview!=null) tview.setTextFill(aFill);
+}
+
+/**
+ * Returns whether text underlined.
+ */
+public boolean isTextUnderlined()
+{
+    TextView tview = getTextView();
+    return tview!=null? tview.isUnderlined() : null;
+}
+
+/**
+ * Sets whether text underlined.
+ */
+public void setTextUnderlined(boolean aValue)
+{
+    TextView tview = getTextView();
+    if(tview!=null) tview.setUnderlined(aValue);
 }
 
 /**

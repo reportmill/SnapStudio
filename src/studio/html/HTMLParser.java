@@ -110,7 +110,7 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
         }
             
         // Handle close: On first close, check for content
-        else if(anId==">" && !_checkedContent) {
+        else if(anId==">" && !_checkedContent) { _checkedContent = true;
             XMLElement htext = getHTMLText(aNode);
             if(htext!=null) _part.addElement(htext);
         }
@@ -164,6 +164,7 @@ private static String decodeXMLString(String aStr)
     // Do common entity ref replacements
     aStr = aStr.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">");
     aStr = aStr.replace("&quot;", "\"").replace("&apos;", "'").replace("&nbsp;", " ");
+    aStr = aStr.replace("&copy;", "\u00A9");
     
     // Iterate over string to find numeric/hex references and replace with char
     for(int start=aStr.indexOf("&#"); start>=0;start=aStr.indexOf("&#",start)) {
@@ -201,11 +202,12 @@ private static class HTMLTokenizer extends Tokenizer {
         }
         
         // If next char isn't close tag, return null (assumes we hit child element instead of text content)
-        if(!isNext("</"))
-            return null;
+        //if(!isNext("</")) return null;
         
         // Return string for content
         String str = getInput().subSequence(start, _charIndex).toString();
+        if(str.trim().length()==0)
+            return null;
         return decodeXMLString(str);
     }
 

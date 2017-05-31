@@ -2,7 +2,7 @@ package studio.html;
 import snap.view.*;
 
 /**
- * A custom class.
+ * A viewer for HTML documents.
  */
 public class HTMLViewer extends ViewOwner {
     
@@ -11,27 +11,35 @@ public class HTMLViewer extends ViewOwner {
     
     // The document
     HTMLDoc      _doc;
+    
+    // The document box
+    Box          _docBox = new Box();
 
 /**
  * Creates a new HTMLViewer.
  */
 public HTMLViewer(Object aSource)
 {
-    _src = aSource;
+    HTMLDoc doc = HTMLDoc.getDoc(aSource);
+    setDoc(doc);
 }
 
 /**
  * Creates the UI.
  */
-protected View createUI()  { return getDoc(); }
+protected View createUI()  { return _docBox; }
 
 /**
  * Returns the document.
  */
-public HTMLDoc getDoc()
+public HTMLDoc getDoc()  { return _doc; }
+
+/**
+ * Sets the document.
+ */
+public void setDoc(HTMLDoc aDoc)
 {
-    if(_doc!=null || _src==null) return _doc;
-    return _doc = new HTMLDoc(_src);
+    _docBox.setContent(_doc = aDoc);
 }
 
 /**

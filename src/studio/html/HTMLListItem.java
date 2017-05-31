@@ -19,7 +19,7 @@ public void readHTML(XMLElement aXML, HTMLDoc aDoc)
     // Add bullet
     for(View child : getChildren()) {
         if(child instanceof HTMLText) { HTMLText text = (HTMLText)child;
-            text.setText("- " + text.getText()); return; }
+            text.setText("\u2022 " + text.getText()); return; }
     }
 }
 

@@ -9,10 +9,33 @@ import snap.view.*;
  */
 public class HTMLElement extends ChildView {
 
+    // The layout
+    ViewLayout  _layout = createLayout();
+
 /**
  * Returns the doc.
  */
 public HTMLDoc getDoc()  { return getParent(HTMLDoc.class); }
+
+/**
+ * Creates the layout.
+ */
+protected ViewLayout createLayout()  { return new ViewLayout.BoxLayout(this); }
+
+/**
+ * Returns the preferred width.
+ */
+protected double getPrefWidthImpl(double aH)  { return _layout.getPrefWidth(aH); }
+
+/**
+ * Returns the preferred height.
+ */
+protected double getPrefHeightImpl(double aW)  { return _layout.getPrefHeight(aW); }
+
+/**
+ * Layout children.
+ */
+protected void layoutImpl()  { _layout.layoutChildren(); }
 
 /**
  * Reads HTML.
@@ -50,13 +73,16 @@ public static HTMLElement createHTML(XMLElement aXML, HTMLDoc aDoc)
     String name = aXML.getName().toLowerCase();
     HTMLElement hview = null;
     switch(name) {
-        case "html": hview = new HTMLDoc(); break;
         case "body": hview = new HTMLBody(); break;
-        case "table": hview = new HTMLTable(); break;
-        case "tr": hview = new HTMLTableRow(); break;
-        case "td": hview = new HTMLTableData(); break;
-        case "img": hview = new HTMLImage(); break;
+        case "html": hview = new HTMLDoc(); break;
         case "html_text": hview = new HTMLText(); break;
+        case "img": hview = new HTMLImage(); break;
+        case "li": hview = new HTMLListItem(); break;
+        case "ol": hview = new HTMLList(); break;
+        case "table": hview = new HTMLTable(); break;
+        case "td": hview = new HTMLTableData(); break;
+        case "tr": hview = new HTMLTableRow(); break;
+        case "ul": hview = new HTMLList(); break;
         default:
             for(XMLElement child : aXML.getElements())
                 if((hview = createHTML(child, aDoc))!=null)

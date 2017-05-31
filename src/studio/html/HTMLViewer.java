@@ -8,6 +8,9 @@ public class HTMLViewer extends ViewOwner {
     
     // The source
     Object       _src;
+    
+    // The document
+    HTMLDoc      _doc;
 
 /**
  * Creates a new HTMLViewer.
@@ -20,10 +23,15 @@ public HTMLViewer(Object aSource)
 /**
  * Creates the UI.
  */
-protected View createUI()
+protected View createUI()  { return getDoc(); }
+
+/**
+ * Returns the document.
+ */
+public HTMLDoc getDoc()
 {
-    HTMLDoc doc = new HTMLDoc(_src);
-    return doc;
+    if(_doc!=null || _src==null) return _doc;
+    return _doc = new HTMLDoc(_src);
 }
 
 /**
@@ -31,7 +39,9 @@ protected View createUI()
  */
 public static void main(String args[])
 {
-    new HTMLViewer("/Temp/ReportMill!/index2.html").setWindowVisible(true);
+    HTMLViewer viewer = new HTMLViewer("/Temp/ReportMill!/index2.html");
+    viewer.getWindow().setTitle(viewer.getDoc().getTitle());
+    viewer.setWindowVisible(true);
 }
 
 }

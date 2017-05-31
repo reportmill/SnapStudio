@@ -2,7 +2,6 @@ package studio.html;
 import snap.view.ImageView;
 import snap.gfx.Image;
 import snap.util.XMLElement;
-import snap.view.ViewLayout;
 import snap.web.WebURL;
 
 /**
@@ -15,9 +14,6 @@ public class HTMLImage extends HTMLElement {
     
     // The image
     Image           _img;
-
-    // The layout
-    ViewLayout  _layout = new ViewLayout.BoxLayout(this);
 
 /**
  * Returns the image source.
@@ -60,21 +56,6 @@ protected void loadImage(HTMLDoc aDoc)
     if(img!=null)
         setImage(img);
 }
-
-/**
- * Returns the preferred width.
- */
-protected double getPrefWidthImpl(double aH)  { return _layout.getPrefWidth(aH); }
-
-/**
- * Returns the preferred height.
- */
-protected double getPrefHeightImpl(double aW)  { return _layout.getPrefHeight(aW); }
-
-/**
- * Layout children.
- */
-protected void layoutImpl()  { _layout.layoutChildren(); }
 
 /**
  * Reads HTML.

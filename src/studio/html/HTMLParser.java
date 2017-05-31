@@ -122,6 +122,8 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
         HTMLTokenizer xt = (HTMLTokenizer)aNode.getParser().getTokenizer();
         String content = xt.getContent(); if(content==null) return null;
         content = content.trim(); if(content.length()==0) return null;
+        content = content.replaceAll("\\s+", " ");
+        content = decodeXMLString(content);
         XMLElement txml = new XMLElement("html_text"); txml.setValue(content);
         return txml;
     }
@@ -161,7 +163,7 @@ private static String decodeXMLString(String aStr)
     
     // Do common entity ref replacements
     aStr = aStr.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">");
-    aStr = aStr.replace("&quot;", "\"").replace("&apos;", "'");
+    aStr = aStr.replace("&quot;", "\"").replace("&apos;", "'").replace("&nbsp;", " ");
     
     // Iterate over string to find numeric/hex references and replace with char
     for(int start=aStr.indexOf("&#"); start>=0;start=aStr.indexOf("&#",start)) {

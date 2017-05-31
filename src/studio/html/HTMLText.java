@@ -7,23 +7,28 @@ import snap.view.*;
  */
 public class HTMLText extends HTMLElement {
 
-    // The layout
-    ViewLayout  _layout = new ViewLayout.BoxLayout(this);
+/**
+ * Returns the text.
+ */
+public String getText()
+{
+    TextView tview = getTextView();
+    return tview!=null? tview.getText() : null;
+}
 
 /**
- * Returns the preferred width.
+ * Sets the text.
  */
-protected double getPrefWidthImpl(double aH)  { return _layout.getPrefWidth(aH); }
+public void setText(String aStr)
+{
+    TextView tview = getTextView();
+    if(tview!=null) tview.setText(aStr);
+}
 
 /**
- * Returns the preferred height.
+ * Returns the text view.
  */
-protected double getPrefHeightImpl(double aW)  { return _layout.getPrefHeight(aW); }
-
-/**
- * Layout children.
- */
-protected void layoutImpl()  { _layout.layoutChildren(); }
+public TextView getTextView()  { return getChildCount()>0? (TextView)getChild(0) : null; }
 
 /**
  * Reads HTML.

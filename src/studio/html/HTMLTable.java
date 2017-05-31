@@ -7,9 +7,6 @@ import snap.view.ViewLayout;
  */
 public class HTMLTable extends HTMLElement {
 
-    // The layout
-    ViewLayout  _layout = new ViewLayout.VBoxLayout(this);
-
 /**
  * Creates a new HTMLTable.
  */
@@ -20,18 +17,8 @@ public HTMLTable()
 }
 
 /**
- * Returns the preferred width.
+ * Creates the layout.
  */
-protected double getPrefWidthImpl(double aH)  { return _layout.getPrefWidth(aH); }
-
-/**
- * Returns the preferred height.
- */
-protected double getPrefHeightImpl(double aW)  { return _layout.getPrefHeight(aW); }
-
-/**
- * Layout children.
- */
-protected void layoutImpl()  { _layout.layoutChildren(); }
+protected ViewLayout createLayout()  { return new ViewLayout.VBoxLayout(this); }
 
 }

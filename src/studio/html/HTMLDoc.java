@@ -14,9 +14,9 @@ public class HTMLDoc extends HTMLElement {
     // The source URL
     WebURL      _srcURL;
     
-    // The layout
-    ViewLayout  _layout = new ViewLayout.VBoxLayout(this);
-
+    // The title
+    String      _title;
+    
 /**
  * Creates a new HTMLDoc.
  */
@@ -52,6 +52,16 @@ public WebURL getSourceURL()  { return _srcURL; }
 public void setSourceURL(WebURL aURL)  { _srcURL = aURL; }
 
 /**
+ * Returns the title.
+ */
+public String getTitle()  { return _title; }
+
+/**
+ * Sets the title.
+ */
+public void setTitle(String aTitle)  { _title = aTitle; }
+
+/**
  * Returns the source URL for given string path.
  */
 public WebURL getSourceURL(String aPath)
@@ -64,25 +74,26 @@ public WebURL getSourceURL(String aPath)
 }
 
 /**
- * Returns the preferred width.
+ * Creates the layout.
  */
-protected double getPrefWidthImpl(double aH)  { return _layout.getPrefWidth(aH); }
-
-/**
- * Returns the preferred height.
- */
-protected double getPrefHeightImpl(double aW)  { return _layout.getPrefHeight(aW); }
-
-/**
- * Layout children.
- */
-protected void layoutImpl()  { _layout.layoutChildren(); }
+protected ViewLayout createLayout()  { return new ViewLayout.VBoxLayout(this); }
 
 /**
  * Reads HTML.
  */
 public void readHTML(XMLElement aXML, HTMLDoc aDoc)
 {
+    // Get Head and Title
+    aXML.setIgnoreCase(true);
+    XMLElement head = aXML.get("head");
+    XMLElement title = head!=null? head.get("title") : null;
+    if(title!=null) {
+        XMLElement titleText = title.get("html_text");
+        String titleStr = titleText!=null? titleText.getValue() : null;
+        setTitle(titleStr); head.removeElement(title);
+    }
+    
+    // Do normal version
     super.readHTML(aXML, aDoc);
 }
 

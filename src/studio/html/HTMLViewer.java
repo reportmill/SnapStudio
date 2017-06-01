@@ -47,7 +47,8 @@ public void setDoc(HTMLDoc aDoc)
  */
 public static void main(String args[])
 {
-    HTMLViewer viewer = new HTMLViewer("/Temp/ReportMill!/index2.html");
+    HTMLDoc doc = new HTMLDoc("/Temp/ReportMill!/index2.html");
+    HTMLViewer viewer = new HTMLViewer(doc);
     viewer.getWindow().setTitle(viewer.getDoc().getTitle());
     viewer.setWindowVisible(true);
 }

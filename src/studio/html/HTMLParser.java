@@ -11,6 +11,16 @@ import snap.util.*;
 public class HTMLParser extends Parser {
     
 /**
+ * Called when parse fails.
+ */
+protected void parseFailed(ParseRule aRule, ParseHandler aHandler)
+{
+    if(aHandler!=null) aHandler.reset();
+    System.err.println("HTMLParser: Parse failed for " + aRule.getName() + " at line " + getTokenizer().getLineNum());
+    //throw new ParseException(this, aRule);
+}
+
+/**
  * Creates a new HTMLParser.
  */
 public HTMLParser()
@@ -90,21 +100,50 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
     {
         // Handle Name
         if(anId=="Name") {
+            
+            // Handle open tag name: create part for name
             String name = aNode.getString();
             if(_part==null) { _part = new XMLElement(name); _checkedContent = false; }
+            
+            // Handle close tag name: if wrong name, bypass final processing (to close this tag) and rewind
             else if(!_part.getName().equals(name)) {
-                System.err.println("XMLParser: Expected closing tag " + _part.getName());
-                throw new ParseException(aNode.getParser(), aNode.getRule());
+                
+                // Print error message
+                int lineNum = aNode.getStartToken().getLineIndex() + 1;
+                System.err.println("XMLParser: Expected close tag " + _part.getName() + " at line " + lineNum);
+                
+                // Tell parser to bypass rest of this element and rewind to close char
+                bypass();
+                aNode.getParser().setCharIndex(aNode.getStart()-2);
             }
         }
             
         // Handle Attribute
-        else if(anId=="Attribute")
-            _part.addAttribute((XMLAttribute)aNode.getCustomNode());
+        else if(anId=="Attribute") {
+            
+            // If attribute is valid, add it
+            XMLAttribute attr = aNode.getCustomNode(XMLAttribute.class);
+            if(attr!=null && attr.getValue()!=null)
+                _part.addAttribute(attr);
+                
+            // Otherwise, skip to next whitespace
+            else {
+                Parser parser = aNode.getParser(); parser.clearTokens();
+                Tokenizer toker = aNode.getParser().getTokenizer();
+                while(toker.hasChar()) { char c = toker.getChar();
+                    if(Character.isWhitespace(c) || c=='>')
+                        break;
+                    if(c=='<') {
+                        bypass(); break; }
+                    else toker.eatChar();
+                }
+            }
+        }
             
         // Handle Element
         else if(anId=="Element") {
-            _part.addElement((XMLElement)aNode.getCustomNode());
+            XMLElement child = aNode.getCustomNode(XMLElement.class);
+            if(child!=null) _part.addElement(child);
             
             // Read more content
             XMLElement htext = getHTMLText(aNode);
@@ -114,8 +153,13 @@ public static class ElementHandler extends ParseHandler <XMLElement> {
         // Handle close: On first close, check for content
         else if(anId==">" && !_checkedContent) { _checkedContent = true;
         
+            // Handle Empty tag
+            String name = _part.getName();
+            if(HTMLUtils.isEmptyTag(name))
+                bypass();
+        
             // Handle Script: Read script chars into part
-            if(_part.getName().equalsIgnoreCase("script"))
+            else if(name.equalsIgnoreCase("script"))
                 getScriptText(aNode);
             
             // Handle normal element

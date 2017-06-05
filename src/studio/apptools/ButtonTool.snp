@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VBox Align="TOP_CENTER" Padding="24,8,8,8" Spacing="10" title="General">
+  <font name="Arial" size="11" />
+  <HBox PrefWidth="250" Spacing="5">
+    <Label text="Title:" />
+    <TextField Name="TitleText" GrowWidth="true" />
+  </HBox>
+</VBox>

@@ -434,7 +434,7 @@ private List <View> getHitShapes()
         path = superView.parentToLocal(selRect); editor.setSuperSelectedView(superView); }
 
     // Returns the children of the super-selected shape that intersect selection path
-    return superView.getChildrenAt(path);
+    return superView.getChildrenAt(path, null, null);
 }
 
 /**

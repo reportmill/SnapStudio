@@ -34,7 +34,7 @@ public static void main(final String args[])
 public App(String args[])
 {
     // Set App Prefs class
-    PrefsUtils.setPrefsClass(App.class);
+    Prefs.setPrefsClass(App.class);
     
     // Install Exception reporter
     ExceptionReporter er = new ExceptionReporter("SnapStudio"); er.setToAddress("support@reportmill.com");
@@ -57,7 +57,7 @@ public static void quitApp()  { SwingUtilities.invokeLater(() -> quitAppImpl());
 private static void quitAppImpl()
 {
     //if(AppPane.getOpenAppPane()!=null) AppPane.getOpenAppPane().hide();
-    PrefsUtils.flush();
+    Prefs.get().flush();
     System.exit(0);
 }
 

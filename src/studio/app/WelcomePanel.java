@@ -1,6 +1,5 @@
 package studio.app;
 import java.util.*;
-import java.util.prefs.*;
 import snap.util.*;
 import snap.view.*;
 import snap.web.*;
@@ -54,7 +53,7 @@ public void hide()
     
     // Write current list of sites, flush prefs and mayb exit
     //writeSites();         // Write data file for open/selected sites
-    PrefsUtils.flush();    // Flush preferences
+    Prefs.get().flush();    // Flush preferences
     if(_exit) quitApp(); // If exit requested, quit app
 }
 
@@ -192,10 +191,7 @@ public void openFile(Object aSource)
 public static List <WebFile> getRecentFiles()
 {
     // Get prefs for RecentDocuments (just return if missing)
-    Preferences prefs = PrefsUtils.prefs();
-    try { if(!prefs.nodeExists("RecentDocuments")) return new ArrayList(); }
-    catch(BackingStoreException bse) { return new ArrayList(); }
-    prefs = prefs.node("RecentDocuments");
+    Prefs prefs = Prefs.get().getChild("RecentDocuments");
     
     // Add to the list only if the file is around and readable
     List list = new ArrayList();
@@ -225,21 +221,16 @@ public static void addRecentFile(String aPath)
     docs.remove(file); docs.add(0, file);
     
     // Add at most 10 files to the preferences list
-    Preferences prefs = PrefsUtils.prefs().node("RecentDocuments");
+    Prefs prefs = Prefs.get().getChild("RecentDocuments");
     for(int i=0; i<docs.size() && i<10; i++) 
-        prefs.put("index"+i, docs.get(i).getPath());
+        prefs.set("index"+i, docs.get(i).getPath());
     try { prefs.flush(); } catch(Exception e)  { System.err.println(e); }
 }
 
 /**
  * Clears recent documents from preferences.
  */
-public void clearRecentFiles()
-{
-    Preferences p = PrefsUtils.prefs();
-    try { if(p.nodeExists("RecentDocuments")) p.node("RecentDocuments").removeNode(); }
-    catch(BackingStoreException e) { }
-}
+public void clearRecentFiles()  { Prefs.get().getChild("RecentDocuments").clear(); }
 
 /**
  * A viewer owner to load/view WelcomePanel animation from WelcomePanelAnim.snp.

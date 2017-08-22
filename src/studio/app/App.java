@@ -34,7 +34,7 @@ public static void main(final String args[])
 public App(String args[])
 {
     // Set App Prefs class
-    Prefs.setPrefsClass(App.class);
+    Prefs.setPrefsDefault(Prefs.getPrefs(App.class));
     
     // Install Exception reporter
     ExceptionReporter er = new ExceptionReporter("SnapStudio"); er.setToAddress("support@reportmill.com");

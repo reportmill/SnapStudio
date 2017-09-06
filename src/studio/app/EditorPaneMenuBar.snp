@@ -21,13 +21,6 @@
       <MenuItem Name="PreviewJPEGMenuItem" text="JPEG" />
       <MenuItem Name="PreviewPNGMenuItem" text="PNG" />
     </Menu>
-    <Menu Name="SamplesMenu" text="Samples">
-      <MenuItem Name="MoviesMenuItem" text="Movies" />
-      <MenuItem Name="MoviesGraphMenuItem" text="Movies Graph" />
-      <MenuItem Name="MoviesLabelsMenuItem" text="Movies Labels" />
-      <MenuItem Name="HollywoodMenuItem" text="HollywoodDB.xml" />
-      <MenuItem Name="SalesMenuItem" text="Sales.xml" />
-    </Menu>
     <MenuItem />
     <MenuItem Name="PrintMenuItem" text="Print..." key="meta P" />
     <MenuItem />

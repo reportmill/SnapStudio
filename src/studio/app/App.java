@@ -18,9 +18,6 @@ public class App {
  */
 public static void main(final String args[])
 {
-    // Hook to run as SnapApp instead
-    if(args.length>0 && args[0].equals("-snap")) { snap.javafx.SnapApp.main(args); return; }
-    
     // Mac specific stuff
     if(SnapUtils.isMac) new AppleAppHandler().init();
 

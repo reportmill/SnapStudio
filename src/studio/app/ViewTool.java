@@ -776,10 +776,10 @@ public boolean acceptsDrag(T aView, ViewEvent anEvent)
     //if(aView.isRoot()) return true;
     
     // Return true for Color drag or File drag
-    if(anEvent.hasDragContent(Clipboard.COLOR)) return true;
+    if(anEvent.getDragboard().hasContent(Clipboard.COLOR)) return true;
     
     // Handle file drag - really just want to check for images here, but can't ask for transferable contents yet
-    if(anEvent.hasDragFiles())
+    if(anEvent.getDragboard().hasFiles())
         return true;
     
     // Return true in any case if accepts children
@@ -815,15 +815,15 @@ public void drop(T aView, ViewEvent anEvent)
         GalleryPane.get().dropView(aView, anEvent);
     
     // Handle String drop
-    else if(anEvent.hasDragString())
+    else if(anEvent.getDragboard().hasString())
         dropString(aView, anEvent);
 
     // Handle color panel drop
-    else if(anEvent.hasDragContent(Clipboard.COLOR))
+    else if(anEvent.getDragboard().hasContent(Clipboard.COLOR))
         dropColor(aView, anEvent);
 
     // Handle File drop - get list of dropped files and add individually
-    else if(anEvent.hasDragFiles())
+    else if(anEvent.getDragboard().hasFiles())
         dropFiles(aView, anEvent);
 }
 
@@ -854,7 +854,7 @@ public void dropColor(T aView, ViewEvent anEvent)
  */
 public void dropFiles(T aView, ViewEvent anEvent)
 {
-    List <File> filesList = anEvent.getDropFiles(); Point point = anEvent.getPoint();
+    List <File> filesList = anEvent.getDragboard().getFiles(); Point point = anEvent.getPoint();
     for(File file : filesList)
         point = dropFile(aView, file, anEvent);
 }

@@ -72,7 +72,7 @@ public void respondUI(ViewEvent anEvent)
         _dragActor = ViewUtils.getDeepestChildAt(view, anEvent.getX(), anEvent.getY(), SnapActor.class);
         _ui.setPickable(false);
         //while(!(view2.getParent() instanceof ChildView)) view2 = view2.getParent();
-        Clipboard dboard = anEvent.getDragboard();
+        Clipboard dboard = anEvent.getClipboard();
         dboard.setContent("CastPane: " + _dragActor.getRealClassName());
         dboard.setDragImage(_dragActor.getImage());
         dboard.startDrag();

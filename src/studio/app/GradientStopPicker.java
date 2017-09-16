@@ -324,13 +324,13 @@ protected void processEvent(ViewEvent anEvent)
     }
     
     // Handle DragEnger
-    else if(anEvent.isDragEnter()) { Clipboard db = anEvent.getDragboard();
+    else if(anEvent.isDragEnter()) { Clipboard db = anEvent.getClipboard();
         if(db.hasColor()) anEvent.acceptDrag();
         //else dtde.rejectDrag();
     }
 
     // Handle DragOver
-    else if(anEvent.isDragOver()) { Clipboard db = anEvent.getDragboard();
+    else if(anEvent.isDragOver()) { Clipboard db = anEvent.getClipboard();
         if(db.hasColor()) { anEvent.acceptDrag(); _dragPoint = anEvent.getPoint(); repaint(); }
     }
 
@@ -341,7 +341,7 @@ protected void processEvent(ViewEvent anEvent)
     else if(anEvent.isDragDrop()) {
         if(_gradientRect.contains(anEvent.getPoint())) {
             anEvent.acceptDrag();  // Accept drop
-            Color color = anEvent.getDragboard().getColor();
+            Color color = anEvent.getClipboard().getColor();
             addStop(getStopOffset(_dragPoint), color);
             _dragPoint = null;
             resetComponents();

@@ -776,10 +776,10 @@ public boolean acceptsDrag(T aView, ViewEvent anEvent)
     //if(aView.isRoot()) return true;
     
     // Return true for Color drag or File drag
-    if(anEvent.getDragboard().hasContent(Clipboard.COLOR)) return true;
+    if(anEvent.getClipboard().hasColor()) return true;
     
     // Handle file drag - really just want to check for images here, but can't ask for transferable contents yet
-    if(anEvent.getDragboard().hasFiles())
+    if(anEvent.getClipboard().hasFiles())
         return true;
     
     // Return true in any case if accepts children
@@ -815,15 +815,15 @@ public void drop(T aView, ViewEvent anEvent)
         GalleryPane.get().dropView(aView, anEvent);
     
     // Handle String drop
-    else if(anEvent.getDragboard().hasString())
+    else if(anEvent.getClipboard().hasString())
         dropString(aView, anEvent);
 
     // Handle color panel drop
-    else if(anEvent.getDragboard().hasContent(Clipboard.COLOR))
+    else if(anEvent.getClipboard().hasColor())
         dropColor(aView, anEvent);
 
     // Handle File drop - get list of dropped files and add individually
-    else if(anEvent.getDragboard().hasFiles())
+    else if(anEvent.getClipboard().hasFiles())
         dropFiles(aView, anEvent);
 }
 
@@ -833,7 +833,7 @@ public void drop(T aView, ViewEvent anEvent)
 public void dropString(T aView, ViewEvent anEvent)
 {
     if(aView instanceof ParentView) { ParentView pview = (ParentView)aView;
-        Clipboard cb = anEvent.getDragboard(); //Transferable transferable = anEvent.getTransferable();
+        Clipboard cb = anEvent.getClipboard(); //Transferable transferable = anEvent.getTransferable();
         getEditor().undoerSetUndoTitle("Drag and Drop Key");
         EditorClipboard.paste(getEditor(), cb, pview, anEvent.getPoint());
     }
@@ -844,7 +844,7 @@ public void dropString(T aView, ViewEvent anEvent)
  */
 public void dropColor(T aView, ViewEvent anEvent)
 {
-    Color color = anEvent.getDragboard().getColor();
+    Color color = anEvent.getClipboard().getColor();
     getEditor().undoerSetUndoTitle("Set Fill Color");
     aView.setFill(color);
 }
@@ -854,7 +854,7 @@ public void dropColor(T aView, ViewEvent anEvent)
  */
 public void dropFiles(T aView, ViewEvent anEvent)
 {
-    List <File> filesList = anEvent.getDragboard().getFiles(); Point point = anEvent.getPoint();
+    List <File> filesList = anEvent.getClipboard().getJavaFiles(); Point point = anEvent.getPoint();
     for(File file : filesList)
         point = dropFile(aView, file, anEvent);
 }

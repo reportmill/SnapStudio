@@ -34,7 +34,7 @@ public <T extends ViewLayout> T getLayout(Class <T> aClass)
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new ViewLayout.BoxLayout(this); }
+protected ViewLayout createLayout()  { return new Box.BoxLayout(this); }
 
 /**
  * Returns the preferred width.

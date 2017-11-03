@@ -1,9 +1,10 @@
 package studio.app;
 import snap.gfx.*;
 import snap.view.*;
+import snap.viewx.FileChooser;
 
 /**
- * UI editing for RMImageFill.
+ * UI editing for ImagePaint.
  */
 public class ImagePaintTool extends FillTool {
 
@@ -51,8 +52,7 @@ public void respondUI(ViewEvent anEvent)
     
     // Handle ChooseButton
     if(anEvent.equals("ChooseButton")) {
-        FileChooser fc = getEnv().getFileChooser(); fc.setDesc("Image File"); fc.setExts(".png", ".jpg", ".gif");
-        String path = fc.showOpenPanel(getUI());
+        String path = FileChooser.showOpenPanel(getUI(), "Image File", "png", "jpg", "gif");
         if(path!=null) {
             //RMImageData idata = RMImageData.getImageData(path);
             //if(idata!=null)

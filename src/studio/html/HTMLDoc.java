@@ -1,11 +1,8 @@
 package studio.html;
 import snap.gfx.Color;
-import snap.util.StringUtils;
-import snap.util.XMLElement;
-import snap.view.ViewLayout;
-import snap.web.PathUtils;
-import snap.web.WebSite;
-import snap.web.WebURL;
+import snap.util.*;
+import snap.view.*;
+import snap.web.*;
 
 /**
  * A view for displaying an HTML document.
@@ -79,7 +76,7 @@ public WebURL getSourceURL(String aPath)
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new ViewLayout.VBoxLayout(this); }
+protected ViewLayout createLayout()  { return new VBox.VBoxLayout(this); }
 
 /**
  * Reads HTML.

@@ -1,6 +1,6 @@
 package studio.html;
 import snap.gfx.Color;
-import snap.view.ViewLayout;
+import snap.view.*;
 
 /**
  * A HTMLElement subclass for HTML table row.
@@ -18,6 +18,6 @@ public HTMLTableRow()
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new ViewLayout.HBoxLayout(this); }
+protected ViewLayout createLayout()  { return new HBox.HBoxLayout(this); }
 
 }

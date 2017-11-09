@@ -1,5 +1,5 @@
 package studio.html;
-import snap.view.ViewLayout;
+import snap.view.*;
 
 /**
  * A HTMLElement subclass for HTML table.
@@ -17,7 +17,7 @@ public HTMLList()
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new ViewLayout.VBoxLayout(this); }
+protected ViewLayout createLayout()  { return new VBox.VBoxLayout(this); }
 
 
 }

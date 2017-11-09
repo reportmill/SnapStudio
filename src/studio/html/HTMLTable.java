@@ -1,6 +1,6 @@
 package studio.html;
 import snap.gfx.Color;
-import snap.view.ViewLayout;
+import snap.view.*;
 
 /**
  * A HTMLElement subclass for HTML table.
@@ -13,12 +13,12 @@ public class HTMLTable extends HTMLElement {
 public HTMLTable()
 {
     setBorder(Color.LIGHTBLUE.brighter().brighter().brighter(),1);
-    getLayout(ViewLayout.VBoxLayout.class).setFillWidth(true);
+    getLayout(VBox.VBoxLayout.class).setFillWidth(true);
 }
 
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new ViewLayout.VBoxLayout(this); }
+protected ViewLayout createLayout()  { return new VBox.VBoxLayout(this); }
 
 }

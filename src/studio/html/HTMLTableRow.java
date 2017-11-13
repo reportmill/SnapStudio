@@ -16,8 +16,18 @@ public HTMLTableRow()
 }
 
 /**
- * Creates the layout.
+ * Returns the preferred width.
  */
-protected ViewLayout createLayout()  { return new RowView.HBoxLayout(this); }
+protected double getPrefWidthImpl(double aH)  { return RowView.getPrefWidth(this, getChildren(), 0, aH); }
+
+/**
+ * Returns the preferred height.
+ */
+protected double getPrefHeightImpl(double aW)  { return RowView.getPrefHeight(this, getChildren(), aW); }
+
+/**
+ * Layout children.
+ */
+protected void layoutImpl()  { RowView.layout(this, getChildren(), null, false, 0); }
 
 }

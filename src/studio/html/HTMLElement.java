@@ -10,46 +10,30 @@ import snap.view.*;
  */
 public class HTMLElement extends ChildView {
 
-    // The layout
-    ViewLayout  _layout = createLayout();
-
 /**
  * Returns the doc.
  */
 public HTMLDoc getDoc()  { return getParent(HTMLDoc.class); }
 
 /**
- * Returns the layout.
+ * Returns the first child.
  */
-public ViewLayout getLayout()  { return _layout; }
-
-/**
- * Returns the layout.
- */
-public <T extends ViewLayout> T getLayout(Class <T> aClass)
-{
-    return (T)_layout;
-}
-
-/**
- * Creates the layout.
- */
-protected ViewLayout createLayout()  { return new BoxView.BoxLayout(this); }
+protected View getChild()  { return getChildCount()>0? getChild(0) : null; }
 
 /**
  * Returns the preferred width.
  */
-protected double getPrefWidthImpl(double aH)  { return _layout.getPrefWidth(aH); }
+protected double getPrefWidthImpl(double aH)  { return BoxView.getPrefWidth(this, getChild(), aH); }
 
 /**
  * Returns the preferred height.
  */
-protected double getPrefHeightImpl(double aW)  { return _layout.getPrefHeight(aW); }
+protected double getPrefHeightImpl(double aW)  { return BoxView.getPrefHeight(this, getChild(), aW); }
 
 /**
  * Layout children.
  */
-protected void layoutImpl()  { _layout.layoutChildren(); }
+protected void layoutImpl()  { BoxView.layout(this, getChild(), null, false, false); }
 
 /**
  * Reads HTML.

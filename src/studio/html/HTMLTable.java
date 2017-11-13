@@ -13,12 +13,21 @@ public class HTMLTable extends HTMLElement {
 public HTMLTable()
 {
     setBorder(Color.LIGHTBLUE.brighter().brighter().brighter(),1);
-    getLayout(ColView.VBoxLayout.class).setFillWidth(true);
 }
 
 /**
- * Creates the layout.
+ * Returns the preferred width.
  */
-protected ViewLayout createLayout()  { return new ColView.VBoxLayout(this); }
+protected double getPrefWidthImpl(double aH)  { return ColView.getPrefWidth(this, getChildren(), aH); }
+
+/**
+ * Returns the preferred height.
+ */
+protected double getPrefHeightImpl(double aW)  { return ColView.getPrefHeight(this, getChildren(), 0, aW); }
+
+/**
+ * Layout children.
+ */
+protected void layoutImpl()  { ColView.layout(this, getChildren(), null, true, 0); }
 
 }

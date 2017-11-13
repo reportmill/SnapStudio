@@ -7,8 +7,18 @@ import snap.view.*;
 public class HTMLBody extends HTMLElement {
 
 /**
- * Creates the layout.
+ * Returns the preferred width.
  */
-protected ViewLayout createLayout()  { return new ColView.VBoxLayout(this); }
+protected double getPrefWidthImpl(double aH)  { return ColView.getPrefWidth(this, null, -1); }
+
+/**
+ * Returns the preferred height.
+ */
+protected double getPrefHeightImpl(double aW)  { return ColView.getPrefHeight(this, null, 0, -1); }
+
+/**
+ * Layout children.
+ */
+protected void layoutImpl()  { ColView.layout(this, null, null, true, 0); }
 
 }

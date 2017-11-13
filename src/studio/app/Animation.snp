@@ -35,18 +35,16 @@
   <Button Name="DeleteButton" x="223" y="73" width="48" height="19" text="Delete">
     <font name="Arial" size="10" />
   </Button>
-  <ScrollView x="4" y="94" width="71" height="205">
+  <ListView Name="KeyFrameList" x="4" y="94" width="71" height="205">
     <font name="Arial" size="10" />
-    <ListView Name="KeyFrameList" />
-  </ScrollView>
+  </ListView>
   <Button Name="FreezeFrameButton" x="4" y="301" width="71" height="19" text="Freeze">
     <font name="Arial" size="10" />
     <binding aspect="Enabled" key="FreezableFrame" />
   </Button>
-  <ScrollView x="77" y="94" width="198" height="84">
+  <ListView Name="ChangesList" x="77" y="94" width="198" height="84">
     <font name="Arial" size="10" />
-    <ListView Name="ChangesList" />
-  </ScrollView>
+  </ListView>
   <ComboBox Name="InterpolationComboBox" x="77" y="180" width="198" height="22" />
   <TextView Name="HelpText" x="80" y="204" width="195" height="55">
     <font name="Arial" size="10" />

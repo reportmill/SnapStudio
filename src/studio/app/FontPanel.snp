@@ -14,16 +14,12 @@
   <HBox GrowHeight="true" Spacing="4" FillHeight="true">
     <VBox GrowWidth="true" Spacing="4" FillWidth="true">
       <Label text=" Family" />
-      <ScrollView GrowHeight="true">
-        <ListView Name="FamilyList" />
-      </ScrollView>
+      <ListView Name="FamilyList" GrowHeight="true" />
       <ComboBox Name="FamilyComboBox" ShowTextField="true" ShowButton="false" FilterList="true" />
     </VBox>
     <VBox PrefWidth="60" Spacing="4" FillWidth="true">
       <Label text=" Sizes" />
-      <ScrollView GrowHeight="true">
-        <ListView Name="SizesList" />
-      </ScrollView>
+      <ListView Name="SizesList" GrowHeight="true" />
       <TextField Name="SizeText" />
     </VBox>
   </HBox>

@@ -20,7 +20,7 @@ public HTMLTableData()
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new VBox.VBoxLayout(this); }
+protected ViewLayout createLayout()  { return new ColView.VBoxLayout(this); }
 
 /**
  * Reads HTML.

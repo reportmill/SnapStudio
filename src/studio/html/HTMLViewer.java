@@ -13,7 +13,7 @@ public class HTMLViewer extends ViewOwner {
     HTMLDoc      _doc;
     
     // The document box
-    Box          _docBox = new Box();
+    BoxView          _docBox = new BoxView();
 
 /**
  * Creates a new HTMLViewer.

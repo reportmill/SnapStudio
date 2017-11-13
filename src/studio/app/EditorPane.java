@@ -98,7 +98,7 @@ public void setShowRulers(boolean aValue)
 protected View createUI()
 {
     BorderView bpane = (BorderView)super.createUI(); //bpane.setGrowWidth(true);
-    VBox vbox = new VBox(); vbox.setFillWidth(true); vbox.setPrefWidth(275);
+    ColView vbox = new ColView(); vbox.setFillWidth(true); vbox.setPrefWidth(275);
     vbox.setChildren(getAttributesPanel().getUI(), getInspectorPanel().getUI());
     vbox.setBorder(Border.createLineBorder(Color.LIGHTGRAY, 1));
     //HBox hbox = new HBox(); hbox.setAlignment(Pos.TOP_LEFT); hbox.setFillHeight(true); hbox.setChildren(bpane, vbox);
@@ -269,8 +269,8 @@ public EditorPane newDocument()
         PageView page = new PageView(); page.setPrefSize(612,792);
         doc.setPage(page);
     }
-    else if(desc.equals(options[1])) pview = new HBox();
-    else if(desc.equals(options[2])) pview = new VBox();
+    else if(desc.equals(options[1])) pview = new RowView();
+    else if(desc.equals(options[2])) pview = new ColView();
     else if(desc.equals(options[3])) pview = new BorderView();
     
     return open((Object)pview);

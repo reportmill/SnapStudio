@@ -18,13 +18,13 @@ import snap.web.*;
  *   myFrame.getContentPane().add(new JScrollPane(viewer));
  * </pre></blockquote>
  */
-public class Viewer extends Box { //implements PropChangeListener {
+public class Viewer extends BoxView { //implements PropChangeListener {
 
     // The Source URL
     WebURL                   _url;
 
     // The view used to manage real root of views
-    Box                      _cbox = new Box();
+    BoxView                      _cbox = new BoxView();
     
     // The Zoom mode
     ZoomMode                 _zoomMode = ZoomMode.ZoomAsNeeded;
@@ -58,7 +58,7 @@ public Viewer()
 /**
  * Returns the viewer view.
  */
-public Box getContentBox()  { return _cbox; }
+public BoxView getContentBox()  { return _cbox; }
 
 /**
  * Returns the root view that is the content of this viewer.

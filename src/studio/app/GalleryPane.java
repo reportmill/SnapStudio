@@ -9,7 +9,7 @@ import snap.view.*;
 public class GalleryPane extends studio.app.EditorPane.SupportPane {
 
     // The UI
-    VBox       _ui;
+    ColView       _ui;
 
     // The shared GalleryPane
     static GalleryPane  _shared;
@@ -27,7 +27,7 @@ public GalleryPane(EditorPane anEP)  { super(anEP); _shared = this; }
  */
 protected View createUI()
 {
-    _ui = new VBox(); _ui.setSpacing(6); _ui.setGrowWidth(true); _ui.setPickable(false);
+    _ui = new ColView(); _ui.setSpacing(6); _ui.setGrowWidth(true); _ui.setPickable(false);
     
     // Create Label, Buttons, Separator
     Label lbl = new Label("Label"); lbl.setPrefWidth(80);
@@ -64,8 +64,8 @@ protected View createUI()
     // Create DocView, PageView
     
     // Create HBox, VBox, BorderView, StackView, SpringView
-    HBox hbox = new HBox(); hbox.setBorder(Color.LIGHTGRAY,1); hbox.setPrefSize(100,25);
-    VBox vbox = new VBox(); vbox.setBorder(Color.LIGHTGRAY,1); vbox.setPrefSize(100,25);
+    RowView hbox = new RowView(); hbox.setBorder(Color.LIGHTGRAY,1); hbox.setPrefSize(100,25);
+    ColView vbox = new ColView(); vbox.setBorder(Color.LIGHTGRAY,1); vbox.setPrefSize(100,25);
     
     // Add nodes
     View nodes[] = { lbl, btn, tbtn, cbtn, rbtn, sep, tfd, spnr, cbox, mbtn, sldr, twh, pbar };
@@ -75,7 +75,7 @@ protected View createUI()
     //Box box2 = new Box(); box2.setPadding(4,4,4,4); box2.setContent(_ui); //box2.setFill(ViewUtils.getBackDarkFill());
     //_ui.setFill(ViewUtils.getBackFill()); _ui.setEffect(new ShadowEffect());
     _ui.setBorder(Border.createCompoundBorder(Border.createLoweredBevelBorder(), Border.createEmptyBorder(8,8,8,12)));
-    Box box = new Box(); box.setPadding(3,3,3,3); box.setContent(_ui); box.setFillWidth(true);
+    BoxView box = new BoxView(); box.setPadding(3,3,3,3); box.setContent(_ui); box.setFillWidth(true);
     box.setAlign(Pos.TOP_CENTER); enableEvents(box, DragGesture, ViewEvent.Type.DragSourceEnd);
     ScrollView sview = new ScrollView(box); sview.setFill(ViewUtils.getBackFill());
     sview.setGrowWidth(true); sview.setGrowHeight(true);
@@ -107,9 +107,9 @@ public void respondUI(ViewEvent anEvent)
 /**
  * Adds a Gallery item.
  */
-public void addItem(VBox aVBox, View aView)
+public void addItem(ColView aVBox, View aView)
 {
-    HBox hbox = new HBox(); hbox.setSpacing(3); aView.setLeanX(HPos.CENTER);
+    RowView hbox = new RowView(); hbox.setSpacing(3); aView.setLeanX(HPos.CENTER);
     Label label = new Label(aView.getClass().getSimpleName()); label.setPrefWidth(80);
     hbox.setChildren(label, aView);
     aVBox.addChild(hbox);

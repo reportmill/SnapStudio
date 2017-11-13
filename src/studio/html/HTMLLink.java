@@ -49,7 +49,7 @@ public void setHRef(String aValue)  { _href = aValue; }
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new HBox.HBoxLayout(this); }
+protected ViewLayout createLayout()  { return new RowView.HBoxLayout(this); }
 
 /**
  * Reads HTML.

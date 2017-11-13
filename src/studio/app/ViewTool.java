@@ -59,7 +59,7 @@ protected View createUI()
     TableCol c2 = new TableCol(); c2.setItemKey("ValueString"); c2.setGrowWidth(true);
     table.addCol(c1); table.addCol(c2);
     ScrollView sview = new ScrollView(table); sview.setPrefHeight(300);
-    VBox box = new VBox(); box.setFillWidth(true); box.setPadding(8,4,4,4); box.setSpacing(4);
+    ColView box = new ColView(); box.setFillWidth(true); box.setPadding(8,4,4,4); box.setSpacing(4);
     box.setChildren(new Label("Properties:"), sview);
     return box; //return getClass()==ViewTool.class? new Label() : super.createUI();
 }

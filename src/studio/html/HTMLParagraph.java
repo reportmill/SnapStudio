@@ -9,6 +9,6 @@ public class HTMLParagraph extends HTMLElement {
 /**
  * Creates the layout.
  */
-protected ViewLayout createLayout()  { return new HBox.HBoxLayout(this); }
+protected ViewLayout createLayout()  { return new RowView.HBoxLayout(this); }
 
 }

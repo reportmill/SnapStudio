@@ -103,7 +103,7 @@ public static List <View> getCandidateShapes(Editor anEditor)
     // The "stepParent" is merely an empty shape whose bounds match the parent, but in the same coordinate
     // system as the other candidate shapes.
     if(_includeSuperSelectedShape) {
-        View stepParent = new Box(); //stepParent.copyShape(parent);
+        View stepParent = new BoxView(); //stepParent.copyShape(parent);
         stepParent.setXY(0f, 0f);
         candidateShapes.add(stepParent);
     }

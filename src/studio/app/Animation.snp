@@ -46,9 +46,9 @@
     <font name="Arial" size="10" />
   </ListView>
   <ComboBox Name="InterpolationComboBox" x="77" y="180" width="198" height="22" />
-  <TextView Name="HelpText" x="80" y="204" width="195" height="55">
+  <TextArea Name="HelpText" x="80" y="204" width="195" height="55">
     <font name="Arial" size="10" />
-  </TextView>
+  </TextArea>
   <Label x="78" y="284" width="62" height="17" text="Frame Rate" />
   <TextField Name="FrameRateText" x="77" y="300" width="60" height="21" Align="CENTER" />
   <Label x="140" y="284" width="60" height="17" text="Max Time" />

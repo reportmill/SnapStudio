@@ -77,8 +77,8 @@ public void readHTML(XMLElement aXML, HTMLDoc aDoc)
     
     // Read text and create text view
     String text = aXML.getValue();
-    TextView tview = new TextView(); tview.setFill(null); tview.setText(text);
-    addChild(tview);
+    TextArea tarea = new TextArea(); tarea.setFill(null); tarea.setText(text);
+    addChild(tarea);
 }
 
 }

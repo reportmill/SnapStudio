@@ -11,9 +11,7 @@
       <ToggleButton Name="AlignMiddleButton" PrefWidth="24" PrefHeight="22" image="AlignMiddle.png" Position="CENTER" ToggleGroup="bg2" />
       <ToggleButton Name="AlignBottomButton" PrefWidth="24" PrefHeight="22" image="AlignBottom.png" Position="CENTER_RIGHT" ToggleGroup="bg2" />
     </HBox>
-    <ScrollView x="2" y="30" width="250" height="120" GrowWidth="true" GrowHeight="true">
-      <TextView Name="TextView" />
-    </ScrollView>
+    <TextView Name="TextView" x="2" y="30" width="250" height="120" GrowWidth="true" GrowHeight="true" />
     <Label x="2" y="199" width="118" height="20" LeanY="BOTTOM" text="Overflow Behavior:" />
     <RadioButton Name="GrowRadio" x="4" y="219" width="130" height="20" LeanY="BOTTOM" text="Grow (if in row)" ToggleGroup="bg3" />
     <RadioButton Name="ShrinkRadio" x="4" y="239" width="130" height="20" LeanY="BOTTOM" text="Shrink Text to Fit" ToggleGroup="bg3" />

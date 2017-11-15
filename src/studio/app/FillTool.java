@@ -28,7 +28,7 @@ public FillTool()  { super(null); }
 /**
  * Called to reset UI controls.
  */
-public void resetUI()
+protected void resetUI()
 {
     // Get currently selected shape
     View shape = getEditor().getSelectedOrSuperSelectedView();
@@ -40,7 +40,7 @@ public void resetUI()
 /**
  * Called to respond to UI controls
  */
-public void respondUI(ViewEvent anEvent)
+protected void respondUI(ViewEvent anEvent)
 {
     // Get the current editor and currently selected shape (just return if null)
     Editor editor = getEditor(); if(editor==null) return;

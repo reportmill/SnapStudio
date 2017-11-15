@@ -9,9 +9,17 @@ import snap.view.*;
 public class GradientPaintTool extends FillTool {
 
 /**
+ * Initialize UI.
+ */
+protected void initUI()
+{
+    setViewItems("TypeComboBox", new String[] { "Linear", "Radial" });
+}
+
+/**
  * Updates the UI controls from the currently selected shape.
  */
-public void resetUI()
+protected void resetUI()
 {
     // Get currently selected shape and shape gradient fill (just return if null)
     View shape = getEditor().getSelectedOrSuperSelectedView(); if(shape==null) return;
@@ -44,7 +52,7 @@ public void resetUI()
 /**
  * Updates the currently selected shape from the UI controls.
  */
-public void respondUI(ViewEvent anEvent)
+protected void respondUI(ViewEvent anEvent)
 {
     // Get currently selected shape and its fill (just return if null)
     View shape = getEditor().getSelectedOrSuperSelectedView(); if(shape==null) return;

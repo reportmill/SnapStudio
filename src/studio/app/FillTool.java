@@ -16,7 +16,7 @@ public class FillTool extends EditorPane.SupportPane {
     static Border     _strokes[] = { Border.createLineBorder(Color.BLACK,1)  };
     
     // List of known fills
-    static Image       _img = Image.get(FillTool.class.getResource("pkg.images/Clouds.jpg"));
+    static Image       _img = Image.get(FillTool.class, "pkg.images/Clouds.jpg");
     static ImagePaint  _imageFill = new ImagePaint(_img);
     static Paint       _fills[] = { Color.BLACK, new GradientPaint(), _imageFill };
 

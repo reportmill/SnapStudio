@@ -18,13 +18,13 @@ import snap.web.*;
  *   myFrame.getContentPane().add(new JScrollPane(viewer));
  * </pre></blockquote>
  */
-public class Viewer extends BoxView { //implements PropChangeListener {
+public class Viewer extends ParentView {
 
     // The Source URL
     WebURL                   _url;
 
     // The view used to manage real root of views
-    BoxView                      _cbox = new BoxView();
+    BoxView                  _cbox = new BoxView(null, true, true);
     
     // The Zoom mode
     ZoomMode                 _zoomMode = ZoomMode.ZoomAsNeeded;
@@ -46,10 +46,13 @@ public class Viewer extends BoxView { //implements PropChangeListener {
  */
 public Viewer()
 {
-    enableEvents(MouseEvents); enableEvents(KeyEvents);
+    // Configure Viewer
+    setAlign(Pos.CENTER); setFill(Color.LIGHTGRAY);
     setFocusable(true); setFocusWhenPressed(true);
-    setFill(Color.LIGHTGRAY);
-    super.setContent(_cbox);
+    enableEvents(MouseEvents); enableEvents(KeyEvents);
+    
+    // Configure ContentBox and add
+    addChild(_cbox);
     _cbox.setFill(ViewUtils.getBackFill()); _cbox.setFillWidth(true); _cbox.setFillHeight(true);
     _cbox.setEffect(new ShadowEffect());
     _cbox.setPickable(false);
@@ -82,8 +85,7 @@ public void setContent(View aView)
     else _cbox.setMinSize(500,500);
     
     // Set ZoomToFitFactor and relayout/repaint (for possible size change)
-    setZoomToFitFactor();
-    relayout(); repaint();
+    setZoomToFitFactor(); //relayoutParent(); repaint();
 }
 
 /**
@@ -253,13 +255,13 @@ public int getContentY()
 /**
  * Override to paint viewer views and page, margin, grid, etc.
  */
-public void paintFront(Painter aPntr)
+/*public void paintFront(Painter aPntr)
 {
     //Rect bnds = new Rect(0, 0, getWidth(), getHeight()); double scale = getZoomFactor();
     //RMShapePaintProps props = createShapePaintProps(); if(props!=null) aPntr.setProps(props);
     //RMShapeUtils.paintShape(aPntr, _vshape, bnds, scale);
     //if(props!=null) aPntr.setProps(null); //RMShapePainter spntr = getShapePainter(aPntr); spntr.paintShape(_vshape);
-}
+}*/
 
 /**
  * Handle mouse events.
@@ -288,5 +290,20 @@ public void undoerSetUndoTitle(String aTitle)
  * Returns whether undos exist in the viewer's documents's undoer (convenience).
  */
 public boolean undoerHasUndos()  { return getUndoer()!=null && getUndoer().hasUndos(); }
+
+/**
+ * Override to layout ContentBox.
+ */
+protected double getPrefWidthImpl(double aH)  { return BoxView.getPrefWidth(this, _cbox, aH); }
+
+/**
+ * Override to layout ContentBox.
+ */
+protected double getPrefHeightImpl(double aW)  { return BoxView.getPrefHeight(this, _cbox, aW); }
+
+/**
+ * Override to layout ContentBox.
+ */
+protected void layoutImpl()  { BoxView.layout(this, _cbox, null, false, false); }
 
 }

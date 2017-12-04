@@ -7,22 +7,22 @@ import snap.web.WebURL;
  * This class is a container for a viewer and tool bars. The default tool bars add document controls (save,
  * print, copy), input controls (select, pan, text select, image select), zoom controls and page controls. 
  */
-public class ViewerPane extends ViewOwner implements PropChangeListener {
+public class ViewerPane extends ViewOwner {
 
     // The real viewer
-    Viewer          _viewer;
+    Viewer              _viewer;
     
     // The ScrollView for this viewer
-    ScrollView        _scrollView;
+    ScrollView          _scrollView;
     
     // The BorderView for the ScrollView
-    BorderView        _scrollBorderView;
+    BorderView          _scrollBorderView;
     
     // The controls at the top of the document
-    ViewOwner         _topToolBar;
+    ViewOwner           _topToolBar;
     
     // The controls at the bottom of the document
-    ViewOwner         _btmToolBar;
+    ViewOwner           _btmToolBar;
     
 /**
  * Initializes the UI.
@@ -31,7 +31,7 @@ protected View createUI()
 {
     // Create and configure viewer
     _viewer = createViewer();
-    _viewer.addPropChangeListener(this); // Listen to PropertyChanges
+    _viewer.addPropChangeListener(pc -> viewerDidPropChange(pc)); // Listen to PropertyChanges
     _scrollView = new ScrollView(); _scrollView.setFill(new snap.gfx.Color("#c0c0c0"));
 
     _scrollView.setContent(_viewer);
@@ -51,11 +51,6 @@ protected View createUI()
  * Returns the viewer for this viewer pane.
  */
 public Viewer getViewer()  { if(_viewer==null) getUI(); return _viewer; }
-
-/**
- * Sets the viewer for this viewer pane.
- */
-protected void setViewer(Viewer aViewer)  { _viewer = aViewer; getScrollView().setContent(_viewer); }
 
 /**
  * Creates the real viewer for this viewer plus.
@@ -168,7 +163,7 @@ protected void resetUI()
 /**
  * ResetUI on PropertyChange.
  */
-public void propertyChange(PropChange aPC)
+public void viewerDidPropChange(PropChange aPC)
 {
     String pname = aPC.getPropertyName();
     if(pname==View.Cursor_Prop || pname==View.Width_Prop || pname==View.Height_Prop) return;

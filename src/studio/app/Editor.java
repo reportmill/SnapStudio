@@ -904,7 +904,7 @@ protected void setUndoSelection(Object aSelection)
 /**
  * Property change.
  */
-public void deepChange(PropChangeListener aView, PropChange anEvent)
+public void deepChange(Object aView, PropChange anEvent)
 {
     // Get source and prop name (if not View, just return)
     Object src = anEvent.getSource();

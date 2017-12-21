@@ -3,7 +3,6 @@ import java.util.*;
 import snap.gfx.*;
 import snap.util.ListUtils;
 import snap.view.*;
-import studio.app.ViewTool.ViewHandle;
 
 /**
  * This class handles mouse selection and manipulation of shapes, including:

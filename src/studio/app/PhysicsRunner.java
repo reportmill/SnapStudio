@@ -1,5 +1,6 @@
 package studio.app;
 import java.util.*;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
@@ -54,9 +55,9 @@ public PhysicsRunner(ParentView aView)
     
     // Add sidewalls
     double vw = _view.getWidth(), vh = _view.getHeight();
-    RectView r0 = new RectView(-1, -900, 1, vh+900); r0.getPhysics(true);
-    RectView r1 = new RectView(0, vh+1, vw, 1); r1.getPhysics(true);
-    RectView r2 = new RectView(vw, -900, 1, vh+900); r2.getPhysics(true);
+    RectView r0 = new RectView(-1, -900, 1, vh+900); r0.getPhysics(true);  // Left
+    RectView r1 = new RectView(0, vh+1, vw, 1); r1.getPhysics(true);       // Bottom
+    RectView r2 = new RectView(vw, -900, 1, vh+900); r2.getPhysics(true);  // Right
     createBody(r0); createBody(r1); createBody(r2);
 }
 
@@ -176,7 +177,7 @@ void updateDrag()
 /**
  * Convert View coord to Box2D.
  */
-public double viewToBox(double aValue)  { return aValue/_scale; }
+public float viewToBox(double aValue)  { return (float)(aValue/_scale); }
 
 /**
  * Convert View coord to Box2D.
@@ -232,7 +233,7 @@ public Body createBody(View aView)
     
     // Create PolygonShape
     Shape vshape = aView.getBoundsShape();
-    PolygonShape pshape = createShape(vshape);
+    org.jbox2d.collision.shapes.Shape pshape = createShape(vshape);
     
     // Create FixtureDef
     FixtureDef fdef = new FixtureDef(); fdef.shape = pshape; fdef.restitution = .25f; fdef.density = 1;
@@ -246,15 +247,31 @@ public Body createBody(View aView)
 /**
  * Creates a Box2D shape for given snap shape.
  */
-public PolygonShape createShape(Shape aShape)
+public org.jbox2d.collision.shapes.Shape createShape(Shape aShape)
 {
     // Handle Rect (simple case)
     if(aShape instanceof Rect) { Rect rect = (Rect)aShape;
         PolygonShape pshape = new PolygonShape();
-        double pw = viewToBox(rect.width/2);
-        double ph = viewToBox(rect.height/2);
-        pshape.setAsBox((float)pw, (float)ph);
+        float pw = viewToBox(rect.width/2);
+        float ph = viewToBox(rect.height/2);
+        pshape.setAsBox(pw, ph);
         return pshape;
+    }
+    
+    // Handle Ellipse
+    if(aShape instanceof Ellipse && aShape.getWidth()==aShape.getHeight()) { Ellipse elp = (Ellipse)aShape;
+        CircleShape cshape = new CircleShape();
+        cshape.setRadius(viewToBox(elp.getWidth()/2));
+        return cshape;
+    }
+    
+    // Handle Arc
+    if(aShape instanceof Arc && aShape.getWidth()==aShape.getHeight()) { Arc arc = (Arc)aShape;
+        if(arc.getSweepAngle()==360) {
+            CircleShape cshape = new CircleShape();
+            cshape.setRadius(viewToBox(arc.getWidth()/2));
+            return cshape;
+        }
     }
     
     // Get shape centered around shape midpoint

@@ -24,6 +24,9 @@ public class ViewerPane extends ViewOwner {
     // The controls at the bottom of the document
     ViewOwner           _btmToolBar;
     
+    // Listener for Viewer changes
+    PropChangeListener  _viewLsnr = pc -> viewerDidPropChange(pc);
+    
 /**
  * Initializes the UI.
  */
@@ -31,7 +34,7 @@ protected View createUI()
 {
     // Create and configure viewer
     _viewer = createViewer();
-    _viewer.addPropChangeListener(pc -> viewerDidPropChange(pc)); // Listen to PropertyChanges
+    _viewer.addPropChangeListener(_viewLsnr); // Listen to PropertyChanges
     _scrollView = new ScrollView(); _scrollView.setFill(new snap.gfx.Color("#c0c0c0"));
 
     _scrollView.setContent(_viewer);
@@ -48,14 +51,30 @@ protected View createUI()
 }
 
 /**
+ * Creates the real viewer for this viewer plus.
+ */
+protected Viewer createViewer()  { return new Viewer(); }
+
+/**
  * Returns the viewer for this viewer pane.
  */
 public Viewer getViewer()  { if(_viewer==null) getUI(); return _viewer; }
 
 /**
- * Creates the real viewer for this viewer plus.
+ * Sets the viewer for this viewer pane.
  */
-protected Viewer createViewer()  { return new Viewer(); }
+protected void setViewer(Viewer aViewer)
+{
+    // Stop listening to PropChanges on old
+    if(_viewer!=null) _viewer.removePropChangeListener(_viewLsnr);
+    
+    // Set Viewer
+    _viewer = aViewer;
+    _scrollView.setContent(_viewer);
+    
+    // Start listening to PropChanges
+    _viewer.addPropChangeListener(_viewLsnr);
+}
 
 /**
  * Returns the scroll view for this viewer plus.

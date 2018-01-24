@@ -145,6 +145,11 @@ protected void respondUI(ViewEvent anEvent)
     if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignX(editor, HPos.RIGHT);
     if(anEvent.equals("AlignFullButton")) EditorShapes.setJustify(editor, true);
     
+    // Handle Preview/Edit button and PreviewMenuItem
+    if(anEvent.equals("PreviewEditButton") || anEvent.equals("PreviewMenuItem")) {
+        getEditorPane().setEditing(!getEditorPane().isEditing());
+    }
+    
     // Handle PreviewXMLMenuItem
     if(anEvent.equals("PreviewXMLMenuItem"))
         EditorPaneUtils.previewXML(getEditorPane());

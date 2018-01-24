@@ -24,6 +24,12 @@ public class EditorPane extends ViewerPane {
     // The shared attributes inspector (go ahead and create to get RMColorPanel created)
     AttributesPanel        _attrsPanel = createAttributesPanel();
     
+    // Holds the real editor when in preview mode
+    Editor                 _realEditor;
+    
+    // The PhysicsRunner
+    PhysicsRunner          _physRunner;
+
     // The image for a window frame icon
     static Image           _frameIcon = Image.get(EditorPane.class, "ReportMill16x16.png");
 
@@ -90,6 +96,59 @@ public void setShowRulers(boolean aValue)
     // Resize window if window was previously at preferred size
     if(doPack)
         getWindow().pack();
+}
+
+/**
+ * Returns whether editor is really doing editing.
+ */
+public boolean isEditing()  { return _realEditor==null; } //getEditor().isEditing(); }
+
+/**
+ * Sets whether editor is really doing editing.
+ */
+public void setEditing(boolean aValue)
+{
+    // If already set, just return
+    if(aValue==isEditing()) return;
+    
+    // If not yet previewing, store current template then generate report and swap it in
+    if(!aValue) {
+                
+        // Cache current editor and flush any current editing
+        _realEditor = getEditor(); //_realEditor.flushEditingChanges();
+        
+        // Reload content
+        //XMLElement xml = getEditor().getContentXML();
+        //ParentView content = new ViewArchiver().getParentView(xml.getBytes());
+        ParentView content = new ViewArchiver().copy(getContent());
+        
+        // Create new editor, set editing to false and set report document
+        Editor editor = new Editor(); //editor.setEditing(false);
+        editor.getContentBox().removeDeepChangeListener(editor);
+        editor.setContent(content);
+        editor.setSize(_realEditor.getSize());
+        
+        // Set new editor
+        setViewer(editor);
+        
+        // Start physics
+        runLater(() -> {
+            ParentView worldView = content; if(worldView instanceof DocView) worldView = ((DocView)worldView).getPage();
+            _physRunner = new PhysicsRunner(worldView);
+            _physRunner.setRunning(true);
+            editor.getContentBox().setPickable(true);
+        });
+    }
+
+    // If turning preview off, restore real editor
+    else {
+        setViewer(_realEditor); _realEditor = null;
+        _physRunner.setRunning(false); _physRunner = null;
+    }
+    
+    // Focus on editor
+    requestFocus(getEditor());
+    resetLater();
 }
 
 /**

@@ -18,7 +18,7 @@ public class EditorProxGuide {
     static boolean        _includeSuperSelectedShape = false;
     
     // The list of rects that need to be repainted for proximity guides
-    static List <Rect>  _guidelineRects = new Vector();
+    static List <Rect>  _guidelineRects = new ArrayList();
 
 /**
  * Returns whether proximity guides are enabled.

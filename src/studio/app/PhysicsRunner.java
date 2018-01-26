@@ -233,11 +233,13 @@ public Body createBody(View aView)
     
     // Create PolygonShape
     Shape vshape = aView.getBoundsShape();
-    org.jbox2d.collision.shapes.Shape pshape = createShape(vshape);
+    org.jbox2d.collision.shapes.Shape pshapes[] = createShape(vshape);
     
     // Create FixtureDef
-    FixtureDef fdef = new FixtureDef(); fdef.shape = pshape; fdef.restitution = .25f; fdef.density = 1;
-    body.createFixture(fdef);
+    for(org.jbox2d.collision.shapes.Shape pshp : pshapes) {
+        FixtureDef fdef = new FixtureDef(); fdef.shape = pshp; fdef.restitution = .25f; fdef.density = 1;
+        body.createFixture(fdef);
+    }
     
     // Return body
     phys.setNative(body);
@@ -247,7 +249,7 @@ public Body createBody(View aView)
 /**
  * Creates a Box2D shape for given snap shape.
  */
-public org.jbox2d.collision.shapes.Shape createShape(Shape aShape)
+public org.jbox2d.collision.shapes.Shape[] createShape(Shape aShape)
 {
     // Handle Rect (simple case)
     if(aShape instanceof Rect) { Rect rect = (Rect)aShape;
@@ -255,14 +257,14 @@ public org.jbox2d.collision.shapes.Shape createShape(Shape aShape)
         float pw = viewToBox(rect.width/2);
         float ph = viewToBox(rect.height/2);
         pshape.setAsBox(pw, ph);
-        return pshape;
+        return new org.jbox2d.collision.shapes.Shape[] { pshape };
     }
     
     // Handle Ellipse
     if(aShape instanceof Ellipse && aShape.getWidth()==aShape.getHeight()) { Ellipse elp = (Ellipse)aShape;
         CircleShape cshape = new CircleShape();
         cshape.setRadius(viewToBox(elp.getWidth()/2));
-        return cshape;
+        return new org.jbox2d.collision.shapes.Shape[] { cshape };
     }
     
     // Handle Arc
@@ -270,29 +272,55 @@ public org.jbox2d.collision.shapes.Shape createShape(Shape aShape)
         if(arc.getSweepAngle()==360) {
             CircleShape cshape = new CircleShape();
             cshape.setRadius(viewToBox(arc.getWidth()/2));
-            return cshape;
+            return new org.jbox2d.collision.shapes.Shape[] { cshape };
         }
+    }
+    
+    // Handle Polygon if Simple, Convex and less than 8 points
+    if(aShape instanceof Polygon) { Polygon poly = (Polygon)aShape;
+        org.jbox2d.collision.shapes.Shape pshape = createShape(poly);
+        if(pshape!=null) return new org.jbox2d.collision.shapes.Shape[] { pshape };
     }
     
     // Get shape centered around shape midpoint
     Rect bnds = aShape.getBounds();
-    Shape shape = aShape.copyFor(new Transform(-bnds.width/2, -bnds.height/2)).getFlat();
+    Shape shape = aShape.copyFor(new Transform(-bnds.width/2, -bnds.height/2));
     
-    // Iterate over path to create Box2D Vec2 objects
-    PathIter piter = shape.getPathIter(null); double pnts[] = new double[6];
-    List <Vec2> vecs = new ArrayList();
-    while(piter.hasNext()) {
-        switch(piter.getNext(pnts)) {
-            case MoveTo:
-            case LineTo: vecs.add(viewToBox(pnts[0], pnts[1]));
-            default: break;
+    // Get PolygonList for shape
+    PolygonList polyList = new PolygonList(shape);
+    List <org.jbox2d.collision.shapes.Shape> pshapes = new ArrayList();
+    
+    // Iterate over polygons
+    for(int i=0, iMax=polyList.getPolyCount();i<iMax;i++) { Polygon poly = polyList.getPoly(i);
+    
+        // Try simple case
+        org.jbox2d.collision.shapes.Shape pshp = createShape(poly);
+        if(pshp!=null) pshapes.add(pshp);
+        
+        // Otherwise, create Convex Polys and add them
+        else {
+            PolygonList polys = poly.getConvexPolys(8);
+            for(int j=0,jMax=polys.getPolyCount();j<jMax;j++) { Polygon p = polys.getPoly(j);
+                pshapes.add(createShape(p)); }
         }
     }
     
-    // Create PolygonShape, set points and return
-    Vec2 vary[] = vecs.toArray(new Vec2[0]);
-    PolygonShape pshape = new PolygonShape();
-    pshape.set(vary, vary.length);
+    // Return Box2D shapes array
+    return pshapes.toArray(new org.jbox2d.collision.shapes.Shape[0]);
+}
+
+/**
+ * Creates a Box2D shape for given snap shape.
+ */
+public org.jbox2d.collision.shapes.Shape createShape(Polygon aPoly)
+{
+    // If invalid, just return null
+    if(!aPoly.isSimple() || !aPoly.isConvex() || aPoly.getPointCount()>=8) return null;
+    
+    // Create Box2D PolygonShape and return
+    int pc = aPoly.getPointCount();
+    Vec2 vecs[] = new Vec2[pc]; for(int i=0;i<pc;i++) vecs[i] = viewToBox(aPoly.getX(i), aPoly.getY(i));
+    PolygonShape pshape = new PolygonShape(); pshape.set(vecs, vecs.length);
     return pshape;
 }
 

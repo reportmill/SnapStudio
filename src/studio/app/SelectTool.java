@@ -30,7 +30,7 @@ public class SelectTool extends ViewTool {
     Rect          _selectionRect = new Rect();
     
     // The list of shapes currently selected while selecting
-    List <View>   _whileSelectingSelectedShapes = new Vector();
+    List <View>   _whileSelectingSelectedShapes = new ArrayList();
     
     // Whether to re-enter mouse pressed
     boolean       _redoMousePressed;

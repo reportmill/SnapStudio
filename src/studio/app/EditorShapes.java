@@ -54,7 +54,7 @@ public static void groupShapes(Editor anEditor, List <? extends View> theShapes,
 public static void ungroupShapes(Editor anEditor)
 {
     // Get currently super selected shape and create list to hold ungrouped shapes
-    List <View> ungroupedShapes = new Vector();
+    List <View> ungroupedShapes = new ArrayList();
     
     // Register undo title for ungrouping
     anEditor.undoerSetUndoTitle("Ungroup");

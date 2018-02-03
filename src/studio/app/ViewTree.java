@@ -1,5 +1,4 @@
 package studio.app;
-import snap.gfx.Color;
 import snap.view.*;
 
 /**
@@ -8,7 +7,7 @@ import snap.view.*;
 public class ViewTree extends EditorPane.SupportPane {
     
     // The ViewTree
-    TreeView       _viewTree;
+    TreeView <View>  _viewTree;
 
 /**
  * Creates a new ViewTree.
@@ -20,10 +19,9 @@ public ViewTree(EditorPane anEP)  { super(anEP); }
  */
 protected View createUI()
 {
-    TreeView tview = new TreeView(); tview.setName("ViewTree"); tview.setGrowHeight(true);
-    tview.setResolver(new ViewTreeResolver()); tview.setBorder(Color.GRAY, 1);
-    ScrollView scroll = new ScrollView(_viewTree = tview);
-    return scroll;
+    _viewTree = new TreeView(); _viewTree.setName("ViewTree"); _viewTree.setGrowHeight(true);
+    _viewTree.setResolver(new ViewTreeResolver());
+    return _viewTree;
 }
 
 /**

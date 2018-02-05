@@ -110,7 +110,7 @@ public void dropActor(View aView, ViewEvent anEvent)
     ParentView content = getEditor().getContent();
     SnapScene scene = content instanceof SnapScene? (SnapScene)content : null; if(scene==null) { beep(); return; }
     
-    Point pnt = scene.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
+    Point pnt = scene.parentToLocal(anEvent.getX(), anEvent.getY(), anEvent.getView());
     double w = img.getWidth(), h = img.getHeight();
     double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
     actr.setBounds(x, y, w, h);

@@ -409,7 +409,7 @@ public View getViewAtPoint(Point aPoint)
         superSelView = getContentPage();
 
     // Get the point in superSelectedView's coords
-    Point point = superSelView.parentToLocal(this, aPoint.x, aPoint.y);
+    Point point = superSelView.parentToLocal(aPoint.x, aPoint.y, this);
 
     // Get child of superSelectedView hit by point
     View viewAtPoint = getChildViewAtPoint(superSelView, point);
@@ -517,12 +517,12 @@ public ParentView firstSuperSelectedViewThatAcceptsChildrenAtPoint(Point aPoint)
 
     // Iterate up view hierarchy until we find a view that is hit and accepts children
     while(!getTool(parent).getAcceptsChildren(parent) ||
-        !parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
+        !parent.contains(parent.parentToLocal(aPoint.x, aPoint.y, this))) {
 
         // If view childrenSuperSelImmd and view hitByPt, see if any view children qualify (otherwise use parent)
         if(getTool(parent).childrenSuperSelectImmediately(parent) &&
-            parent.contains(parent.parentToLocal(this, aPoint.x, aPoint.y))) {
-            View childView = parent.getChildAt(parent.parentToLocal(this,aPoint.x,aPoint.y));
+            parent.contains(parent.parentToLocal(aPoint.x, aPoint.y, this))) {
+            View childView = parent.getChildAt(parent.parentToLocal(aPoint.x,aPoint.y,this));
             if(childView!=null && getTool(childView).getAcceptsChildren(childView))
                 parent = (ParentView)childView;
             else parent = parent.getParent();
@@ -750,7 +750,7 @@ public Rect getSelectedViewsBounds()
     
     // Get select views rect in viewer coords and return
     Rect sbounds = views.get(0).getBounds(); //ViewUtils.getBoundsOfChildren(parent, views);
-    sbounds = parent.localToParent(this, sbounds).getBounds();
+    sbounds = parent.localToParent(sbounds, this).getBounds();
     return sbounds;
 }
 
@@ -955,8 +955,8 @@ private WebFile.Updater _updr = file -> updateFile();
  */
 public Rect rootViewWillPaint(RootView aRV, Rect aRect)
 {
-    Rect rect = parentToLocal(aRV, aRect).getBounds();
-    if(rect.intersects(getBoundsLocal())) { rect.inset(-4); aRect = localToParent(aRV, rect).getBounds(); }
+    Rect rect = parentToLocal(aRect, aRV).getBounds();
+    if(rect.intersects(getBoundsLocal())) { rect.inset(-4); aRect = localToParent(rect, aRV).getBounds(); }
     return aRect;
 }
 

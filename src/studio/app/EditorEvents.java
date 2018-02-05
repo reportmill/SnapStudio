@@ -76,7 +76,7 @@ public void mousePressed(ViewEvent anEvent)
     
     // Set downpoint and last point to current event point in document coords
     View content = _editor.getContent();
-    _downPoint = content.parentToLocal(_editor, anEvent.getX(), anEvent.getY());
+    _downPoint = content.parentToLocal(anEvent.getX(), anEvent.getY(), _editor);
 
     // If current tool isn't select tool, see if super selected shape needs to be updated
     if(!_editor.isCurrentToolSelectTool()) {
@@ -189,7 +189,7 @@ public ViewEvent getCurrentEvent()  { return _currentEvent; }
 public Point getEventPointInDoc()
 {
     Editor ed = getEditor(); View cont = ed.getContent();
-    return cont.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
+    return cont.parentToLocal(_currentEvent.getX(), _currentEvent.getY(), ed);
 }
 
 /**
@@ -198,7 +198,7 @@ public Point getEventPointInDoc()
 public Point getEventPointInShape(boolean shouldSnap)
 {
     Editor ed = getEditor(); View view = ed.getSuperSelectedView();
-    return view.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
+    return view.parentToLocal(_currentEvent.getX(), _currentEvent.getY(), ed);
 }
 
 /**
@@ -207,7 +207,7 @@ public Point getEventPointInShape(boolean shouldSnap)
 public Point getEventPointInShape(boolean snapToGrid, boolean snapEdges)
 {
     Editor ed = getEditor(); View view = ed.getSuperSelectedView();
-    return view.parentToLocal(ed, _currentEvent.getX(), _currentEvent.getY());
+    return view.parentToLocal(_currentEvent.getX(), _currentEvent.getY(), ed);
 }
 
 /**
@@ -222,7 +222,7 @@ public Point getEventPointInDoc(boolean snapToGrid)
 {
     // Get current event point in doc coords, rounded to integers
     View content = _editor.getContent();
-    Point point = content.parentToLocal(_editor, _currentEvent.getX(), _currentEvent.getY());
+    Point point = content.parentToLocal(_currentEvent.getX(), _currentEvent.getY(), _editor);
     point.snap();
     
     // If shift key is down, constrain values to increments of 45 degrees from _downPoint

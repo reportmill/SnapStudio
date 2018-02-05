@@ -458,7 +458,7 @@ public void paintHandles(T aText, Painter aPntr, boolean isSuperSelected)
         aPntr.setColor(isSuperSelected? new Color(.9f, .4f, .4f) : Color.LIGHTGRAY);
         aPntr.setStroke(Stroke.Stroke1.copyForDashes(3, 2));
         Shape path = aText.getBoundsShape();
-        path = aText.localToParent(getEditor(), path);
+        path = aText.localToParent(path, getEditor());
         aPntr.setAntialiasing(false); aPntr.draw(path); aPntr.setAntialiasing(true);
         aPntr.restore();
     }

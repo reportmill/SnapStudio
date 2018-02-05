@@ -98,7 +98,7 @@ protected void paintHor(Painter aPntr)
     View content = getContent();
     Rect vrect = _editor.getVisRect();
     Rect bnds = new Rect(vrect.getX()-_rulerWidth, 0, getWidth(), _rulerWidth);
-    bnds = content.parentToLocal(_editor, bnds).getBounds();
+    bnds = content.parentToLocal(bnds, _editor).getBounds();
     
     // Scale and translate ruler to doc coords
     aPntr.save();
@@ -126,7 +126,7 @@ protected void paintHor(Painter aPntr)
         aPntr.setColor(new Color(1,.5)); aPntr.fillRect(bounds.getX(), 0, bounds.getWidth(), getHeight()); }
         
     // Paint mouse position
-    Point mp = content.parentToLocal(_editor, _mouse.x, _mouse.y);
+    Point mp = content.parentToLocal(_mouse.x, _mouse.y, _editor);
     aPntr.setColor(Color.BLACK); aPntr.setStroke(_mouseStroke);
     aPntr.drawLine(mp.getX(), 0, mp.getX(), getHeight());
     aPntr.restore();
@@ -141,7 +141,7 @@ protected void paintVer(Painter aPntr)
     View content = getContent();
     Rect vrect = _editor.getVisRect();
     Rect bnds = new Rect(0, vrect.getY(), _rulerWidth, getHeight());
-    bnds = content.parentToLocal(_editor, bnds).getBounds();
+    bnds = content.parentToLocal(bnds, _editor).getBounds();
     
     // Scale ruler to doc coords
     aPntr.save();
@@ -169,7 +169,7 @@ protected void paintVer(Painter aPntr)
         aPntr.setColor(new Color(1,.5)); aPntr.fillRect(0, bounds.getY(), getWidth(), bounds.getHeight()); }
         
     // Paint mouse position
-    Point mp = content.parentToLocal(_editor, _mouse.x, _mouse.y);
+    Point mp = content.parentToLocal(_mouse.x, _mouse.y, _editor);
     aPntr.setColor(Color.BLACK); aPntr.setStroke(_mouseStroke);
     aPntr.drawLine(0, mp.getY(), getWidth(), mp.getY());
     aPntr.restore();
@@ -181,7 +181,7 @@ private Rect getSelViewBounds()
     View sv = _editor.getSelectedOrSuperSelectedView();
     if(sv==null) return null;// || shape instanceof RMDocument || shape instanceof RMPage) return null;
     Rect sbnds = sv.getBoundsLocal(); //shape.convertRectToShape(sbnds, null); return sbnds;
-    return sv.localToParent(getContent(), sbnds).getBounds();
+    return sv.localToParent(sbnds, getContent()).getBounds();
 }
 
 }

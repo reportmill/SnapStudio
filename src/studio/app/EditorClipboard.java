@@ -130,7 +130,7 @@ public static void paste(Editor anEditor, Clipboard aCB, ParentView aParent, Poi
         // Resize/relocate shape (if point was provided, move pasted shape to that point)
         pastedView.setSize(pastedView.getBestSize());
         if(aPoint!=null) {
-            aPoint = aParent.parentToLocal(anEditor, aPoint.x, aPoint.y);
+            aPoint = aParent.parentToLocal(aPoint.x, aPoint.y, anEditor);
             pastedView.setXY(aPoint.getX() - pastedView.getWidth()/2, aPoint.getY() - pastedView.getHeight()/2);
         }
         

@@ -151,7 +151,7 @@ public View createDragView(View aView, ViewEvent anEvent)
     
     // Set bounds using drag image
     Image img = Clipboard.getDrag().getDragImage();
-    Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
+    Point pnt = aView.parentToLocal(anEvent.getX(), anEvent.getY(), anEvent.getView());
     double w = img.getWidth(), h = img.getHeight();
     double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
     view.setBounds(x, y, w, h);

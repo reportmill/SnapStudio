@@ -82,7 +82,7 @@ public void mousePressed(ViewEvent anEvent)
     _pointCountOnMouseDown = _path.getPointCount();
 
     Rect rect = _path.getBounds().getInsetRect(-10);
-    rect = content.localToParent(editor, rect).getBounds();
+    rect = content.localToParent(rect, editor).getBounds();
     editor.repaint(rect);
 }
 
@@ -99,7 +99,7 @@ public void mouseDragged(ViewEvent anEvent)
     else _path.setPoint(_path.getPointCount()-1, point.x, point.y);
 
     rect.union(_path.getBounds()); rect.inset(-10, -10);
-    rect = content.localToParent(editor, rect).getBounds();
+    rect = content.localToParent(rect, editor).getBounds();
     editor.repaint(rect);
 }
 
@@ -153,7 +153,7 @@ public void mouseReleased(ViewEvent anEvent)
 public void mouseMoved(T aPathView, ViewEvent anEvent)
 {
     // Get the mouse down point in view coords
-    Point point = aPathView.parentToLocal(getEditor(), anEvent.getX(), anEvent.getY());
+    Point point = aPathView.parentToLocal(anEvent.getX(), anEvent.getY(), getEditor());
     
     // If control point is hit, change cursor to move
     Path path = aPathView.getPath(); Size size = new Size(9,9);
@@ -227,7 +227,7 @@ private void createPoly()
         ParentView parent = editor.getSuperSelectedParentView();
         PathView pview = new PathView();
         Rect pbounds = _path.getBounds();
-        if(parent!=content) pbounds = parent.parentToLocal(content, pbounds).getBounds();
+        if(parent!=content) pbounds = parent.parentToLocal(pbounds, content).getBounds();
         pview.setBounds(pbounds); //pview.setFrame(pbounds);
         pview.setBorder(Color.BLACK, 1);
         pview.setPath(_path);
@@ -268,7 +268,7 @@ public void paintTool(Painter aPntr)
 {
     if(_path==null) return;
     Editor editor = getEditor(); View content = editor.getContent();
-    Shape path = content.localToParent(editor, _path);
+    Shape path = content.localToParent(_path, editor);
     aPntr.setColor(Color.BLACK); aPntr.setStroke(Stroke.Stroke1); aPntr.draw(path);
 }
 
@@ -366,7 +366,7 @@ public void runContextMenu(PathView aPathView, ViewEvent anEvent)
     // Otherwise if the path itself was hit, use 'add point'
     else {
         // Convert event point to view coords
-        _newPoint = aPathView.parentToLocal(getEditor(), anEvent.getX(), anEvent.getY());
+        _newPoint = aPathView.parentToLocal(anEvent.getX(), anEvent.getY(), getEditor());
         
         // linewidth is probably in view coords, and might need to get transformed to path coords here
         if(path.intersects(_newPoint.getX(), _newPoint.getY(), Math.max(aPathView.getBorder().getWidth(),8))) {

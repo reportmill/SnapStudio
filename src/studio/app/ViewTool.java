@@ -689,7 +689,7 @@ public Rect getHandleRect(T aView, Pos aHandle, boolean isSuperSelected)
 {
     // Get handle point for given handle index in shape coords and editor coords
     Point hp = getHandlePoint(aView, aHandle, isSuperSelected);
-    Point hpEd = aView.localToParent(getEditor(), hp.getX(), hp.getY());
+    Point hpEd = aView.localToParent(hp.getX(), hp.getY(), getEditor());
     
     // Get handle rect at handle point, outset rect by handle width and return
     Rect hr = new Rect(Math.round(hpEd.getX()), Math.round(hpEd.getY()), 0, 0);
@@ -885,7 +885,7 @@ private Point dropFile(T aView, File aFile, ViewEvent anEvent)
         ifile2.setBytes(ifile1.getBytes());
         ifile2.save();
         
-        Point pnt = aView.parentToLocal(anEvent.getView(), anEvent.getX(), anEvent.getY());
+        Point pnt = aView.parentToLocal(anEvent.getX(), anEvent.getY(), anEvent.getView());
         ImageView iview = new ImageView(ifile2); iview.setImageName(fname); iview.setSize(iview.getPrefSize());
         double w = iview.getWidth(), h = iview.getHeight();
         double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
@@ -940,7 +940,7 @@ public void dropImageFile(View aView, String aPath, Point aPoint) //private
     
     // Get parent to add image view to and drop point in parent coords
     ParentView parent = aView instanceof ParentView? (ParentView)aView : aView.getParent();
-    Point point = parent.parentToLocal(editor, aPoint.x, aPoint.y);
+    Point point = parent.parentToLocal(aPoint.x, aPoint.y, editor);
     
     // Create new image view
     //ImageView imageView = new ImageView(aPath);

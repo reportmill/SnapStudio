@@ -54,7 +54,7 @@ protected View createUI()
     
     // Create TabView, TitleView, TextView
     TabView tab = new TabView(); tab.addTab("One", new Label()); tab.addTab("Two", new Label());tab.setPrefSize(100,40);
-    TitleView ttlp = new TitleView(); ttlp.setTitle("TitleView"); ttlp.setContent(new Label());ttlp.setPrefSize(100,30);
+    TitleView ttlp = new TitleView("TitleView", new Label()); ttlp.setPrefSize(100,30);
     TextView txtv = new TextView(); txtv.setText("TextView"); txtv.setPrefSize(100,30);
     
     // Create MenuBar, MenuItem, Menu

@@ -99,10 +99,14 @@ public static void ungroupShapes(Editor anEditor)
  */
 public static void bringToFront(Editor anEditor)
 {
-    ChildView parent = anEditor.getSuperSelectedChildView();
-    if(parent==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
+    ChildView par = anEditor.getSuperSelectedChildView();
+    if(par==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Bring to Front");
-    parent.bringViewsToFront(anEditor.getSelectedViews());
+    
+    // Iterate over selected views and remove/add to move to front
+    List <View> views = anEditor.getSelectedViews();
+    for(View view : views) {
+        par.removeChild(view); par.addChild(view); }
 }
 
 /**
@@ -110,10 +114,14 @@ public static void bringToFront(Editor anEditor)
  */
 public static void sendToBack(Editor anEditor)
 {
-    ChildView parent = anEditor.getSuperSelectedChildView();
-    if(parent==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
+    ChildView par = anEditor.getSuperSelectedChildView();
+    if(par==null || anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Send to Back");
-    parent.sendViewsToBack(anEditor.getSelectedViews());
+    
+    // Iterate over selected views and remove/add to move to back
+    List <View> views = anEditor.getSelectedViews();
+    for(int i=0, iMax=views.size(); i<iMax; i++) { View view = views.get(i);
+        par.removeChild(view); par.addChild(view, i); }
 }
 
 /**

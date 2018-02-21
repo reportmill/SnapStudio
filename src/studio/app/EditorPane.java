@@ -3,9 +3,7 @@ import java.util.*;
 import snap.gfx.*;
 import snap.view.*;
 import snap.util.*;
-import snap.viewx.DialogBox;
-import snap.viewx.FileChooser;
-import snap.viewx.FormBuilder;
+import snap.viewx.*;
 import snap.web.*;
 
 /**
@@ -340,7 +338,7 @@ public EditorPane newDocument()
 public EditorPane open(View aView)
 {
     // Get path from open panel for supported file extensions
-    String path = FileChooser.showOpenPanel(aView, getFileDescription(), getFileExtensions());
+    String path = FilePanel.showOpenPanel(aView, getFileDescription(), getFileExtensions());
     return open(path);
 }
 
@@ -413,7 +411,7 @@ public void saveAs()
     }
     
     // Run save panel, set Document.Source to path and re-save (or just return if cancelled)
-    String path = FileChooser.showSavePanel(getEditor(), getFileDescription(), exts); if(path==null) return;
+    String path = FilePanel.showSavePanel(getEditor(), getFileDescription(), exts); if(path==null) return;
     setSourceURL(WebURL.getURL(path));
     save();
 }

@@ -1,7 +1,7 @@
 package studio.app;
 import snap.gfx.*;
 import snap.view.*;
-import snap.viewx.FileChooser;
+import snap.viewx.FilePanel;
 
 /**
  * UI editing for ImagePaint.
@@ -37,8 +37,7 @@ public void respondUI(ViewEvent anEvent)
     ImagePaint fill = shape.getFill() instanceof ImagePaint? (ImagePaint)shape.getFill() : _imageFill;
     
     // Handle TiledCheckBox
-    //if(anEvent.equals("TiledCheckBox"))
-    //    fill = new ImagePaint(fill.getImage(), anEvent.getBooleanValue());
+    //if(anEvent.equals("TiledCheckBox")) fill = new ImagePaint(fill.getImage(), anEvent.getBooleanValue());
     
     // Handle XSpinner, YSpinner, ScaleXSpinner, ScaleYSpinner
     //if(anEvent.equals("XSpinner"))
@@ -52,11 +51,10 @@ public void respondUI(ViewEvent anEvent)
     
     // Handle ChooseButton
     if(anEvent.equals("ChooseButton")) {
-        String path = FileChooser.showOpenPanel(getUI(), "Image File", "png", "jpg", "gif");
+        String path = FilePanel.showOpenPanel(getUI(), "Image File", "png", "jpg", "gif");
         if(path!=null) {
             //RMImageData idata = RMImageData.getImageData(path);
-            //if(idata!=null)
-            //    fill = new RMImageFill(idata, true);
+            //if(idata!=null) fill = new RMImageFill(idata, true);
         }
     }
 

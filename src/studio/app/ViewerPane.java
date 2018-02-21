@@ -1,6 +1,7 @@
 package studio.app;
 import snap.util.*;
 import snap.view.*;
+import snap.viewx.DialogBox;
 import snap.web.WebURL;
 
 /**

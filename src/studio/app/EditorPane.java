@@ -3,7 +3,9 @@ import java.util.*;
 import snap.gfx.*;
 import snap.view.*;
 import snap.util.*;
+import snap.viewx.DialogBox;
 import snap.viewx.FileChooser;
+import snap.viewx.FormBuilder;
 import snap.web.*;
 
 /**

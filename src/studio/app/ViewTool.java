@@ -5,6 +5,7 @@ import java.util.*;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
+import snap.viewx.DialogBox;
 import snap.web.*;
 
 /**

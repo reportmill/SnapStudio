@@ -46,7 +46,7 @@ public void resetUI()
     
     // Update layers table selection
     //_layersTable.setItems(page.getLayers());
-    //_layersTable.setSelectedIndex(page.getSelectedLayerIndex());
+    //_layersTable.setSelIndex(page.getSelectedLayerIndex());
 }
 
 /**
@@ -67,7 +67,7 @@ public void respondUI(ViewEvent anEvent)
 
     // Handle RemoveButton
     if(anEvent.equals("RemoveButton")) {
-        //int index = getViewSelectedIndex("LayersTable");
+        //int index = getViewSelIndex("LayersTable");
         //page.removeLayer(index);
     }
 
@@ -89,7 +89,7 @@ public void respondUI(ViewEvent anEvent)
     
     // Handle RenameButton
     /*if(anEvent.equals("RenameButton")) {
-        int srow = getViewSelectedIndex("LayersTable");
+        int srow = getViewSelIndex("LayersTable");
         RMPageLayer layer = page.getLayer(srow);
         DialogBox dbox = new DialogBox("Rename Layer"); dbox.setQuestionMessage("Layer Name:");
         String newName = dbox.showInputDialog(getUI(), layer.getName());
@@ -101,7 +101,7 @@ public void respondUI(ViewEvent anEvent)
     /*if(anEvent.equals("LayersTable")) {
         
         // Handle MouseClick event - have page select new table row
-        int row = _layersTable.getSelectedIndex(); if(row<0) return;
+        int row = _layersTable.getSelIndex(); if(row<0) return;
         RMPageLayer layer = page.getLayer(row);
         page.selectLayer(layer);
         

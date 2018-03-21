@@ -64,7 +64,7 @@ public void resetUI()
     // Get font names in currently selected font's family
     String familyNames[] = Font.getFontNames(font.getFamily());
     
-    // Reset FontNameComboBox Items, SelectedItem and Enabled
+    // Reset FontNameComboBox Items, SelItem and Enabled
     setViewItems("FontNameComboBox", familyNames);
     String fn = font.getFontFile().getNativeName(); setViewSelItem("FontNameComboBox", fn);
     setViewDisabled("FontNameComboBox", familyNames.length<=1);

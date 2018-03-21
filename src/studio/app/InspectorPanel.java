@@ -252,19 +252,19 @@ private Image getImage(View aView, int aW, int aH, Color aColor)
 /**
  * Changes the selection path selection to the level of the string index in the action event.
  */
-public void popSelection(int selectedIndex) 
+public void popSelection(int selIndex) 
 {
     // Get main editor (just return if editor or deepest shape is null)
     Editor editor = getEditor(); if(editor==null || _deepestShape==null) return;
     
     // If user selected descendant of current selected shape, select on down to it
-    if(selectedIndex > getParentCount(editor.getSelectedOrSuperSelectedView())) {
+    if(selIndex > getParentCount(editor.getSelectedOrSuperSelectedView())) {
         
         // Get current deepest shape
         View shape = _deepestShape;
 
         // Find shape that was clicked on
-        while(selectedIndex != getParentCount(shape))
+        while(selIndex != getParentCount(shape))
             shape = shape.getParent();
 
         // If shape parent's childrenSuperSelectImmediately, superSelect shape
@@ -277,7 +277,7 @@ public void popSelection(int selectedIndex)
     }
 
     // If user selected ancestor of current shape, pop selection up to it
-    else while(selectedIndex != getParentCount(editor.getSelectedOrSuperSelectedView()))
+    else while(selIndex != getParentCount(editor.getSelectedOrSuperSelectedView()))
         editor.popSelection();
 
     // Set selected shape to new editor selected shape

@@ -229,10 +229,10 @@ public void respondUI(ViewEvent anEvent)
     if(anEvent.equals(_keyFramesList)) {
         Integer ntime = _keyFramesList.getSelItem(); if(ntime==null) return;
         setTime(ntime);
-        /*int index = _keyFramesList.getSelectedIndexMax();
+        /*int index = _keyFramesList.getSelIndexMax();
         if(index>=0 && index<getKeyFrameCount()) {
-            if(index!=_keyFramesList.getSelectedIndexMin())
-                setTimeForScopedKeyFrame(getKeyFrame(index), getKeyFrame(_keyFramesList.getSelectedIndexMin()));
+            if(index!=_keyFramesList.getSelIndexMin())
+                setTimeForScopedKeyFrame(getKeyFrame(index), getKeyFrame(_keyFramesList.getSelIndexMin()));
             else setTime(getKeyFrame(index)); }*/
     }
 
@@ -277,7 +277,7 @@ public void respondUI(ViewEvent anEvent)
         View shape = getEditor().getSelectedOrSuperSelectedView();
         RMTimeline timeline = shape.getTimeline();
         String interpName = anEvent.getStringValue();
-        String change = (String)getViewSelectedItem(_changesList);
+        String change = (String)getViewSelItem(_changesList);
         RMKeyFrame keyFrame = timeline!=null? timeline.getKeyFrameAt(animator.getTime()) : null;
         RMKeyValue keyValue = keyFrame!=null? keyFrame.getKeyValue(shape, change) : null;
         if(keyValue!=null) {
@@ -351,9 +351,9 @@ public int getMaxTime()  { return 5000; }
     _update = true;
     
     if(aScope==null) {
-        setViewSelectedIndex(_keyFramesList, -1);
+        setViewSelIndex(_keyFramesList, -1);
         setViewValue(_keyFramesList, animator.getTime());
-        setViewSelectedIndex(_changesList, -1);
+        setViewSelIndex(_changesList, -1);
     }
 }*/
 

@@ -52,7 +52,7 @@ public void resetUI()
 {
     // Get currently selected view
     View view = getEditor().getSelectedOrSuperSelectedView();
-    int tabViewIndex = getViewSelectedIndex("TabView");
+    int tabViewIndex = getViewSelIndex("TabView");
     
     // If Stroke tab is showing, ensure proper inspector is showing and forward on
     if(tabViewIndex==0) {
@@ -117,7 +117,7 @@ public void respondUI(ViewEvent anEvent)
     Editor editor = getEditor(); if(editor==null) return;
     View view = editor.getSelectedOrSuperSelectedView(); if(view==null) return;
     List <View> views = editor.getSelectedOrSuperSelectedViews();
-    int tabViewIndex = getViewSelectedIndex("TabView");
+    int tabViewIndex = getViewSelIndex("TabView");
     
     // If Stroke tab is showing, handle basic StrokePane stuff
     if(tabViewIndex==0) {
@@ -133,7 +133,7 @@ public void respondUI(ViewEvent anEvent)
         
         // Handle StrokeComboBox: Get selected stroke instance and iterate over shapes and add stroke if not there
         if(anEvent.equals("StrokeComboBox")) {
-            Border newStroke = _fillTool.getStroke(anEvent.getSelectedIndex());
+            Border newStroke = _fillTool.getStroke(anEvent.getSelIndex());
             for(View v : views) v.setBorder(newStroke);
         }
     }
@@ -152,7 +152,7 @@ public void respondUI(ViewEvent anEvent)
         
         // Handle FillComboBox: Get selected fill instance and iterate over shapes and add fill if not there
         if(anEvent.equals("FillComboBox")) {
-            Paint newFill = _fillTool.getFill(anEvent.getSelectedIndex());
+            Paint newFill = _fillTool.getFill(anEvent.getSelIndex());
             for(View v : views) v.setFill(newFill);// newFill.deriveFill(s.getFill()));
         }
     }
@@ -171,7 +171,7 @@ public void respondUI(ViewEvent anEvent)
         
         // Handle EffectComboBox: Get selected effect instance and iterate over shapes and add effect if not there
         if(anEvent.equals("EffectComboBox")) {
-            Effect eff = _effectTool.getEffect(anEvent.getSelectedIndex());
+            Effect eff = _effectTool.getEffect(anEvent.getSelIndex());
             for(View v : views) v.setEffect(eff);
         }
     }

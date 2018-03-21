@@ -30,7 +30,7 @@ protected void resetUI()
     
     // set the type popup and swap in the proper controls
     boolean isRadial = fill.isRadial();
-    setViewSelectedIndex("TypeComboBox", isRadial? 1 : 0);
+    setViewSelIndex("TypeComboBox", isRadial? 1 : 0);
     getView("RadialPicker").setVisible(isRadial);
     getView("LinearControls").setVisible(!isRadial);
         
@@ -76,7 +76,7 @@ protected void respondUI(ViewEvent anEvent)
     
     // Handle linear/radial popup
     else if(anEvent.equals("TypeComboBox")) {
-        GradientPaint.Type t = anEvent.getSelectedIndex()==1? GradientPaint.Type.RADIAL : GradientPaint.Type.LINEAR;
+        GradientPaint.Type t = anEvent.getSelIndex()==1? GradientPaint.Type.RADIAL : GradientPaint.Type.LINEAR;
         newFill = oldfill.copyForType(t);
     }
 

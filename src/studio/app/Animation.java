@@ -125,7 +125,7 @@ public void resetUI()
         
     // If KeyFramesList and animator still don't match, reset keyFrameList
     //_keyFramesList.setSelectionInterval(frameStartIndex, frameEndIndex);
-    _keyFramesList.setSelectedItem(time);
+    _keyFramesList.setSelItem(time);
     
     // Clear list of changes
     _changes.clear();
@@ -143,7 +143,7 @@ public void resetUI()
     _changesList.setItems(_changes);
         
     // Get selected change
-    String change = _changesList.getSelectedItem();
+    String change = _changesList.getSelItem();
     
     // Get key/value for change
     //RMKeyValue keyValue = keyFrame!=null && change!=null? keyFrame.getKeyValue(shape, change) : null;
@@ -227,7 +227,7 @@ public void respondUI(ViewEvent anEvent)
 
     // Handle KeyFrameList
     if(anEvent.equals(_keyFramesList)) {
-        Integer ntime = _keyFramesList.getSelectedItem(); if(ntime==null) return;
+        Integer ntime = _keyFramesList.getSelItem(); if(ntime==null) return;
         setTime(ntime);
         /*int index = _keyFramesList.getSelectedIndexMax();
         if(index>=0 && index<getKeyFrameCount()) {

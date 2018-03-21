@@ -39,7 +39,7 @@ protected void resetUI()
 {
     _viewTree.setItems(getEditor().getContent());
     _viewTree.expandAll();
-    _viewTree.setSelectedItem(getEditor().getSelectedOrSuperSelectedView());
+    _viewTree.setSelItem(getEditor().getSelectedOrSuperSelectedView());
 }
 
 /**
@@ -49,11 +49,11 @@ protected void respondUI(ViewEvent anEvent)
 {
     // Handle ViewTree
     if(anEvent.equals("ViewTree") && anEvent.isActionEvent())
-        getEditor().setSelectedView((View)anEvent.getSelectedItem());
+        getEditor().setSelectedView((View)anEvent.getSelItem());
         
     // Handle MouseClick
     if(anEvent.isMouseClick() && anEvent.getClickCount()==2)
-        getEditor().setSuperSelectedView((View)anEvent.getSelectedItem());
+        getEditor().setSuperSelectedView((View)anEvent.getSelItem());
 }
 
 /**

@@ -66,7 +66,7 @@ public void resetUI()
     
     // Reset FontNameComboBox Items, SelectedItem and Enabled
     setViewItems("FontNameComboBox", familyNames);
-    String fn = font.getFontFile().getNativeName(); setViewSelectedItem("FontNameComboBox", fn);
+    String fn = font.getFontFile().getNativeName(); setViewSelItem("FontNameComboBox", fn);
     setViewDisabled("FontNameComboBox", familyNames.length<=1);
 }
 

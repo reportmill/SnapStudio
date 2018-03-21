@@ -81,9 +81,9 @@ protected void initUI()
 protected void resetUI()
 {
     TableView propTable = getView("PropTable", TableView.class); if(propTable==null) return;
-    int sind = propTable.getSelectedIndex(); if(sind<0) sind = 0;
+    int sind = propTable.getSelIndex(); if(sind<0) sind = 0;
     propTable.setItems(getSelNodeItems());
-    propTable.setSelectedIndex(sind);
+    propTable.setSelIndex(sind);
 }
 
 /**
@@ -94,7 +94,7 @@ protected void respondUI(ViewEvent anEvent)
     // Handle NodeTable double click
     if(anEvent.equals("PropTable") && anEvent.isMouseRelease() && anEvent.getClickCount()==2) {
         TableView <PropItem> propTable = getView("PropTable", TableView.class);
-        PropItem prop = propTable.getSelectedItem(); View pview = prop._view; String pkey = prop._key;
+        PropItem prop = propTable.getSelItem(); View pview = prop._view; String pkey = prop._key;
         DialogBox dbox = new DialogBox("Set Property Panel"); dbox.setQuestionMessage("Enter " + pkey + " value:");
         String str = dbox.showInputDialog(pview, prop.getValueString()); if(str==null) return;
         pview.setValue(pkey,str);

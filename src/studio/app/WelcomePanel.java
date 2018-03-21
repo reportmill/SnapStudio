@@ -119,7 +119,7 @@ public void respondUI(ViewEvent anEvent)
 {
     // Handle SitesTable double-click
     if(anEvent.equals("SitesTable") && anEvent.getClickCount()>1) {
-        WebFile file = (WebFile)getViewSelectedItem("SitesTable");
+        WebFile file = (WebFile)getViewSelItem("SitesTable");
         openFile(file);
     }
     

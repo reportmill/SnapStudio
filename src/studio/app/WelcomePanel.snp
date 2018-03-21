@@ -6,7 +6,7 @@
     </Label>
     <TableView Name="SitesTable" GrowHeight="true">
       <binding aspect="Items" key="RecentFiles" />
-      <binding aspect="SelectedItem" key="SelFile" />
+      <binding aspect="SelItem" key="SelFile" />
       <TableCol PrefWidth="120" ItemKey="Name" Header="Name" />
       <TableCol GrowWidth="true" ItemKey="Parent.Path" Header="URL" />
     </TableView>

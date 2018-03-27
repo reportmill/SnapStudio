@@ -28,15 +28,41 @@ public class PathViewTool <T extends PathView> extends ViewTool <T> {
     int          _selectedPointIndex;
 
 /**
- * Override to return empty panel.
+ * Initialize UI.
  */
-protected View createUI()  { return new Label(); }
+protected void initUI()
+{
+    getView("PathText", TextView.class).setFireActionOnFocusLost(true);
+}
 
 /**
- * Handles the pop-up menu
+ * Reset UI.
+ */
+protected void resetUI()
+{
+    // Get current PathView and path
+    PathView pview = getSelectedView();
+    Path path = pview.getPathInBounds();
+    
+    // Update PathText
+    setViewText("PathText", path.getString());
+}
+
+/**
+ * Respond to UI.
  */
 public void respondUI(ViewEvent anEvent)
 {
+    // Get current PathView and path
+    PathView pview = getSelectedView();
+    
+    // Handle PathText
+    if(anEvent.equals("PathText")) {
+        String str = anEvent.getStringValue();
+        Path path = Path.getPathFromSVG(str); if(path==null) return;
+        pview.resetPath(path);
+    }
+    
     // Handle DeletePointMenuItem
     if(anEvent.equals("DeletePointMenuItem"))
         deleteSelectedPoint();
@@ -480,7 +506,7 @@ private static void setPointStructured(Path aPath, int index, Point point)
     if(elmt==Seg.CubicTo) {
         int pointIndexForElementIndex = aPath.getSegPointIndex(elmtIndex);
 
-        // If point index is control point 1, and previous element is a curveto, bring control point 2 of previous curveto in line
+        // If point index is control point 1, and previous element is curveto, bring cp 2 of previous curveto in line
         if(index - pointIndexForElementIndex == 0) {
             if(elmtIndex-1>0 && aPath.getSeg(elmtIndex-1)==Seg.CubicTo) {
                 Point endPoint = aPath.getPoint(index-1), cntrlPnt2 = aPath.getPoint(index-2);
@@ -490,7 +516,7 @@ private static void setPointStructured(Path aPath, int index, Point point)
                     size.normalize(); size.negate();
                     Size size2 = new Size(cntrlPnt2.getX() - endPoint.getX(), cntrlPnt2.getY() - endPoint.getY());
                     double mag = size2.getMagnitude();
-                    aPath.setPoint(index-2, endPoint.getX() + size.getWidth()*mag, endPoint.getY() + size.getHeight()*mag);
+                    aPath.setPoint(index-2, endPoint.getX() + size.width*mag, endPoint.getY() + size.height*mag);
                 }
                 else {
                     // Illustrator pops the otherControlPoint here to what it was at the 
@@ -499,7 +525,7 @@ private static void setPointStructured(Path aPath, int index, Point point)
             }
         }
 
-        // If point index is control point 2, and next element is a curveto, bring control point 1 of next curveto in line
+        // If point index is control point 2, and next element is a curveto, bring cp 1 of next curveto in line
         else if(index - pointIndexForElementIndex == 1) {
             if(elmtIndex+1<aPath.getSegCount() && aPath.getSeg(elmtIndex+1)==Seg.CubicTo) {
                 Point endPoint = aPath.getPoint(index+1), otherControlPoint = aPath.getPoint(index+2);

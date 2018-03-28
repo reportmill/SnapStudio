@@ -1,57 +1,85 @@
 package studio.app;
 import java.util.*;
 import snap.gfx.*;
+import snap.util.ListUtils;
 import snap.view.*;
 
 /**
- * Handles editor methods specific to clipboard operations (cut, copy paste).
+ * Some utility methods for Editor.
  */
-public class EditorShapes {
-
-    // The editor
-    Editor          _editor;
+public class EditorUtils {
 
     // The last color set by or returned to the color panel
     static Color    _lastColor = Color.BLACK;
 
 /**
- * Creates a new editor shapes helper.
+ * Groups the given view list to the given group view.
+ * If given view list is null, use editor selected views.
+ * If given group view is null, create new generic group view.
  */
-public EditorShapes(Editor anEditor) { _editor = anEditor; }
-
-/**
- * Returns the editor.
- */
-public Editor getEditor() { return _editor; }
-
-/**
- * Groups the given shape list to the given group shape.
- * If given shapes list is null, use editor selected shapes.
- * If given group shape is null, create new generic group shape.
- */
-public static void groupShapes(Editor anEditor, List <? extends View> theShapes, ParentView aGroupShape)
+public static void groupViews(Editor anEditor, List <? extends View> theViews, ChildView aGroupView)
 {
     // If shapes not provided, use editor selected shapes
-    if(theShapes==null)
-        theShapes = anEditor.getSelectedViews();
+    if(theViews==null) theViews = anEditor.getSelectedViews();
     
     // If there are less than 2 selected shapes play a beep (the user really should know better)
-    if(theShapes.size()==0) { anEditor.beep(); return; }
+    if(theViews.size()==0) { anEditor.beep(); return; }
     
     // Set undo title
     anEditor.undoerSetUndoTitle("Group");
 
-    // Group shapes
-    //aGroupShape = RMShapeUtils.groupShapes(theShapes, aGroupShape);
+    // Get copy of shapes, sorted by their original index in parent
+    List <? extends View> shapes = theViews; //Sort.sortedList(theShapes, "indexInParent");
+    
+    // Get parent
+    ChildView parent = (ChildView)shapes.get(0).getParent();
+    
+    // If no group shape, create one
+    if(aGroupView==null) {
+        aGroupView = new SpringView();
+        aGroupView.setBounds(ViewUtils.getBoundsOfViews(parent, shapes));
+    }
+
+    // Add groupShape to the current parent (with no transform)
+    parent.addChild(aGroupView);
+
+    // Iterate over children and group to GroupShape
+    for(View child : shapes)
+        groupView(child, aGroupView);
     
     // Select group shape
-    anEditor.setSelectedView(aGroupShape);
+    anEditor.setSelectedView(aGroupView);
+}
+
+/**
+ * Adds child shape to group shape.
+ */
+private static void groupView(View child, ChildView gshape)
+{
+    // Get center point in parent coords and store as child x/y
+    ChildView parent = (ChildView)child.getParent();
+    Point cp = child.localToParent(child.getWidth()/2, child.getHeight()/2);
+    child.setXY(cp.x, cp.y);
+    
+    // Move child to GroupShape
+    parent.removeChild(child);
+    gshape.addChild(child);
+        
+    // Undo transforms of group shape
+    child.setRotate(child.getRotate() - gshape.getRotate());
+    child.setScaleX(child.getScaleX()/gshape.getScaleX()); child.setScaleY(child.getScaleY()/gshape.getScaleY());
+    //child.setSkewX(child.getSkewX() - gshape.getSkewX()); child.setSkewY(child.getSkewY() - gshape.getSkewY());
+    
+    // Reset center point: Get old center point in GroupShape coords and offset child by new center in GroupShape coords
+    cp = gshape.parentToLocal(cp.x, cp.y);
+    Point cp2 = child.localToParent(child.getWidth()/2, child.getHeight()/2);
+    child.setXY(child.getX() + cp.x - cp2.x, child.getY() + cp.y - cp2.y);
 }
 
 /**
  * Ungroups any currently selected group shapes.
  */
-public static void ungroupShapes(Editor anEditor)
+public static void ungroupViews(Editor anEditor)
 {
     // Get currently super selected shape and create list to hold ungrouped shapes
     List <View> ungroupedShapes = new ArrayList();
@@ -64,26 +92,17 @@ public static void ungroupShapes(Editor anEditor)
         
         // If shape cann't be ungrouped, skip
         if(!anEditor.getTool(shape).isUngroupable(shape)) continue;
-        ParentView groupShape = (ParentView)shape;
-        ParentView parent = groupShape.getParent();
+        ChildView groupShape = (ChildView)shape;
+        ChildView parent = (ChildView)groupShape.getParent();
             
-        // Iterate over children, remove from groupShape, add to groupShape parent and add to ungroupedShapes list
-        /*for(View child : groupShape.getChildArray()) {
-            
-            // Convert child to world coords
-            child.convertToShape(null);
-            
-            // Remove from group shape & add to group shape parent
-            groupShape.removeChild(child);
-            parent.addChild(child);
+        // Iterate over children and ungroup from GroupShape
+        for(View child : groupShape.getChildren().clone()) {
+            ungroupView(child);
             ungroupedShapes.add(child);
-            
-            // Convert back from world coords
-            child.convertFromShape(null);
-        }*/
+        }
 
         // Remove groupShape from parent
-        ((ChildView)parent).removeChild(groupShape);
+        parent.removeChild(groupShape);
     }
 
     // If were some ungroupedShapes, select them (set selected objects for undo/redo)
@@ -92,6 +111,30 @@ public static void ungroupShapes(Editor anEditor)
 
     // If no ungroupedShapes, beep at silly user
     else anEditor.beep();
+}
+
+/**
+ * Transforms given shape to world coords.
+ */
+private static void ungroupView(View child)
+{
+    // Get center point in parent coords and store as child x/y
+    ChildView gshape = (ChildView)child.getParent(), parent = (ChildView)gshape.getParent();
+    Point cp = child.localToParent(child.getWidth()/2, child.getHeight()/2, parent);
+    child.setXY(cp.x, cp.y);
+    
+    // Coalesce transforms up the parent chain
+    child.setRotate(child.getRotate() + gshape.getRotate());
+    child.setScaleX(child.getScaleX() * gshape.getScaleX()); child.setScaleY(child.getScaleY() * gshape.getScaleY());
+    //child.setSkewX(child.getSkewX() + gshape.getSkewX()); child.setSkewY(child.getSkewY() + gshape.getSkewY());
+
+    // Remove from group shape & add to group shape parent
+    gshape.removeChild(child);
+    parent.addChild(child);
+    
+    // Reset center point: Get new center in parent coords and offset child by change
+    Point cp2 = child.localToParent(child.getWidth()/2, child.getHeight()/2);
+    child.setXY(child.getX() + cp.x - cp2.x, child.getY() + cp.y - cp2.y);
 }
 
 /**
@@ -318,18 +361,45 @@ public static void combinePaths(Editor anEditor)
     // If shapes less than 2, just beep and return
     if(anEditor.getSelectedViewCount()<2) { anEditor.beep(); return; }
     
-    // Get selected shapes and create CombinedShape
-    /*List <RMShape> selectedShapes = ListUtils.clone(anEditor.getSelectedShapes());
-    RMPolygonShape combinedShape = RMShapeUtils.getCombinedPathsShape(selectedShapes);
+    // Get selected views and create CombinedView
+    List <View> selViews = ListUtils.clone(anEditor.getSelectedViews());
+    PathView combinedView = getCombinedPathsView(selViews);
     
     // Remove original children and replace with CombinedShape
     anEditor.undoerSetUndoTitle("Add Paths");
-    RMParentShape parent = anEditor.getSuperSelectedParentShape();
-    for(RMShape shape : selectedShapes) parent.removeChild(shape);
-    parent.addChild(combinedShape);
+    ChildView parent = (ChildView)anEditor.getSuperSelectedParentView();
+    for(View shape : selViews) parent.removeChild(shape);
+    parent.addChild(combinedView);
     
     // Select CombinedShape
-    anEditor.setSelectedShape(combinedShape);*/
+    anEditor.setSelectedView(combinedView);
+}
+
+/**
+ * Returns a PathView by combining paths of given views.
+ */
+public static PathView getCombinedPathsView(List <View> theViews)
+{
+    // Get first view and the path of the combined views
+    View view0 = theViews.size()>0? theViews.get(0) : null; if(view0==null) return null;
+    Shape newPath = getCombinedPath(theViews);
+
+    // Create combined view, configure and return
+    PathView view = new PathView(); view.setBounds(newPath.getBounds());
+    view.setFill(view0.getFill()); view.setBorder(view0.getBorder()); //view.copyShape(shape0); view._rss = null;
+    view.resetPath(newPath);
+    return view;
+}
+
+/**
+ * Returns the combined path from given views.
+ */
+public static Shape getCombinedPath(List <View> theViews)
+{
+    List <Shape> paths = getPathsFromViews(theViews, 0); Shape s1 = paths.get(0);
+    for(int i=1, iMax=paths.size(); i<iMax; i++) { Shape s2 = paths.get(i);
+        s1 = Shape.add(s1, s2); }
+    return s1;
 }
 
 /**
@@ -341,17 +411,76 @@ public static void subtractPaths(Editor anEditor)
     if(anEditor.getSelectedViewCount()<2) { anEditor.beep(); return; }
     
     // Get selected shapes and create SubtractedShape
-    /*List <RMShape> selectedShapes = ListUtils.clone(anEditor.getSelectedShapes());
-    RMPolygonShape subtractedShape = RMShapeUtils.getSubtractedPathsShape(selectedShapes, 0);
+    List <View> selViews = ListUtils.clone(anEditor.getSelectedViews());
+    PathView newView = getSubtractedPathsView(selViews, 0);
     
     // Remove original children and replace with SubtractedShape
     anEditor.undoerSetUndoTitle("Subtract Paths");
-    RMParentShape parent = anEditor.getSuperSelectedParentShape();
-    for(RMShape shape : selectedShapes) parent.removeChild(shape);
-    parent.addChild(subtractedShape);
+    ChildView parent = (ChildView)anEditor.getSuperSelectedParentView();
+    for(View view : selViews) parent.removeChild(view);
+    parent.addChild(newView);
     
     // Select SubtractedShape
-    anEditor.setSelectedShape(subtractedShape);*/
+    anEditor.setSelectedView(newView);
+}
+
+/**
+ * Returns a PathView by subtracting paths of given views.
+ */
+public static PathView getSubtractedPathsView(List <View> theViews, int anInset)
+{
+    // Get first view and path for subtracted views
+    View view0 = theViews.get(0);
+    Shape newPath = getSubtractedPath(theViews, 0);
+
+    // Create subtracted view, configure and return
+    PathView view = new PathView(); view.setBounds(newPath.getBounds());
+    view.setFill(view0.getFill()); view.setBorder(view0.getBorder()); //view.copyShape(view0); view._rss = null;
+    view.resetPath(newPath);
+    return view;
+}
+
+/**
+ * Returns the combined path from given views.
+ */
+public static Shape getSubtractedPath(List <View> theViews, int anInset)
+{
+    // Eliminate view that don't intersect first shape frame
+    View shape0 = theViews.get(0);
+    Rect shape0Frame = shape0.localToParent(shape0.getBoundsLocal()).getBounds();
+    List <View> shapes = theViews;
+    for(int i=shapes.size()-1; i>=0; i--) { View view = shapes.get(i);
+        Rect frame = view.localToParent(view.getBoundsLocal()).getBounds();
+        if(!frame.intersects(shape0Frame)) {
+            if(shapes==theViews) shapes = new ArrayList(theViews); shapes.remove(i); }}
+    
+    // Get shape paths, iterate over them, successively subtract them and return final
+    List <Shape> paths = getPathsFromViews(shapes, anInset); Shape s1 = paths.get(0);
+    for(int i=1, iMax=paths.size(); i<iMax; i++) { Shape s2 = paths.get(i);
+        s1 = Shape.subtract(s1, s2); }
+    return s1;
+}
+
+/**
+ * Returns the list of paths from the given shapes list.
+ */
+private static List <Shape> getPathsFromViews(List <View> theViews, int anInset)
+{
+    // Get first shape and parent
+    View shape0 = theViews.get(0);
+    View parent = shape0.getParent(); // Should probably get common ancestor
+
+    // Iterate over shapes, get bounds of each (inset), path of each (in parent coords) and add to list
+    List paths = new ArrayList(theViews.size());
+    for(int i=0, iMax=theViews.size(); i<iMax; i++) { View shape = theViews.get(i);
+        Rect bounds = shape.getBoundsLocal(); if(anInset!=0 && i>0) bounds.inset(anInset);
+        Shape path = shape.getBoundsShape(); //shape.getPath().copyFor(bounds);
+        path = shape.localToParent(path);
+        paths.add(path);
+    }
+    
+    // Return paths list
+    return paths;
 }
 
 /**
@@ -708,5 +837,50 @@ public static void setFormat(Editor anEditor, TextFormat aFormat)
 {
     //for(RMShape shape : anEditor.getSelectedOrSuperSelectedShapes()) shape.setFormat(aFormat);
 }
+
+/**
+ * Preview PDF.
+ */
+public static void previewPDF(EditorPane anEP)  { }
+
+/**
+ * Generate report, save as HTML in temp file and open.
+ */
+public static void previewHTML(EditorPane anEP)  { }
+
+/**
+ * Generate report, save as CSV in temp file and open.
+ */
+public static void previewCSV(EditorPane anEP)  { }
+
+/**
+ * Generate report, save as JPG in temp file and open.
+ */
+public static void previewJPG(EditorPane anEP)  { }
+
+/**
+ * Generate report, save as PNG in temp file and open.
+ */
+public static void previewPNG(EditorPane anEP)  { }
+
+/**
+ * Preview XLS.
+ */
+public static void previewXLS(EditorPane anEP)  { }
+
+/**
+ * Preview RTF.
+ */
+public static void previewRTF(EditorPane anEP)  { }
+
+/**
+ * Preview XML.
+ */
+public static void previewXML(EditorPane anEP)  { }
+
+/**
+ * Save document as PDF to given path.
+ */
+public static void saveAsPDF(EditorPane anEP)  { }
 
 }

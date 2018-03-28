@@ -96,13 +96,13 @@ public void resetUI()
     // If line height min not set (0), update LineHeightMinSpinner with current font size
     // If valid line height min, update LineHeightMinSpinner with line height
     double lineHtMin = lstyle.getMinHeight();
-    boolean lineHtMinSet = lineHtMin!=0; if(!lineHtMinSet) lineHtMin = EditorShapes.getFont(editor).getSize();
+    boolean lineHtMinSet = lineHtMin!=0; if(!lineHtMinSet) lineHtMin = EditorUtils.getFont(editor).getSize();
     setViewValue("LineHeightMinSpinner", lineHtMin);
     
     // If line height max not set, update LineHeightMaxSpinner with current font size
     // If line height max is set, update LineHeightMaxSpinner with line height max
     double lineHtMax = lstyle.getMaxHeight();
-    boolean lineHtMaxSet = lineHtMax>999; if(!lineHtMaxSet) lineHtMax = EditorShapes.getFont(editor).getSize();
+    boolean lineHtMaxSet = lineHtMax>999; if(!lineHtMaxSet) lineHtMax = EditorUtils.getFont(editor).getSize();
     setViewValue("LineHeightMaxSpinner", lineHtMax);
 }
 
@@ -142,10 +142,10 @@ public void respondUI(ViewEvent anEvent)
     }*/
     
     // Handle AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
-    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignX(editor, HPos.LEFT);
-    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignX(editor, HPos.CENTER);
-    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignX(editor, HPos.RIGHT);
-    if(anEvent.equals("AlignFullButton")) EditorShapes.setJustify(editor, true);
+    if(anEvent.equals("AlignLeftButton")) EditorUtils.setAlignX(editor, HPos.LEFT);
+    if(anEvent.equals("AlignCenterButton")) EditorUtils.setAlignX(editor, HPos.CENTER);
+    if(anEvent.equals("AlignRightButton")) EditorUtils.setAlignX(editor, HPos.RIGHT);
+    if(anEvent.equals("AlignFullButton")) EditorUtils.setJustify(editor, true);
     if(anEvent.equals("AlignTopButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.TOP));
     if(anEvent.equals("AlignMiddleButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.CENTER));
     if(anEvent.equals("AlignBottomButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.BOTTOM));

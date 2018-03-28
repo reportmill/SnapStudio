@@ -44,7 +44,7 @@ public void resetUI()
 {
     // Get current font
     Editor editor = getEditor();
-    Font font = EditorShapes.getFont(editor);
+    Font font = EditorUtils.getFont(editor);
     
     // Get family name and size
     String familyName = font.getFamily();
@@ -58,8 +58,8 @@ public void resetUI()
     setViewDisabled("BoldButton", font.getBold()==null);
     setViewValue("ItalicButton", font.isItalic());
     setViewDisabled("ItalicButton", font.getItalic()==null);
-    setViewValue("UnderlineButton", EditorShapes.isUnderlined(editor));
-    setViewValue("OutlineButton", EditorShapes.getTextBorder(editor)!=null);
+    setViewValue("UnderlineButton", EditorUtils.isUnderlined(editor));
+    setViewValue("OutlineButton", EditorUtils.getTextBorder(editor)!=null);
     
     // Get font names in currently selected font's family
     String familyNames[] = Font.getFontNames(font.getFamily());
@@ -79,28 +79,28 @@ public void respondUI(ViewEvent anEvent)
     Editor editor = getEditor();
     
     // Handle FontSizeUpButton, FontSizeDownButton
-    if(anEvent.equals("FontSizeUpButton")) { Font font = EditorShapes.getFont(editor);
-        EditorShapes.setFontSize(editor, font.getSize()<16? 1 : 2, true); }
-    if(anEvent.equals("FontSizeDownButton")) { Font font = EditorShapes.getFont(editor);
-        EditorShapes.setFontSize(editor, font.getSize()<16? -1 : -2, true); }
+    if(anEvent.equals("FontSizeUpButton")) { Font font = EditorUtils.getFont(editor);
+        EditorUtils.setFontSize(editor, font.getSize()<16? 1 : 2, true); }
+    if(anEvent.equals("FontSizeDownButton")) { Font font = EditorUtils.getFont(editor);
+        EditorUtils.setFontSize(editor, font.getSize()<16? -1 : -2, true); }
     
     // Handle BoldButton, ItalicButton, UnderlineButton, OutlineButton
     if(anEvent.equals("BoldButton"))
-        EditorShapes.setFontBold(editor, anEvent.getBoolValue());
+        EditorUtils.setFontBold(editor, anEvent.getBoolValue());
     if(anEvent.equals("ItalicButton"))
-        EditorShapes.setFontItalic(editor, anEvent.getBoolValue());
+        EditorUtils.setFontItalic(editor, anEvent.getBoolValue());
     if(anEvent.equals("UnderlineButton"))
-        EditorShapes.setUnderlined(editor);
+        EditorUtils.setUnderlined(editor);
     if(anEvent.equals("OutlineButton"))
-        EditorShapes.setTextBorder(editor);
+        EditorUtils.setTextBorder(editor);
     
     // Handle SizesList
     if(anEvent.equals("SizesList") && anEvent.getValue()!=null)
-        EditorShapes.setFontSize(editor, anEvent.getFloatValue(), false);
+        EditorUtils.setFontSize(editor, anEvent.getFloatValue(), false);
     
     // Handle SizeText
     if(anEvent.equals("SizeText"))
-        EditorShapes.setFontSize(editor, anEvent.getFloatValue(), false);
+        EditorUtils.setFontSize(editor, anEvent.getFloatValue(), false);
 
     // Handle FamilyList, FamilyComboBox
     if(anEvent.equals("FamilyList") || (anEvent.equals("FamilyComboBox") && anEvent.isActionEvent())) {
@@ -108,13 +108,13 @@ public void respondUI(ViewEvent anEvent)
         String fontNames[] = Font.getFontNames(familyName); if(fontNames.length==0) return;
         String fontName = fontNames[0];
         Font font = new Font(fontName, 12);
-        EditorShapes.setFontFamily(editor, font);
+        EditorUtils.setFontFamily(editor, font);
     }
     
     // Handle FontNameComboBox
     if(anEvent.equals("FontNameComboBox")) {
         Font font = new Font(anEvent.getStringValue(), 12);
-        EditorShapes.setFontName(editor, font);
+        EditorUtils.setFontName(editor, font);
     }
 }
     

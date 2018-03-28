@@ -45,7 +45,7 @@ protected void resetUI()
 {
     // Get the editor
     Editor editor = getEditor();
-    Font font = EditorShapes.getFont(editor);
+    Font font = EditorUtils.getFont(editor);
     
     // Update UndoButton, RedoButton
     Undoer undoer = editor.getUndoer();
@@ -67,10 +67,10 @@ protected void resetUI()
     setViewEnabled("BoldButton", font.getBold()!=null);
     setViewValue("ItalicButton", font.isItalic());
     setViewEnabled("ItalicButton", font.getItalic()!=null);
-    setViewValue("UnderlineButton", EditorShapes.isUnderlined(editor));
+    setViewValue("UnderlineButton", EditorUtils.isUnderlined(editor));
     
     // Update AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
-    HPos lineAlign = EditorShapes.getAlignX(editor); boolean isJustify = EditorShapes.isJustify(editor);
+    HPos lineAlign = EditorUtils.getAlignX(editor); boolean isJustify = EditorUtils.isJustify(editor);
     setViewValue("AlignLeftButton", lineAlign==HPos.LEFT && !isJustify);
     setViewValue("AlignCenterButton", lineAlign==HPos.CENTER && !isJustify);
     setViewValue("AlignRightButton", lineAlign==HPos.RIGHT && !isJustify);
@@ -106,11 +106,11 @@ protected void respondUI(ViewEvent anEvent)
     
     // Handle FillColorButton, StrokeColorButton, TextColorButton
     if(anEvent.equals("FillColorButton"))
-        EditorShapes.setColor(editor, anEvent.getView(ColorButton.class).getColor());
+        EditorUtils.setColor(editor, anEvent.getView(ColorButton.class).getColor());
     if(anEvent.equals("StrokeColorButton"))
-        EditorShapes.setStrokeColor(editor, anEvent.getView(ColorButton.class).getColor());
+        EditorUtils.setStrokeColor(editor, anEvent.getView(ColorButton.class).getColor());
     if(anEvent.equals("TextColorButton"))
-        EditorShapes.setTextColor(editor, anEvent.getView(ColorButton.class).getColor());
+        EditorUtils.setTextColor(editor, anEvent.getView(ColorButton.class).getColor());
     
     // Handle FontFaceComboBox
     if(anEvent.equals("FontFaceComboBox")) {
@@ -118,32 +118,32 @@ protected void respondUI(ViewEvent anEvent)
         String fontNames[] = Font.getFontNames(familyName); if(fontNames==null || fontNames.length==0) return;
         String fontName = fontNames[0];
         Font font = Font.get(fontName, 12);
-        EditorShapes.setFontFamily(editor, font);
+        EditorUtils.setFontFamily(editor, font);
         editor.requestFocus();
     }
     
     // Handle FontSizeComboBox
     if(anEvent.equals("FontSizeComboBox")) {
-        EditorShapes.setFontSize(editor, anEvent.getFloatValue(), false);
+        EditorUtils.setFontSize(editor, anEvent.getFloatValue(), false);
         editor.requestFocus();
     }
     
     // Handle FontSizeUpButton, FontSizeDownButton
-    if(anEvent.equals("FontSizeUpButton")) { Font font = EditorShapes.getFont(editor);
-        EditorShapes.setFontSize(editor, font.getSize()<16? 1 : 2, true); }
-    if(anEvent.equals("FontSizeDownButton")) { Font font = EditorShapes.getFont(editor);
-        EditorShapes.setFontSize(editor, font.getSize()<16? -1 : -2, true); }
+    if(anEvent.equals("FontSizeUpButton")) { Font font = EditorUtils.getFont(editor);
+        EditorUtils.setFontSize(editor, font.getSize()<16? 1 : 2, true); }
+    if(anEvent.equals("FontSizeDownButton")) { Font font = EditorUtils.getFont(editor);
+        EditorUtils.setFontSize(editor, font.getSize()<16? -1 : -2, true); }
     
     // Handle Format BoldButton, ItalicButton, UnderlineButton
-    if(anEvent.equals("BoldButton")) EditorShapes.setFontBold(editor, anEvent.getBoolValue());
-    if(anEvent.equals("ItalicButton")) EditorShapes.setFontItalic(editor, anEvent.getBoolValue());
-    if(anEvent.equals("UnderlineButton")) EditorShapes.setUnderlined(editor);
+    if(anEvent.equals("BoldButton")) EditorUtils.setFontBold(editor, anEvent.getBoolValue());
+    if(anEvent.equals("ItalicButton")) EditorUtils.setFontItalic(editor, anEvent.getBoolValue());
+    if(anEvent.equals("UnderlineButton")) EditorUtils.setUnderlined(editor);
     
     // Handle AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton
-    if(anEvent.equals("AlignLeftButton")) EditorShapes.setAlignX(editor, HPos.LEFT);
-    if(anEvent.equals("AlignCenterButton")) EditorShapes.setAlignX(editor, HPos.CENTER);
-    if(anEvent.equals("AlignRightButton")) EditorShapes.setAlignX(editor, HPos.RIGHT);
-    if(anEvent.equals("AlignFullButton")) EditorShapes.setJustify(editor, true);
+    if(anEvent.equals("AlignLeftButton")) EditorUtils.setAlignX(editor, HPos.LEFT);
+    if(anEvent.equals("AlignCenterButton")) EditorUtils.setAlignX(editor, HPos.CENTER);
+    if(anEvent.equals("AlignRightButton")) EditorUtils.setAlignX(editor, HPos.RIGHT);
+    if(anEvent.equals("AlignFullButton")) EditorUtils.setJustify(editor, true);
     
     // Handle Preview/Edit button and PreviewMenuItem
     if(anEvent.equals("PreviewEditButton") || anEvent.equals("PreviewMenuItem")) {
@@ -152,7 +152,7 @@ protected void respondUI(ViewEvent anEvent)
     
     // Handle PreviewXMLMenuItem
     if(anEvent.equals("PreviewXMLMenuItem"))
-        EditorPaneUtils.previewXML(getEditorPane());
+        EditorUtils.previewXML(getEditorPane());
 
     // Handle ToolButton(s)
     if(anEvent.getName().endsWith("ToolButton")) {

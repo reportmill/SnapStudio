@@ -466,15 +466,11 @@ public static Shape getSubtractedPath(List <View> theViews, int anInset)
  */
 private static List <Shape> getPathsFromViews(List <View> theViews, int anInset)
 {
-    // Get first shape and parent
-    View shape0 = theViews.get(0);
-    View parent = shape0.getParent(); // Should probably get common ancestor
-
     // Iterate over shapes, get bounds of each (inset), path of each (in parent coords) and add to list
     List paths = new ArrayList(theViews.size());
     for(int i=0, iMax=theViews.size(); i<iMax; i++) { View shape = theViews.get(i);
         Rect bounds = shape.getBoundsLocal(); if(anInset!=0 && i>0) bounds.inset(anInset);
-        Shape path = shape.getBoundsShape(); //shape.getPath().copyFor(bounds);
+        Shape path = shape.getBoundsShape();
         path = shape.localToParent(path);
         paths.add(path);
     }

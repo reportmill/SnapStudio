@@ -174,8 +174,8 @@ public static void makeRowTop(Editor anEditor)
 {
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Row Top");
-    //double minY = anEditor.getSelectedShape().getFrameY();
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameY(minY);
+    double minY = anEditor.getSelectedView().getBoundsParent().getY();
+    for(View view : anEditor.getSelectedViews()) view.setY(view.getY() + minY - view.getBoundsParent().getY());
 }
 
 /**
@@ -185,8 +185,8 @@ public static void makeRowCenter(Editor anEditor)
 {
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Row Center");
-    //double midY = anEditor.getSelectedShape().getFrame().getMidY();
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameY(midY - shape.getHeight()/2);
+    double midY = anEditor.getSelectedView().getBoundsParent().getMidY();
+    for(View view : anEditor.getSelectedViews()) view.setY(view.getY() + midY - view.getBoundsParent().getMidY());
 }
 
 /**
@@ -196,8 +196,8 @@ public static void makeRowBottom(Editor anEditor)
 {
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Row Bottom");
-    //double maxY = anEditor.getSelectedShape().getFrameMaxY();
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameY(maxY - shape.getHeight());
+    double maxY = anEditor.getSelectedView().getBoundsParent().getMaxY();
+    for(View view : anEditor.getSelectedViews()) view.setY(view.getY() + maxY - view.getBoundsParent().getMaxY());
 }
 
 /**
@@ -207,8 +207,8 @@ public static void makeColumnLeft(Editor anEditor)
 {
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Column Left");
-    //double minX = anEditor.getSelectedShape().getFrameX();
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameX(minX);
+    double minX = anEditor.getSelectedView().getBoundsParent().getX();
+    for(View view : anEditor.getSelectedViews()) view.setX(view.getX() + minX - view.getBoundsParent().getX());
 }
 
 /**
@@ -218,8 +218,8 @@ public static void makeColumnCenter(Editor anEditor)
 {
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Column Center");
-    //double midX = anEditor.getSelectedShape().getFrame().getMidX();
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameX(midX - shape.getWidth()/2);
+    double midX = anEditor.getSelectedView().getBoundsParent().getMidX();
+    for(View view : anEditor.getSelectedViews()) view.setX(view.getX() + midX - view.getBoundsParent().getMidX());
 }
 
 /**
@@ -229,8 +229,8 @@ public static void makeColumnRight(Editor anEditor)
 {
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Column Right");
-    //double maxX = anEditor.getSelectedShape().getFrameMaxX();    
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setFrameX(maxX - shape.getWidth());
+    double maxX = anEditor.getSelectedView().getBoundsParent().getMaxX();
+    for(View view : anEditor.getSelectedViews()) view.setX(view.getX() + maxX - view.getBoundsParent().getMaxX());
 }
 
 /**
@@ -241,7 +241,7 @@ public static void makeSameSize(Editor anEditor)
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
     anEditor.undoerSetUndoTitle("Make Same Size");
     Size size = anEditor.getSelectedView().getSize();
-    //for(RMShape shape : anEditor.getSelectedShapes()) shape.setSize(size.getWidth(), size.getHeight());
+    for(View view : anEditor.getSelectedViews()) view.setSize(size.width, size.height);
 }
 
 /**
@@ -249,18 +249,10 @@ public static void makeSameSize(Editor anEditor)
  */
 public static void makeSameWidth(Editor anEditor)
 {
-    // If no shapes, beep and return
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
-    
-    // Register undo title
     anEditor.undoerSetUndoTitle("Make Same Width");
-    
-    // Get first selected shape width
     double width = anEditor.getSelectedView().getWidth();
-    
-    // Iterate over selected shapes and set width
-    for(View shape : anEditor.getSelectedViews())
-        shape.setWidth(width);
+    for(View view : anEditor.getSelectedViews()) view.setWidth(width);
 }
 
 /**
@@ -268,18 +260,10 @@ public static void makeSameWidth(Editor anEditor)
  */
 public static void makeSameHeight(Editor anEditor)
 {
-    // If no shapes, beep and return
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
-    
-    // Register undo title
     anEditor.undoerSetUndoTitle("Make Same Height");
-    
-    // Get first selected shape height
     double height = anEditor.getSelectedView().getHeight();
-    
-    // Iterate over selected shapes and set height
-    for(View shape : anEditor.getSelectedViews())
-        shape.setHeight(height);
+    for(View view : anEditor.getSelectedViews()) view.setHeight(height);
 }
 
 /**
@@ -287,14 +271,9 @@ public static void makeSameHeight(Editor anEditor)
  */
 public static void setSizeToFit(Editor anEditor)
 {
-    // If no shapes, beep and return
     if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
-    
-    // Register undo title
     anEditor.undoerSetUndoTitle("Size to Fit");
-    
-    // Iterate over shapes and size to fit
-    //for(View shape : anEditor.getSelectedShapes()) shape.setBestSize();
+    for(View view : anEditor.getSelectedViews()) view.setSize(view.getBestSize());
 }
 
 /**
@@ -302,27 +281,24 @@ public static void setSizeToFit(Editor anEditor)
  */
 public static void equallySpaceRow(Editor anEditor)
 {
-    // If no selected shapes, beep and return
-    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
+    // If no selected views, beep and return
+    if(anEditor.getSelectedViewCount()<2) { anEditor.beep(); return; }
     
-    // Get selectedShapes sorted by minXInParentBounds
-    /*List <View> shapes = RMSort.sortedList(anEditor.getSelectedShapes(), "getFrameX");
-    float spaceBetweenShapes = 0;
+    // Get selectedViews sorted by minXInParentBounds
+    List <View> views = anEditor.getSelectedViews(); //Sort.sortedList(views, "getFrameX");
+    double spaceBetween = 0;
 
-    // Calculate average space between shapes
-    for(int i=1, iMax=shapes.size(); i<iMax; i++)
-        spaceBetweenShapes += shapes.get(i).getFrameX() - shapes.get(i-1).getFrameMaxX();
-    if(shapes.size()>1)
-        spaceBetweenShapes = spaceBetweenShapes/(shapes.size()-1);
+    // Calculate average space between views
+    for(int i=1, iMax=views.size(); i<iMax; i++)
+        spaceBetween += views.get(i).getBoundsParent().getX() - views.get(i-1).getBoundsParent().getMaxX();
+    spaceBetween = spaceBetween/(views.size()-1);
     
-    // Reset average space between shapes
+    // Reset average space between views
     anEditor.undoerSetUndoTitle("Equally Space Row");
-    for(int i=1, iMax=shapes.size(); i<iMax; i++) {
-        View shape = shapes.get(i);
-        View lastShape = shapes.get(i-1);
-        double tx = lastShape.getFrameMaxX() + spaceBetweenShapes;
-        shape.setFrameX(tx);
-    }*/
+    for(int i=1, iMax=views.size(); i<iMax; i++) { View view = views.get(i), lastView = views.get(i-1);
+        double tx = lastView.getBoundsParent().getMaxX() + spaceBetween;
+        view.setX(view.getX() + tx); //view.setFrameX(tx);
+    }
 }
 
 /**
@@ -330,27 +306,24 @@ public static void equallySpaceRow(Editor anEditor)
  */
 public static void equallySpaceColumn(Editor anEditor)
 {
-    // If no selected shapes, beep and return
-    if(anEditor.getSelectedViewCount()==0) { anEditor.beep(); return; }
+    // If no selected views, beep and return
+    if(anEditor.getSelectedViewCount()<2) { anEditor.beep(); return; }
     
-    // Get selectedShapes sorted by minXInParentBounds
-    /*List <View> shapes = RMSort.sortedList(anEditor.getSelectedShapes(), "getFrameY");
-    float spaceBetweenShapes = 0;
+    // Get selectedViews sorted by minXInParentBounds
+    List <View> views = anEditor.getSelectedViews(); //Sort.sortedList(views, "getFrameY");
+    float spaceBetween = 0;
 
-    // Calculate average space between shapes
-    for(int i=1, iMax=shapes.size(); i<iMax; i++)
-        spaceBetweenShapes += shapes.get(i).getFrameY() - shapes.get(i-1).getFrameMaxY();
-    if(shapes.size()>1)
-        spaceBetweenShapes = spaceBetweenShapes/(shapes.size()-1);
+    // Calculate average space between views
+    for(int i=1, iMax=views.size(); i<iMax; i++)
+        spaceBetween += views.get(i).getBoundsParent().getY() - views.get(i-1).getBoundsParent().getMaxY();
+    spaceBetween = spaceBetween/(views.size()-1);
 
-    // Reset average space between shapes
+    // Reset average space between views
     anEditor.undoerSetUndoTitle("Equally Space Column");
-    for(int i=1, iMax=shapes.size(); i<iMax; i++) {
-        View shape = shapes.get(i);
-        View lastShape = shapes.get(i-1);
-        double ty = lastShape.getFrameMaxY() + spaceBetweenShapes;
-        shape.setFrameY(ty);
-    }*/
+    for(int i=1, iMax=views.size(); i<iMax; i++) { View view = views.get(i), lastView = views.get(i-1);
+        double ty = lastView.getBoundsParent().getMaxX() + spaceBetween;
+        view.setY(view.getY() + ty); //view.setFrameY(ty);
+    }
 }
 
 /**

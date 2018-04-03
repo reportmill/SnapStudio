@@ -315,7 +315,7 @@ public org.jbox2d.collision.shapes.Shape[] createShape(Shape aShape)
 public org.jbox2d.collision.shapes.Shape createShape(Polygon aPoly)
 {
     // If invalid, just return null
-    if(!aPoly.isSimple() || !aPoly.isConvex() || aPoly.getPointCount()>=8) return null;
+    if(!aPoly.isSimple() || !aPoly.isConvex() || aPoly.getPointCount()>8) return null;
     
     // Create Box2D PolygonShape and return
     int pc = aPoly.getPointCount();

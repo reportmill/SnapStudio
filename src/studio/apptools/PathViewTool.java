@@ -97,7 +97,7 @@ public void mousePressed(ViewEvent anEvent)
     Point point = getEditorEvents().getEventPointInDoc(!smoothPath);
 
     // Register all selectedViews dirty because their handles will probably need to be wiped out
-    editor.getSelectedViews().forEach(i -> i.repaint());
+    for(View v : editor.getSelectedViews()) v.repaint();
 
     // If this is the first mouseDown of a new path, create path and add moveTo. Otherwise add lineTo to current path
     if(_path==null) { _path = new Path(); _path.moveTo(point.x, point.y); }

@@ -44,9 +44,15 @@ public void resetUI()
     //setViewEnabled("RenameButton", page.getLayerCount()>0);
     //setViewEnabled("MergeButton", page.getLayerCount()>1 && page.getSelectedLayerIndex()>0);
     
+    // Update PaintBackCheckBox
+    //setViewValue("PaintBackCheckBox", page.isPaintBackground());
+    
     // Update layers table selection
     //_layersTable.setItems(page.getLayers());
     //_layersTable.setSelIndex(page.getSelectedLayerIndex());
+    
+    // Update DatasetKeyText
+    //setViewText("DatasetKeyText", page.getDatasetKey());
 }
 
 /**
@@ -130,6 +136,10 @@ public void respondUI(ViewEvent anEvent)
     /*if(anEvent.equals("AllLockedButton"))
         for(int i=0, iMax=page.getLayerCount(); i<iMax; i++)
             page.getLayer(i).setLayerState(RMPageLayer.StateLocked);*/
+            
+    // Handle PaintBackCheckBox, DatasetKeyText
+    //if(anEvent.equals("PaintBackCheckBox")) page.setPaintBackground(anEvent.getBoolValue());
+    //if(anEvent.equals("DatasetKeyText")) page setDatasetKey(anEvent.getStringValue());
 }
 
 /**

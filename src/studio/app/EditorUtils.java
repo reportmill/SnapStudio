@@ -481,7 +481,7 @@ public static void moveRightOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Right One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedViews().forEach(i -> i.setX(i.getX() + offset));
+    for(View v : anEditor.getSelectedViews()) v.setX(v.getX() + offset);
 }
 
 /**
@@ -491,7 +491,7 @@ public static void moveLeftOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Left One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedViews().forEach(i -> i.setX(i.getX() - offset));
+    for(View v : anEditor.getSelectedViews()) v.setX(v.getX() - offset);
 }
 
 /**
@@ -501,7 +501,7 @@ public static void moveUpOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Up One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedViews().forEach(i -> i.setY(i.getY() - offset));
+    for(View v : anEditor.getSelectedViews()) v.setY(v.getY() - offset);
 }
 
 /**
@@ -511,7 +511,7 @@ public static void moveDownOnePoint(Editor anEditor)
 {
     anEditor.undoerSetUndoTitle("Move Down One Point");
     double offset = 1; //anEditor.getViewerShape().getSnapGrid()? anEditor.getViewerShape().getGridSpacing() : 1;
-    anEditor.getSelectedViews().forEach(i -> i.setX(i.getX() + offset));
+    for(View v : anEditor.getSelectedViews()) v.setX(v.getX() + offset);
 }
 
 /**

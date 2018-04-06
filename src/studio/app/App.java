@@ -16,7 +16,12 @@ public class App {
 /**
  * Main method to run panel.
  */
-public static void main(final String args[])
+//public static void main(String args[])  { snaptea.TV.set(); new EditorPane().newDocument().setWindowVisible(true); }
+
+/**
+ * Main method to run panel.
+ */
+public static void main(String args[])
 {
     // Mac specific stuff
     if(SnapUtils.isMac) new AppleAppHandler().init();

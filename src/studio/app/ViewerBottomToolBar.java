@@ -66,6 +66,8 @@ protected void resetUI()
     //setViewEnabled("PageBackAllButton", viewer.getSelectedPageIndex()>0);
     //setViewEnabled("PageForwardButton", viewer.getSelectedPageIndex()<viewer.getPageCount()-1);
     //setViewEnabled("PageForwardAllButton", viewer.getSelectedPageIndex()<viewer.getPageCount()-1);
+    
+    getView("PageControls").setVisible(false); //viewer.getDoc().getPageCount()>1
 }
 
 /**

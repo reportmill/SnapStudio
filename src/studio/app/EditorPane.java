@@ -189,6 +189,7 @@ protected void initRootView()
     win.setType(WindowView.TYPE_MAIN);
     win.setImage(getFrameIcon());
     enableEvents(win, WinClose);
+    win.setGrowWidth(true);
 }
 
 /**

@@ -7,6 +7,7 @@ import snap.util.*;
 import snap.view.*;
 import snap.viewx.DialogBox;
 import snap.web.*;
+import studio.apptools.*;
 
 /**
  * This is the base class for tools in SnapStudio - the objects that provide UI editing for Views.
@@ -139,7 +140,7 @@ public class PropItem {
     public String getKey()  { return _key; }
     
     /** Returns the value. */
-    public Object getValue()  { return Key.getValue(_view, _key); }
+    public Object getValue()  { return _view.getValue(_key); }
     
     /** Returns the value as string. */
     public String getValueString()
@@ -994,25 +995,19 @@ public Image getImage()
 public static ViewTool createTool(Class aClass)
 {
     // Handle root
-    if(aClass==null)
-        aClass = View.class;
+    if(aClass==null) aClass = View.class;
     if(aClass==View.class) return new ViewTool();
+    if(aClass==ArcView.class) return new ArcViewTool();
+    if(aClass==Button.class) return new ButtonTool();
+    if(aClass==DocView.class) return new DocViewTool();
+    if(aClass==LineView.class) return new LineViewTool();
+    if(aClass==PageView.class) return new PageViewTool();
+    if(aClass==ParentView.class) return new ParentViewTool();
+    if(aClass==PathView.class) return new PathViewTool();
+    if(aClass==RectView.class) return new RectViewTool();
+    if(aClass==TextView.class) return new TextViewTool();
+    System.err.println("Tool not found: " + aClass);
     
-    // Check tool package for built-in View tools
-    String cname = aClass.getSimpleName();
-    Class tclass = ClassUtils.getClass("studio.apptools." + cname + "Tool");
-    if(tclass==null && cname.endsWith("View"))
-        tclass = ClassUtils.getClass("studio.apptools." + cname.replace("View", "Tool"));
-
-    // If not found, try looking for inner class named "Tool"
-    if(tclass==null)
-        tclass = ClassUtils.getClass(aClass.getName() + "$" + "Tool", aClass);
-    
-    // If tool class found, instantiate tool class
-    if(tclass!=null)
-        try { return (ViewTool)tclass.newInstance(); }
-        catch(Exception e) { throw new RuntimeException(e); }
-        
     // Otherwise, get tool for super class
     return createTool(aClass.getSuperclass());
 }

@@ -60,7 +60,7 @@ public void mousePressed(ViewEvent anEvent)
     Editor editor = getEditor();
 
     // Call setNeedsRepaint on superSelectedShapes to wipe out handles
-    editor.getSuperSelectedViews().forEach(i -> i.repaint());
+    for(View v : editor.getSuperSelectedViews()) v.repaint();
 
     // See if tool wants to handle this one
     ViewTool toolShared = editor.getTool(editor.getSelectedOrSuperSelectedViews());
@@ -237,7 +237,7 @@ public void mouseDragged(ViewEvent anEvent)
             List <View> newShapes = getHitShapes();
             
             // Repaint selected views and SelectionRect
-            _whileSelectingSelectedShapes.forEach(i -> i.repaint());
+            for(View v : _whileSelectingSelectedShapes) v.repaint();
             editor.repaint(content.localToParent(_selectionRect.getInsetRect(-2), editor).getBounds());
             
             // Get new _selectionRect and clear _whileSelectingSelectedShapes
@@ -255,7 +255,7 @@ public void mouseDragged(ViewEvent anEvent)
             else _whileSelectingSelectedShapes.addAll(newShapes);
 
             // Repaint selected views and SelectionRect
-            _whileSelectingSelectedShapes.forEach(i -> i.repaint());
+            for(View v : _whileSelectingSelectedShapes) v.repaint();
             editor.repaint(content.localToParent(_selectionRect.getInsetRect(-2),editor).getBounds());
 
             // break

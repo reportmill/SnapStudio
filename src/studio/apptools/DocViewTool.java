@@ -22,6 +22,11 @@ public class DocViewTool <T extends DocView> extends ViewTool <T> {
     static String    _paperSizeNames[];
 
 /**
+ * Override to make TeaVM happy.
+ */
+public DocViewTool()  { if(SnapUtils.isTeaVM) new PageSizeView(); }
+
+/**
  * Returns the class that tool edits.
  */
 public Class getViewClass()  { return DocView.class; }

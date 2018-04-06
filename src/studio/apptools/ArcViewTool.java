@@ -44,14 +44,14 @@ public void respondUI(ViewEvent anEvent)
     if(anEvent.equals("StartThumb") || anEvent.equals("StartText")) {
         //arc.undoerSetUndoTitle("Start Angle Change");
         double angle = anEvent.getFloatValue();
-        arcs.forEach(i -> i.setStartAngle(angle));
+        for(ArcView ar : arcs) ar.setStartAngle(angle);
     }
 
     // Handle SweepThumb, SweepText
     if(anEvent.equals("SweepThumb") || anEvent.equals("SweepText")) {
         //arc.undoerSetUndoTitle("Sweep Angle Change");
         double angle = anEvent.getFloatValue();
-        arcs.forEach(i -> i.setSweepAngle(angle));
+        for(ArcView ar : arcs) ar.setSweepAngle(angle);
     }
 }
 

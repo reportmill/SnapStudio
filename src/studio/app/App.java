@@ -2,9 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package studio.app;
-import com.apple.eawt.*;
-import com.apple.eawt.AppEvent.*;
-import javax.swing.SwingUtilities;
 import snap.util.*;
 import snap.viewx.ExceptionReporter;
 
@@ -23,18 +20,6 @@ public class App {
  */
 public static void main(String args[])
 {
-    // Mac specific stuff
-    if(SnapUtils.isMac) new AppleAppHandler().init();
-
-    // Config/init JavaFX and invoke real main on event thread
-    SwingUtilities.invokeLater(() -> new App(args));
-}
-
-/**
- * Main method to run panel.
- */
-public App(String args[])
-{
     // Set App Prefs class
     Prefs.setPrefsDefault(Prefs.getPrefs(App.class));
     
@@ -51,42 +36,11 @@ public App(String args[])
 /**
  * Exits the application.
  */
-public static void quitApp()  { SwingUtilities.invokeLater(() -> quitAppImpl()); }
-
-/**
- * Exits the application (real version).
- */
-private static void quitAppImpl()
+public static void quitApp()
 {
     //if(AppPane.getOpenAppPane()!=null) AppPane.getOpenAppPane().hide();
     Prefs.get().flush();
     System.exit(0);
 }
-
-/**
- * A class to handle apple events.
- */
-private static class AppleAppHandler implements PreferencesHandler, QuitHandler {
-
-    // Initializes Apple Application handling.
-    public void init()
-    {
-        //System.setProperty("apple.laf.useScreenMenuBar", "true"); // 1.4
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SnapStudio");
-        com.apple.eawt.Application app = com.apple.eawt.Application.getApplication();
-        app.setPreferencesHandler(this); app.setQuitHandler(this);
-        _appHand = this;
-    }
-
-    // Handle Preferences.
-    public void handlePreferences(PreferencesEvent arg0)
-    {
-        //AppPane appPane = AppPane.getOpenAppPane(); if(appPane==null) return;
-        //appPane.getBrowser().setFile(appPane.getSelectedSite().getRootDir());
-    }
-
-    // Handle QuitRequest.
-    public void handleQuitRequestWith(QuitEvent arg0, QuitResponse arg1)  { App.quitApp(); }
-} static AppleAppHandler _appHand;
 
 }

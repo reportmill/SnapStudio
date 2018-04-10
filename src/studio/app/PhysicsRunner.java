@@ -286,23 +286,17 @@ public org.jbox2d.collision.shapes.Shape[] createShape(Shape aShape)
     Rect bnds = aShape.getBounds();
     Shape shape = aShape.copyFor(new Transform(-bnds.width/2, -bnds.height/2));
     
-    // Get PolygonList for shape
-    PolygonList polyList = new PolygonList(shape);
+    // Get convex Polygons for shape
+    Polygon convexPolys[] = Polygon.getConvexPolys(shape, 8);
     List <org.jbox2d.collision.shapes.Shape> pshapes = new ArrayList();
     
     // Iterate over polygons
-    for(int i=0, iMax=polyList.getPolyCount();i<iMax;i++) { Polygon poly = polyList.getPoly(i);
+    for(Polygon cpoly : convexPolys) {
     
         // Try simple case
-        org.jbox2d.collision.shapes.Shape pshp = createShape(poly);
+        org.jbox2d.collision.shapes.Shape pshp = createShape(cpoly);
         if(pshp!=null) pshapes.add(pshp);
-        
-        // Otherwise, create Convex Polys and add them
-        else {
-            PolygonList polys = poly.getConvexPolys(8);
-            for(int j=0,jMax=polys.getPolyCount();j<jMax;j++) { Polygon p = polys.getPoly(j);
-                pshapes.add(createShape(p)); }
-        }
+        else System.err.println("PhysicsRunner:.createShape: failure");
     }
     
     // Return Box2D shapes array

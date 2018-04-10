@@ -44,8 +44,9 @@ protected void resetUI()
     PathView pview = getSelectedView();
     Path path = pview.getPathInBounds();
     
-    // Update PathText
+    // Update PathText, SimpleText
     setViewText("PathText", path.getString());
+    setViewValue("SimpleText", path.isSimple());
 }
 
 /**

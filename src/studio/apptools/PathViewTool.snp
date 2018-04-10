@@ -4,4 +4,8 @@
   <BoxView Padding="0,8,5,5" GrowWidth="true" Spacing="4">
     <TextView Name="PathText" MinWidth="120" MinHeight="60" PrefHeight="150" GrowWidth="true" />
   </BoxView>
+  <RowView Padding="4" GrowWidth="true" Spacing="4">
+    <Label Margin="0,8,0,4" text="Simple:" />
+    <Label Name="SimpleText" text="Label" />
+  </RowView>
 </ColView>

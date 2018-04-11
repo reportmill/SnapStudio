@@ -173,7 +173,7 @@ protected ViewTool[] createToolBarTools()
     tools.add(editor.getTool(LineView.class));
     tools.add(editor.getTool(RectView.class));
     tools.add(editor.getTool(ArcView.class));
-    tools.add(editor.getTool(TextView.class));
+    tools.add(editor.getTool(TextArea.class));
     tools.add(editor.getTool(PathView.class));
     tools.add(new PathViewTool.PencilTool(editor));
     return tools.toArray(new ViewTool[0]);

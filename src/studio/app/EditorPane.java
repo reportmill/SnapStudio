@@ -174,6 +174,9 @@ protected void initUI()
     
     // Enable Mouse Events for editor
     enableEvents(getEditor(), MousePress, MouseRelease);
+    
+    // This sucks - but needed to properly init InspectorPanel SelPathView
+    runLater(() -> runLater(() -> resetLater()));
 }
 
 /**

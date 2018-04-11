@@ -1005,7 +1005,7 @@ public static ViewTool createTool(Class aClass)
     if(aClass==ParentView.class) return new ParentViewTool();
     if(aClass==PathView.class) return new PathViewTool();
     if(aClass==RectView.class) return new RectViewTool();
-    if(aClass==TextView.class) return new TextViewTool();
+    if(aClass==TextArea.class) return new TextAreaTool();
     System.err.println("Tool not found: " + aClass);
     
     // Otherwise, get tool for super class

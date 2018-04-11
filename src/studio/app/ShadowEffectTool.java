@@ -1,5 +1,6 @@
 package studio.app;
 import snap.gfx.*;
+import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.ColorWell;
 
@@ -8,6 +9,11 @@ import snap.viewx.ColorWell;
  */
 public class ShadowEffectTool extends EffectTool {
     
+/**
+ * Override to make TeaVM happy.
+ */
+public ShadowEffectTool()  { if(SnapUtils.isTeaVM) new OffsetPanel(); }
+
 /**
  * Reset UI controls.
  */

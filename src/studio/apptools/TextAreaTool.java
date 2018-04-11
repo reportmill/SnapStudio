@@ -9,9 +9,9 @@ import snap.util.*;
 import snap.view.*;
 
 /**
- * This class provides UI editing for TextView.
+ * This class provides UI editing for TextArea.
  */
-public class TextViewTool <T extends TextView> extends ViewTool <T> {
+public class TextAreaTool <T extends TextArea> extends ViewTool <T> {
     
     // The inspector TextView
     TextView            _textView;
@@ -19,13 +19,13 @@ public class TextViewTool <T extends TextView> extends ViewTool <T> {
     // The view hit by text tool on mouse down
     View                _downView;
     
-    // Whether editor should resize TextView whenever text changes
+    // Whether editor should resize TextArea whenever text changes
     boolean             _updatingSize = false;
     
     // The minimum height of the RMText when editor text editor is updating size
     double              _updatingMinHeight = 0;
     
-    // A PropChange listener to listen to selected TextView changes
+    // A PropChange listener to listen to selected TextArea changes
     PropChangeListener  _textPropLsner = pce -> textPropChange(pce);
 
 /**
@@ -39,18 +39,18 @@ public boolean isSuperSelectable(T aView)  { return true; }
 protected void initUI()
 {
     _textView = getView("TextView", TextView.class);
-    _textView.addPropChangeListener(pce -> textViewPropChange(pce), TextView.Selection_Prop);
+    _textView.addPropChangeListener(pce -> textAreaPropChange(pce), TextArea.Selection_Prop);
     getEditor().addPropChangeListener(pce -> editorFocusedChange(), View.Focused_Prop);
 }
 
 /**
- * Refreshes UI controls from currently selected text shape.
+ * Refreshes UI controls from currently selected text view.
  */
 public void resetUI()
 {
     // Get editor and currently selected text
     Editor editor = getEditor();
-    TextView text = getSelectedView(); if(text==null) return;
+    TextArea text = getSelectedView(); if(text==null) return;
     
     // Get text style and line style
     TextStyle style = text.getRichText().getStyleAt(0);
@@ -66,20 +66,24 @@ public void resetUI()
     setViewValue("AlignMiddleButton", text.getTextBox().getAlignY()==VPos.CENTER);
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
     
-    // Revalidate TextView for (potentially) updated TextShape
+    // Revalidate TextArea for (potentially) updated TextArea
     _textView.getTextBox().setText(text.getRichText()); //_textView.setSel(text.getSelStart(),text.getSelEnd());
     
     // Reset PaddingText
     setViewValue("PaddingText", text.getPadding().getStringLong());
-
+    
+    // Update RoundingThumb, RoundingText
+    setViewValue("RoundingThumb", 0);
+    setViewValue("RoundingText", 0);
+    
     // Get text's background color and set in TextArea if found
-    //Color color = null; for(RMShape shape=text; color==null && shape!=null;) {
-    //    if(shape.getFill()==null) shape = shape.getParent(); else color = shape.getFill().getColor(); }
-    //_textArea.setBackground(color==null? Color.white : color);
+    //Color color = null; for(View view=text; color==null && view!=null;) {
+    //    if(view.getFill()==null) view = view.getParent(); else color = view.getFill().getColor(); }
+    //_textView.setBackground(color==null? Color.white : color);
     // Get xstring font size and scale up to 12pt if any string run is smaller
     //RMXString xstring = text.getXString(); double fsize = 12;
     //for(int i=0,iMax=xstring.getRunCount();i<iMax;i++) fsize = Math.min(fsize, xstring.getRun(i).getFont().getSize());
-    //_textArea.setFontScale(fsize<12? 12/fsize : 1);
+    //_textView.setFontScale(fsize<12? 12/fsize : 1);
 
     // Update CharSpacingThumb and CharSpacingText
     setViewValue("CharSpacingThumb", style.getCharSpacing());
@@ -104,6 +108,9 @@ public void resetUI()
     double lineHtMax = lstyle.getMaxHeight();
     boolean lineHtMaxSet = lineHtMax>999; if(!lineHtMaxSet) lineHtMax = EditorUtils.getFont(editor).getSize();
     setViewValue("LineHeightMaxSpinner", lineHtMax);
+    
+    // Update PerformWrapCheckBox
+    setViewValue("PerformWrapCheckBox", text.isWrapText()); // Really was for old wrap text stuff
 }
 
 /**
@@ -113,32 +120,32 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get editor, currently selected text view and text views (just return if null)
     Editor editor = getEditor();
-    TextView text = getSelectedView(); if(text==null) return;
-    List <TextView> texts = (List)getSelectedViews();
+    TextArea text = getSelectedView(); if(text==null) return;
+    List <TextArea> texts = (List)getSelectedViews();
     
     // Register repaint for texts
-    texts.forEach(i -> i.repaint());
+    for(TextArea t : texts) t.repaint();
     
-    // Handle TextView: Send KeyEvents to Editor.TextEditor (and update its selection after MouseEvents)
-    /*if(anEvent.getTarget()==_textArea) {
+    // Handle TextArea: Send KeyEvents to Editor.TextEditor (and update its selection after MouseEvents)
+    /*if(anEvent.equals(_textView)) {
         
         // Get Editor TextEditor (if not yet installed, SuperSelect text and try again)
         RMEditorTextEditor ted = editor.getTextEditor();
         if(ted==null) {
-            getEditor().setSuperSelectedShape(text);
+            getEditor().setSuperSelectedView(text);
             ted = editor.getTextEditor(); if(ted==null) return;
         }
         
         // If KeyEvent, reroute to Editor.TextEditor
         if(anEvent.isKeyEvent()) {
             ted.processKeyEvent(anEvent.getEvent(KeyEvent.class)); anEvent.consume();
-            if(anEvent.isKeyPressed()) _textArea.hideCursor();
-            _textArea.setSel(ted.getSelStart(), ted.getSelEnd());
+            if(anEvent.isKeyPressed()) _textView.hideCursor();
+            _textView.setSel(ted.getSelStart(), ted.getSelEnd());
         }
         
         // If MouseEvent, update Editor.TextEditor selection
         if(anEvent.isMouseReleased())
-            ted.setSel(_textArea.getSelStart(), _textArea.getSelEnd(), _textArea.getSelAnchor());
+            ted.setSel(_textView.getSelStart(), _textView.getSelEnd(), _textView.getSelAnchor());
     }*/
     
     // Handle AlignLeftButton, AlignCenterButton, AlignRightButton, AlignFullButton, AlignTopButton, AlignMiddleButton
@@ -146,19 +153,23 @@ public void respondUI(ViewEvent anEvent)
     if(anEvent.equals("AlignCenterButton")) EditorUtils.setAlignX(editor, HPos.CENTER);
     if(anEvent.equals("AlignRightButton")) EditorUtils.setAlignX(editor, HPos.RIGHT);
     if(anEvent.equals("AlignFullButton")) EditorUtils.setJustify(editor, true);
-    if(anEvent.equals("AlignTopButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.TOP));
-    if(anEvent.equals("AlignMiddleButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.CENTER));
-    if(anEvent.equals("AlignBottomButton")) texts.forEach(i -> i.getTextBox().setAlignY(VPos.BOTTOM));
+    if(anEvent.equals("AlignTopButton")) for(TextArea t : texts) t.getTextBox().setAlignY(VPos.TOP);
+    if(anEvent.equals("AlignMiddleButton")) for(TextArea t : texts) t.getTextBox().setAlignY(VPos.CENTER);
+    if(anEvent.equals("AlignBottomButton")) for(TextArea t : texts) t.getTextBox().setAlignY(VPos.BOTTOM);
     
     // Handle PaddingText
     if(anEvent.equals("PaddingText")) {
         Insets ins = Insets.get(anEvent.getStringValue());
-        texts.forEach(i -> i.setPadding(ins));
+        for(TextArea t : texts) t.setPadding(ins);
     }
     
-    // Handle RoundingThumb, RoundingText: make sure shapes have stroke
+    // Handle RoundingThumb, RoundingText
+    //if(anEvent.equals("RoundingThumb")) text.setRadius(anEvent.getFloatValue());
+    //if(anEvent.equals("RoundingText")) text.setRadius(anEvent.getFloatValue());
+    
+    // Handle RoundingThumb, RoundingText: make sure views have stroke
     if(anEvent.equals("RoundingThumb") || anEvent.equals("RoundingText"))
-        for(TextView t : texts) t.setBorder(Color.BLACK, 1);
+        for(TextArea t : texts) t.setBorder(Color.BLACK, 1);
 
     // Handle PaginateRadio, ShrinkRadio, GrowRadio
     //if(anEvent.equals("PaginateRadio")) texts.forEach(i -> i.setWraps(RMTextShape.WRAP_BASIC));
@@ -192,8 +203,11 @@ public void respondUI(ViewEvent anEvent)
     }
     
     // Handle MakeMinWidthMenuItem, MakeMinHeightMenuItem
-    if(anEvent.equals("MakeMinWidthMenuItem")) texts.forEach(i -> i.setWidth(i.getBestWidth(-1)));
-    if(anEvent.equals("MakeMinHeightMenuItem")) texts.forEach(i -> i.setHeight(i.getBestHeight(-1)));
+    if(anEvent.equals("MakeMinWidthMenuItem")) for(TextArea t : texts) t.setWidth(t.getBestWidth(-1));
+    if(anEvent.equals("MakeMinHeightMenuItem")) for(TextArea t : texts) t.setHeight(t.getBestHeight(-1));
+    
+    // Handle PerformWrapCheckBox
+    if(anEvent.equals("PerformWrapCheckBox")) text.setWrapText(anEvent.getBoolValue());
 }
 
 /**
@@ -201,7 +215,7 @@ public void respondUI(ViewEvent anEvent)
  */
 public void activateTool()
 {
-    if(getEditor().getSuperSelectedView() instanceof TextView)
+    if(getEditor().getSuperSelectedView() instanceof TextArea)
         getEditor().setSuperSelectedView(getEditor().getSuperSelectedView().getParent());
 }
 
@@ -215,7 +229,7 @@ public void mouseMoved(ViewEvent anEvent)  { getEditor().setCursor(Cursor.TEXT);
  */
 public void mouseMoved(T aText, ViewEvent anEvent)
 {
-    if(getEditor().getViewAtPoint(anEvent.getPoint()) instanceof TextView) {
+    if(getEditor().getViewAtPoint(anEvent.getPoint()) instanceof TextArea) {
         getEditor().setCursor(Cursor.TEXT); anEvent.consume(); }
 }
 
@@ -224,21 +238,21 @@ public void mouseMoved(T aText, ViewEvent anEvent)
  */
 public void mousePressed(ViewEvent anEvent)
 {
-    // Register all selectedShapes dirty because their handles will probably need to be wiped out
+    // Register all selectedViews dirty because their handles will probably need to be wiped out
     Editor editor = getEditor();
-    editor.getSelectedViews().forEach(i -> i.repaint());
+    for(View v : editor.getSelectedViews()) v.repaint();
 
-    // Get shape hit by down point
+    // Get view hit by down point
     _downView = editor.getViewAtPoint(anEvent.getX(),anEvent.getY());
     
     // Get _downPoint from editor
     _downPoint = getEditorEvents().getEventPointInShape(true);
     
     // Create default text instance and set initial bounds to reasonable value
-    _view = (T)new TextView(); _view.setRich(true); _view.setWrapText(true); _view.setFill(null);
-    _view.setBounds(getDefaultBounds((TextView)_view, _downPoint)); // Was setFrame()
+    _view = (T)new TextArea(); _view.setPlainText(false); _view.setWrapText(true); _view.setFill(null);
+    _view.setBounds(getDefaultBounds((TextArea)_view, _downPoint)); // Was setFrame()
     
-    // Add shape to superSelectedShape (within an undo grouping) and superSelect
+    // Add text to superSelectedView (within an undo grouping) and superSelect
     editor.undoerSetUndoTitle("Add Text");
     ParentView parent = editor.getSuperSelectedParentView(); ViewTool ptool = getTool(parent);
     ptool.addChild(parent, _view);
@@ -271,7 +285,7 @@ public void mouseDragged(ViewEvent anEvent)
         rect = defaultBounds; _updatingMinHeight = 0; }
     else _updatingMinHeight = rect.getHeight();
     
-    // Set new shape bounds
+    // Set new view bounds
     _view.setBounds(rect);  // was setFrame()
 }
 
@@ -284,17 +298,17 @@ public void mouseReleased(ViewEvent anEvent)
     Point upPoint = getEditorEvents().getEventPointInShape(true);
     upPoint = _view.localToParent(upPoint.x, upPoint.y);
     
-    // If upRect is really small, see if the user meant to conver a shape to text instead
+    // If upRect is really small, see if the user meant to convert a view to text instead
     if(Math.abs(_downPoint.getX() - upPoint.getX())<=3 && Math.abs(_downPoint.getY() - upPoint.getY())<=3) {
         
-        // If hit shape is text, just super-select that text and return
-        if(_downView instanceof TextView) {
+        // If hit view is text, just super-select that text and return
+        if(_downView instanceof TextArea) {
             ParentView pview = _view.getParent(); ViewTool ptool = getTool(pview);
             ptool.removeChild(pview, _view);
             getEditor().setSuperSelectedView(_downView);
         }
         
-        // If hit shape is Rectangle, Oval or Polygon, swap for RMText and return
+        // If hit view is Rectangle, Oval or Polygon, swap for RMText and return
         else if(_downView instanceof RectView || _downView instanceof ArcView || _downView instanceof PathView) {
             ParentView pview = _view.getParent(); ViewTool ptool = getTool(pview);
             ptool.removeChild(pview, _view);
@@ -307,30 +321,30 @@ public void mouseReleased(ViewEvent anEvent)
 }
 
 /**
- * Event handling for shape editing (just forwards to text editor).
+ * Event handling for view editing.
  */
 public void processEvent(T aText, ViewEvent anEvent)
 {
-    // Handle KeyEvent: Forward to TextView and return
+    // Handle KeyEvent: Forward to TextArea and return
     if(anEvent.isKeyEvent()) {
         ViewUtils.processEvent(aText, anEvent);
         aText.repaint(); return;
     }
         
-    // If shape isn't super selected, just return
+    // If view isn't super selected, just return
     if(!isSuperSelected(aText)) return;
     
-    // If mouse event, convert event to text shape coords and consume
+    // If mouse event, convert event to text view coords and consume
     if(anEvent.isMouseEvent()) { anEvent.consume();
         anEvent = anEvent.copyForView(aText); }
         
-    // Forward to TextView
+    // Forward to TextArea
     ViewUtils.processEvent(aText, anEvent); aText.repaint();
     if(anEvent.isMouseRelease()) aText.setCaretAnim(isCaretAnimNeeded(aText));
 }
 
 /**
- * Event handling for shape editing (just forwards to text editor).
+ * Event handling for view editing (just forwards to text editor).
  */
 public void processKeyEvent(T aText, ViewEvent anEvent)
 {
@@ -341,7 +355,7 @@ public void processKeyEvent(T aText, ViewEvent anEvent)
 /**
  * Returns whether caret anim is needed.
  */
-protected boolean isCaretAnimNeeded(TextView aText)
+protected boolean isCaretAnimNeeded(TextArea aText)
 {
     Editor editor = getEditor();
     return editor.isFocused() && editor.isSuperSelected(aText) && aText.getSel().isEmpty();
@@ -352,7 +366,7 @@ protected boolean isCaretAnimNeeded(TextView aText)
  */
 public void didBecomeSuperSelected(T aText)
 {
-    // Start listening to changes to TextView and RichText
+    // Start listening to changes to TextArea and RichText
     aText.addPropChangeListener(_textPropLsner);
     aText.getRichText().addPropChangeListener(_textPropLsner);
     aText.setCaretAnim(isCaretAnimNeeded(aText));
@@ -369,7 +383,7 @@ public void willLoseSuperSelected(T aText)
         ptool.removeChild(pview, aText);
     }
 
-    // Stop listening to changes to TextShape RichText
+    // Stop listening to changes to TextArea RichText
     aText.removePropChangeListener(_textPropLsner);
     aText.getRichText().removePropChangeListener(_textPropLsner);
     aText.setSel(aText.length(), aText.length());
@@ -378,12 +392,12 @@ public void willLoseSuperSelected(T aText)
 }
 
 /**
- * Called when selected TextView has property changes.
+ * Called when selected TextArea has property changes.
  */
 public void textPropChange(PropChange aPC)
 {
-    // Get Selected TextView
-    TextView text = getSelectedView(); if(text==null) return;
+    // Get Selected TextArea
+    TextArea text = getSelectedView(); if(text==null) return;
     String prop = aPC.getPropertyName();
     
     // If updating size, reset text width & height to accommodate text
@@ -391,34 +405,34 @@ public void textPropChange(PropChange aPC)
         runLater(() -> resizeText(text));
     
     // Sync selection
-    if(prop==TextView.Selection_Prop)
+    if(prop==TextArea.Selection_Prop)
         _textView.setSel(text.getSelStart(), text.getSelEnd());
 }
 
 /**
- * Called when TextView (in inspector) has property changes.
+ * Called when TextArea (in inspector) has property changes.
  */
-protected void textViewPropChange(PropChange aPC)
+protected void textAreaPropChange(PropChange aPC)
 {
-    TextView text = getSelectedView();
+    TextArea text = getSelectedView();
     text.setSel(_textView.getSelStart(), _textView.getSelEnd());
 }
 
 /**
- * Called when editor changes focus to update SelectedView (TextView) CaretAnim.
+ * Called when editor changes focus to update SelectedView (TextArea) CaretAnim.
  */
 protected void editorFocusedChange()
 {
-    TextView text = getSelectedView(); if(text==null) return;
+    TextArea text = getSelectedView(); if(text==null) return;
     text.setCaretAnim(isCaretAnimNeeded(text));
 }
 
 /**
- * Resizes Selected TextView for current content.
+ * Resizes Selected TextArea for current content.
  */
-protected void resizeText(TextView aText)
+protected void resizeText(TextArea aText)
 {
-    // Get preferred text shape width
+    // Get preferred text view width
     double maxWidth = _updatingMinHeight==0? aText.getParent().getWidth() - aText.getX() : aText.getWidth();
     double prefWidth = aText.getPrefWidth(); if(prefWidth>maxWidth) prefWidth = maxWidth;
 
@@ -448,7 +462,7 @@ public String getToolTip(T aText, ViewEvent anEvent)
 }
 
 /**
- * Paints selected shape indicator, like handles (and maybe a text linking indicator).
+ * Paints selected view indicator, like handles (and maybe a text linking indicator).
  */
 public void paintHandles(T aText, Painter aPntr, boolean isSuperSelected)
 {
@@ -482,7 +496,7 @@ private boolean paintBoundsRect(T aText)
 /**
  * Returns the view class that this tool edits.
  */
-public Class getViewClass()  { return TextView.class; }
+public Class getViewClass()  { return TextArea.class; }
 
 /**
  * Returns the name of this tool to be displayed by inspector.
@@ -490,21 +504,21 @@ public Class getViewClass()  { return TextView.class; }
 public String getWindowTitle()  { return "Text Inspector"; }
 
 /**
- * Converts a shape to a text shape.
+ * Converts a view to a TextArea.
  */
 public void convertToText(View aView, String aString)
 {
-    // If shape is null, just return
+    // If view is null, just return
     if(aView==null) return;
     
-    // Get text shape for given shape (if given shape is text, just use it)
-    TextView text = aView instanceof TextView? (TextView)aView : new TextView();
+    // Create TextArea for given view (if given view is text, just use it)
+    TextArea text = aView instanceof TextArea? (TextArea)aView : new TextArea();
     
-    // Copy attributes of given shape
+    // Copy attributes of given view
     if(text!=aView)
         text.setBounds(aView.getBounds()); //text.copyShape(aShape); text.setPathShape(aShape);
     
-    // Swap this shape in for original
+    // Swap this view in for original
     if(text!=aView) { ChildView cview = (ChildView)aView.getParent();
         cview.addChild(text, aView.indexInParent());
         cview.removeChild(aView);
@@ -518,7 +532,7 @@ public void convertToText(View aView, String aString)
     if(aString!=null)
         text.setText(aString);
     
-    // Select new shape
+    // Select new view
     getEditor().setSuperSelectedView(text);
 }
 
@@ -526,7 +540,7 @@ public void convertToText(View aView, String aString)
  * Returns a rect suitable for the default bounds of a given text at a given point. This takes into account the font
  * and margins of the given text.
  */
-private static Rect getDefaultBounds(TextView aText, Point aPoint)
+private static Rect getDefaultBounds(TextArea aText, Point aPoint)
 {
     // Get text font (or default font, if not available)
     Font font = aText.getFont(); //if(font==null) font = Font.getDefaultFont();
@@ -556,44 +570,44 @@ private static String getTestString()
     "Lao reet ulla mcorper molestie.";
 }
 
-/** Sets the character spacing for the currently selected shapes. */
+/** Sets the character spacing for the currently selected views. */
 private static void setCharSpacing(Editor anEditor, float aValue)
 {
     anEditor.undoerSetUndoTitle("Char Spacing Change");
-    //for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    if(shape instanceof TextView) ((TextView)shape).setCharSpacing(aValue);
+    //for(View view : anEditor.getSelectedOrSuperSelectedViews())
+    //    if(view instanceof TextArea) ((TextArea)view).setCharSpacing(aValue);
 }
 
 /** Sets the line spacing for all chars (or all selected chars, if editing). */
 private static void setLineSpacing(Editor anEditor, float aHeight)
 {
     anEditor.undoerSetUndoTitle("Line Spacing Change");
-    //for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    if(shape instanceof TextView) ((TextView)shape).setLineSpacing(aHeight);
+    //for(View view : anEditor.getSelectedOrSuperSelectedViews())
+    //    if(view instanceof TextArea) ((TextArea)view).setLineSpacing(aHeight);
 }
 
 /** Sets the line gap for all chars (or all selected chars, if editing). */
 private static void setLineGap(Editor anEditor, float aHeight)
 {
     anEditor.undoerSetUndoTitle("Line Gap Change");
-    //for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    if(shape instanceof TextView) ((TextView)shape).setLineGap(aHeight);
+    //for(View view : anEditor.getSelectedOrSuperSelectedViews())
+    //    if(view instanceof TextArea) ((TextArea)view).setLineGap(aHeight);
 }
 
 /** Sets the minimum line height for all chars (or all selected chars, if editing). */
 private static void setLineHeightMin(Editor anEditor, float aHeight)
 {
     anEditor.undoerSetUndoTitle("Min Line Height Change");
-    //for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    if(shape instanceof TextView) ((TextView)shape).setLineHeightMin(aHeight);
+    //for(View view : anEditor.getSelectedOrSuperSelectedViews())
+    //    if(view instanceof TextArea) ((TextArea)view).setLineHeightMin(aHeight);
 }
 
 /** Sets the maximum line height for all chars (or all selected chars, if eiditing). */
 private static void setLineHeightMax(Editor anEditor, float aHeight)
 {
     anEditor.undoerSetUndoTitle("Max Line Height Change");
-    //for(View shape : anEditor.getSelectedOrSuperSelectedShapes())
-    //    if(shape instanceof TextView) ((TextView)shape).setLineHeightMax(aHeight);
+    //for(View view : anEditor.getSelectedOrSuperSelectedViews())
+    //    if(view instanceof TextArea) ((TextArea)view).setLineHeightMax(aHeight);
 }
 
 }

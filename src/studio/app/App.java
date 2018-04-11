@@ -13,7 +13,7 @@ public class App {
 /**
  * Main method to run panel.
  */
-//public static void main(String args[])  { snaptea.TV.set(); new EditorPane().newDocument().setWindowVisible(true); }
+public static void main2(String args[])  { snaptea.TV.set(); new EditorPane().newDocument().setWindowVisible(true); }
 
 /**
  * Main method to run panel.

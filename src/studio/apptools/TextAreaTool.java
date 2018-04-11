@@ -25,8 +25,11 @@ public class TextAreaTool <T extends TextArea> extends ViewTool <T> {
     // The minimum height of the RMText when editor text editor is updating size
     double              _updatingMinHeight = 0;
     
-    // A PropChange listener to listen to selected TextArea changes
-    PropChangeListener  _textPropLsner = pce -> textPropChange(pce);
+    // A PropChange listener to listen to selected TextArea Selection changes
+    PropChangeListener  _textAreaSelLsnr = pce -> textAreaSelChange(pce);
+
+    // A PropChange listener to listen to selected TextArea.RichText property changes
+    PropChangeListener  _richTextPropLsnr = pc -> richTextPropChange(pc);
 
 /**
  * Returns whether a given view is super-selectable.
@@ -38,8 +41,11 @@ public boolean isSuperSelectable(T aView)  { return true; }
  */
 protected void initUI()
 {
+    // Get TextView (in inspector) and register to catch Selection changes
     _textView = getView("TextView", TextView.class);
-    _textView.addPropChangeListener(pce -> textAreaPropChange(pce), TextArea.Selection_Prop);
+    _textView.getTextArea().addPropChangeListener(pce -> textViewSelChange(pce), TextArea.Selection_Prop);
+    
+    // Get editor and register for focus changes
     getEditor().addPropChangeListener(pce -> editorFocusedChange(), View.Focused_Prop);
 }
 
@@ -66,8 +72,9 @@ public void resetUI()
     setViewValue("AlignMiddleButton", text.getTextBox().getAlignY()==VPos.CENTER);
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
     
-    // Revalidate TextArea for (potentially) updated TextArea
-    _textView.getTextBox().setText(text.getRichText()); //_textView.setSel(text.getSelStart(),text.getSelEnd());
+    // Reset TextView from (potentially) updated TextArea
+    _textView.getTextBox().setText(text.getRichText());
+    _textView.setSel(text.getSelStart(),text.getSelEnd());
     
     // Reset PaddingText
     setViewValue("PaddingText", text.getPadding().getStringLong());
@@ -249,7 +256,7 @@ public void mousePressed(ViewEvent anEvent)
     _downPoint = getEditorEvents().getEventPointInShape(true);
     
     // Create default text instance and set initial bounds to reasonable value
-    _view = (T)new TextArea(); _view.setPlainText(false); _view.setWrapText(true); _view.setFill(null);
+    _view = (T)new TextArea(); _view.setPlainText(false); _view.setWrapText(true);
     _view.setBounds(getDefaultBounds((TextArea)_view, _downPoint)); // Was setFrame()
     
     // Add text to superSelectedView (within an undo grouping) and superSelect
@@ -299,7 +306,7 @@ public void mouseReleased(ViewEvent anEvent)
     upPoint = _view.localToParent(upPoint.x, upPoint.y);
     
     // If upRect is really small, see if the user meant to convert a view to text instead
-    if(Math.abs(_downPoint.getX() - upPoint.getX())<=3 && Math.abs(_downPoint.getY() - upPoint.getY())<=3) {
+    if(Math.abs(_downPoint.x - upPoint.x)<=3 && Math.abs(_downPoint.y - upPoint.y)<=3) {
         
         // If hit view is text, just super-select that text and return
         if(_downView instanceof TextArea) {
@@ -309,7 +316,7 @@ public void mouseReleased(ViewEvent anEvent)
         }
         
         // If hit view is Rectangle, Oval or Polygon, swap for RMText and return
-        else if(_downView instanceof RectView || _downView instanceof ArcView || _downView instanceof PathView) {
+        else if(shouldConvertToText(_downView)) {
             ParentView pview = _view.getParent(); ViewTool ptool = getTool(pview);
             ptool.removeChild(pview, _view);
             convertToText(_downView, null);
@@ -367,8 +374,8 @@ protected boolean isCaretAnimNeeded(TextArea aText)
 public void didBecomeSuperSelected(T aText)
 {
     // Start listening to changes to TextArea and RichText
-    aText.addPropChangeListener(_textPropLsner);
-    aText.getRichText().addPropChangeListener(_textPropLsner);
+    aText.addPropChangeListener(_textAreaSelLsnr, TextArea.Selection_Prop);
+    aText.getRichText().addPropChangeListener(_richTextPropLsnr);
     aText.setCaretAnim(isCaretAnimNeeded(aText));
 }
 
@@ -384,38 +391,55 @@ public void willLoseSuperSelected(T aText)
     }
 
     // Stop listening to changes to TextArea RichText
-    aText.removePropChangeListener(_textPropLsner);
-    aText.getRichText().removePropChangeListener(_textPropLsner);
+    aText.removePropChangeListener(_textAreaSelLsnr, TextArea.Selection_Prop);
+    aText.getRichText().removePropChangeListener(_richTextPropLsnr);
     aText.setSel(aText.length(), aText.length());
     aText.setCaretAnim(false);
     _updatingSize = false; _updatingMinHeight = 0;
 }
 
 /**
- * Called when selected TextArea has property changes.
+ * Called when TextView (in inspector) has selection change to sync with TextView in inspector.
  */
-public void textPropChange(PropChange aPC)
+protected void textViewSelChange(PropChange aPC)
 {
-    // Get Selected TextArea
     TextArea text = getSelectedView(); if(text==null) return;
-    String prop = aPC.getPropertyName();
-    
-    // If updating size, reset text width & height to accommodate text
-    if(_updatingSize && aPC.getSource() instanceof RichText)
-        runLater(() -> resizeText(text));
-    
-    // Sync selection
-    if(prop==TextArea.Selection_Prop)
-        _textView.setSel(text.getSelStart(), text.getSelEnd());
+    text.setSel(_textView.getSelStart(), _textView.getSelEnd());
 }
 
 /**
- * Called when TextArea (in inspector) has property changes.
+ * Called when selected TextArea has selection change to sync with selected TextArea.
  */
-protected void textAreaPropChange(PropChange aPC)
+public void textAreaSelChange(PropChange aPC)
 {
-    TextArea text = getSelectedView();
-    text.setSel(_textView.getSelStart(), _textView.getSelEnd());
+    TextArea text = getSelectedView(); if(text==null) return;
+    _textView.setSel(text.getSelStart(), text.getSelEnd());
+}
+
+/**
+ * Handle changes to Selected TextArea.RichText
+ */
+protected void richTextPropChange(PropChange aPC)
+{
+    // If not UpdatingSize, just return
+    if(!_updatingSize) return;
+    
+    // Get Selected TextArea
+    TextArea text = getSelectedView(); if(text==null) return;
+    
+    // Get preferred text view width
+    double maxWidth = _updatingMinHeight==0? text.getParent().getWidth() - text.getX() : text.getWidth();
+    double prefWidth = text.getPrefWidth(-1); if(prefWidth>maxWidth) prefWidth = maxWidth;
+
+    // If width gets updated, get & set desired width (make sure it doesn't go beyond page border)
+    if(_updatingMinHeight==0)
+        text.setWidth(prefWidth);
+
+    // If PrefHeight or current height is greater than UpdatingMinHeight (which won't be zero if user drew a
+    //  text box to enter text), set Height to PrefHeight
+    double prefHeight = text.getPrefHeight(text.getWidth());
+    if(prefHeight>_updatingMinHeight || text.getHeight()>_updatingMinHeight)
+        text.setHeight(Math.max(prefHeight, _updatingMinHeight));
 }
 
 /**
@@ -425,26 +449,6 @@ protected void editorFocusedChange()
 {
     TextArea text = getSelectedView(); if(text==null) return;
     text.setCaretAnim(isCaretAnimNeeded(text));
-}
-
-/**
- * Resizes Selected TextArea for current content.
- */
-protected void resizeText(TextArea aText)
-{
-    // Get preferred text view width
-    double maxWidth = _updatingMinHeight==0? aText.getParent().getWidth() - aText.getX() : aText.getWidth();
-    double prefWidth = aText.getPrefWidth(); if(prefWidth>maxWidth) prefWidth = maxWidth;
-
-    // If width gets updated, get & set desired width (make sure it doesn't go beyond page border)
-    if(_updatingMinHeight==0)
-        aText.setWidth(prefWidth);
-
-    // If PrefHeight or current height is greater than UpdatingMinHeight (which won't be zero if user drew a
-    //  text box to enter text), set Height to PrefHeight
-    double prefHeight = aText.getPrefHeight();
-    if(prefHeight>_updatingMinHeight || aText.getHeight()>_updatingMinHeight)
-        aText.setHeight(Math.max(prefHeight, _updatingMinHeight));
 }
 
 /**
@@ -502,6 +506,14 @@ public Class getViewClass()  { return TextArea.class; }
  * Returns the name of this tool to be displayed by inspector.
  */
 public String getWindowTitle()  { return "Text Inspector"; }
+
+/**
+ * Returns whether text tool should convert view to text.
+ */
+public boolean shouldConvertToText(View aView)
+{
+    return aView instanceof RectView || aView instanceof ArcView || aView instanceof PathView;
+}
 
 /**
  * Converts a view to a TextArea.

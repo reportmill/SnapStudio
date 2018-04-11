@@ -40,7 +40,6 @@
   </ListView>
   <Button Name="FreezeFrameButton" x="4" y="301" width="71" height="19" text="Freeze">
     <font name="Arial" size="10" />
-    <binding aspect="Enabled" key="FreezableFrame" />
   </Button>
   <ListView Name="ChangesList" x="77" y="94" width="198" height="84">
     <font name="Arial" size="10" />

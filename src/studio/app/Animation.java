@@ -127,6 +127,9 @@ public void resetUI()
     //_keyFramesList.setSelectionInterval(frameStartIndex, frameEndIndex);
     _keyFramesList.setSelItem(time);
     
+    // Update FreezeFrameButton
+    setViewEnabled("FreezeFrameButton", isFreezableFrame());
+    
     // Clear list of changes
     _changes.clear();
     if(animNow!=null)

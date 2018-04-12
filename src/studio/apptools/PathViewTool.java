@@ -84,6 +84,11 @@ public Class getViewClass()  { return PathView.class; }
 protected T newInstance()  { T view = super.newInstance(); view.setBorder(Color.BLACK,1); return view; }
 
 /**
+ * Returns whether a given view is super-selectable.
+ */
+public boolean isSuperSelectable(T aView)  { return true; }
+
+/**
  * Returns whether tool should smooth path segments during creation.
  */
 public boolean getSmoothPath()  { return false; }
@@ -293,10 +298,98 @@ public void willLoseSuperSelected(T aView)
  */
 public void paintTool(Painter aPntr)
 {
+    // If editing path, paint it
     if(_path==null) return;
     Editor editor = getEditor(); View content = editor.getContent();
     Shape path = content.localToParent(_path, editor);
     aPntr.setColor(Color.BLACK); aPntr.setStroke(Stroke.Stroke1); aPntr.draw(path);
+}
+
+/**
+ * Handles painting view handles (or any indication that a shape is selected/super-selected).
+ */
+public void paintHandles(T aView, Painter aPntr, boolean isSuperSelected)
+{
+    // Do normal version (and just return if not super-selected)
+    super.paintHandles(aView, aPntr, isSuperSelected); if(!isSuperSelected) return;
+
+    // Get plygon path
+    Path pathInLocal = aView.getPathInBounds();
+    Shape shapeInEditor = aView.localToParent(pathInLocal);
+    Path path = shapeInEditor instanceof Path? (Path)shapeInEditor : new Path(shapeInEditor);
+    
+    // Declare some path iteration variables
+    Seg lastElement = null;
+    int currentPointIndex = 0;
+    Point pnts[] = new Point[3];
+    float HW = 6, HHW= HW/2;
+
+    // Iterate over path segements
+    for(int i=0; i<path.getSegCount(); i++) { int pointIndex = path.getSegPointIndex(i);
+        
+        // Get points
+        pnts[0] = pointIndex<path.getPointCount()? path.getPoint(pointIndex++) : null;
+        pnts[1] = pointIndex<path.getPointCount()? path.getPoint(pointIndex++) : null;
+        pnts[2] = pointIndex<path.getPointCount()? path.getPoint(pointIndex++) : null;
+        
+        // Get segment type and next segment type
+        Seg element = path.getSeg(i);
+        Seg nextElement = i+1<path.getSegCount()? path.getSeg(i+1) : null;
+
+        // Set color black for control lines and so alpha is correct for buttons
+        aPntr.setColor(Color.BLACK);
+
+        // Draw buttons for all segment endPoints
+        switch(element) {
+
+            // Handle MoveTo & LineTo: just draw button
+            case MoveTo:
+            case LineTo: {
+                Rect hrect = new Rect(pnts[0].x-HHW, pnts[0].y-HHW, HW, HW);
+                aPntr.drawButton(hrect, false);
+                currentPointIndex++;
+                break;
+            }
+
+            // Handle CURVE_TO: If selectedPointIndex is CurveTo, draw line to nearest endPoint and button
+            case CubicTo: {
+                
+                // If controlPoint1's point index is the selectedPointIndex or last end point was selectedPointIndex
+                // or lastElement was a CurveTo and it's controlPoint2's pointIndex was the selectedPointIndex
+                //   then draw control line from controlPoint1 to last end point and draw handle for control point 1
+                if(currentPointIndex==_selectedPointIndex || currentPointIndex-1==_selectedPointIndex ||
+                   (lastElement==Seg.CubicTo && currentPointIndex-2==_selectedPointIndex)) {
+                    Point lastPoint = path.getPoint(currentPointIndex-1);
+                    aPntr.setStroke(Stroke.Stroke1);
+                    aPntr.drawLine(pnts[0].getX(), pnts[0].getY(), lastPoint.getX(), lastPoint.getY());
+                    aPntr.drawButton(pnts[0].x-HHW, pnts[0].y-HHW, HW, HW, false); // control pnt handle rect
+                    aPntr.drawButton(lastPoint.x-HHW, lastPoint.y-HHW, HW, HW, false); // last pnt handle rect
+                }
+
+                // If controlPoint2's point index is selectedPointIndex or if end point's index is
+                // selectedPointIndex or if next element is CurveTo and it's cp1 point index is
+                // selectedPointIndex then draw control line from cp2 to end point and draw handle for cp2
+                else if(currentPointIndex+1==_selectedPointIndex || currentPointIndex+2==_selectedPointIndex ||
+                    (nextElement==Seg.CubicTo && currentPointIndex+3==_selectedPointIndex)) {
+                    aPntr.setStroke(Stroke.Stroke1);
+                    aPntr.drawLine(pnts[1].getX(), pnts[1].getY(), pnts[2].getX(), pnts[2].getY());
+                    aPntr.drawButton(pnts[1].x-HHW, pnts[1].y-HHW, HW, HW, false);
+                }
+
+                // Draw button
+                Rect hrect = new Rect(pnts[2].x-HHW, pnts[2].y-HHW, HW, HW);
+                aPntr.drawButton(hrect, false);
+                currentPointIndex += 3;
+                break;
+            }
+
+            // Break
+            default: break;
+        }
+
+        // Remember last element
+        lastElement = element;
+    }
 }
 
 /**
@@ -396,7 +489,7 @@ public void runContextMenu(PathView aPathView, ViewEvent anEvent)
         _newPoint = aPathView.parentToLocal(anEvent.getX(), anEvent.getY(), getEditor());
         
         // linewidth is probably in view coords, and might need to get transformed to path coords here
-        if(path.intersects(_newPoint.getX(), _newPoint.getY(), Math.max(aPathView.getBorder().getWidth(),8))) {
+        if(path.intersects(_newPoint.x, _newPoint.y, Math.max(aPathView.getBorder().getWidth(),8))) {
             mtitle = "Add Anchor Point"; mname = "AddPointMenuItem"; }
     }
     

@@ -90,8 +90,9 @@ public static void setIncludesSuperselectedShape(boolean aFlag)  { _includeSuper
 public static List <View> getCandidateShapes(Editor anEditor)
 {
     // Get super selected shape
-    ParentView parent = anEditor.getSuperSelectedView();
-    if(parent.getChildCount()==0)
+    View selView = anEditor.getSuperSelectedView();
+    ParentView parent = selView instanceof ParentView? (ParentView)selView : null;
+    if(parent==null || parent.getChildCount()==0)
         return Collections.emptyList();
     
     // Get all peers of selected shapes

@@ -17,7 +17,7 @@ public class Editor extends Viewer implements DeepChangeListener, RootView.Liste
     List <View>        _selectedViews = new ArrayList();
     
     // List of super selected views (all ancestors of selected views)
-    List <ParentView>  _superSelectedViews = new ArrayList();
+    List <View>        _superSelectedViews = new ArrayList();
     
     // The last view that was copied to the clipboard (used for smart paste)
     View               _lastCopyView;
@@ -236,7 +236,7 @@ public void removeSelectedView(View aView)
 /**
  * Returns the first super-selected view.
  */
-public ParentView getSuperSelectedView()
+public View getSuperSelectedView()
 {
     return getSuperSelectedViewCount()==0? null : getSuperSelectedView(getSuperSelectedViewCount()-1);
 }
@@ -295,7 +295,7 @@ private void addSuperSelectedView(View aView)
         addSuperSelectedView(aView.getParent());
 
     // Add ancestor to super selected list
-    _superSelectedViews.add((ParentView)aView);
+    _superSelectedViews.add(aView);
     
     // Notify tool
     getTool(aView).didBecomeSuperSelected(aView);
@@ -323,12 +323,12 @@ public int getSuperSelectedViewCount()  { return _superSelectedViews.size(); }
 /**
  * Returns the super-selected view at the given index.
  */
-public ParentView getSuperSelectedView(int anIndex)  { return _superSelectedViews.get(anIndex); }
+public View getSuperSelectedView(int anIndex)  { return _superSelectedViews.get(anIndex); }
 
 /**
  * Returns the super selected view list.
  */
-public List <ParentView> getSuperSelectedViews()  { return _superSelectedViews; }
+public List <View> getSuperSelectedViews()  { return _superSelectedViews; }
 
 /**
  * Returns the number of currently selected views or simply 1, if a view is super-selected.
@@ -402,7 +402,7 @@ public View getViewAtPoint(double aX, double aY)  { return getViewAtPoint(new Po
 public View getViewAtPoint(Point aPoint)
 {
     // Get superSelectedView
-    ParentView superSelView = getSuperSelectedView();
+    View superSelView = getSuperSelectedView();
     
     // If superSelectedView is document, start with page instead (maybe should go)
     if(superSelView==getContent() && getContentPage()!=null)
@@ -458,13 +458,14 @@ public View getViewAtPoint(Point aPoint)
 /**
  * Returns the child of the given view hit by the given point.
  */
-public View getChildViewAtPoint(ParentView aView, Point aPoint)
+public View getChildViewAtPoint(View aView, Point aPoint)
 {
     // If given view is null, return null
     if(aView==null) return null;
+    ParentView parView = aView instanceof ParentView? (ParentView)aView : null; if(parView==null) return null;
     
     // Iterate over view children
-    for(int i=aView.getChildCount(); i>0; i--) { View child = aView.getChild(i-1);
+    for(int i=parView.getChildCount(); i>0; i--) { View child = parView.getChild(i-1);
         
         // If not hittable, continue
         //if(!child.isHittable()) continue;
@@ -513,7 +514,8 @@ public ParentView firstSuperSelectedViewThatAcceptsChildren()
 public ParentView firstSuperSelectedViewThatAcceptsChildrenAtPoint(Point aPoint)
 {
     // Go up chain of superSelectedViews until one acceptsChildren and is hit by aPoint
-    ParentView parent = getSuperSelectedView();
+    View selView = getSuperSelectedView();
+    ParentView parent = selView instanceof ParentView? (ParentView)selView : selView.getParent();
 
     // Iterate up view hierarchy until we find a view that is hit and accepts children
     while(!getTool(parent).getAcceptsChildren(parent) ||
@@ -560,17 +562,17 @@ public void paste()  { EditorClipboard.paste(this); }
  */
 public void selectAll()
 {
-    // Select all children
-    if(getSuperSelectedView().getChildCount()>0) {
+    View selView = getSuperSelectedView();
+    ParentView par = selView instanceof ParentView? (ParentView)selView : null; if(par==null) return;
+    if(par.getChildCount()==0) return;
+    
+    // Get list of all hittable children of super-selected view
+    List views = new ArrayList();
+    for(View view : par.getChildren())
+        views.add(view); //if(view.isHittable())
         
-        // Get list of all hittable children of super-selected view
-        List views = new ArrayList();
-        for(View view : getSuperSelectedView().getChildren())
-                views.add(view); //if(view.isHittable())
-        
-        // Select views
-        setSelectedViews(views);
-    }
+    // Select views
+    setSelectedViews(views);
 }
 
 /**

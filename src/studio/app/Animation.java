@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package studio.app;
+import java.text.DecimalFormat;
 import java.util.*;
 import snap.gfx.Color;
 import snap.util.*;
@@ -42,7 +43,7 @@ protected void initUI()
 {
     // Get KeyFrameList and customize
     _keyFramesList = getView("KeyFrameList", ListView.class);
-    _keyFramesList.setCellConfigure(this :: configureKeyFrameList);
+    _keyFramesList.setCellConfigure(c -> configureKeyFrameList(c));
     
     // Get ChangesList and customize
     _changesList = getView("ChangesList", ListView.class);
@@ -114,7 +115,9 @@ public void resetUI()
     _viewKeyFrames = animRoot!=null? animRoot.getKeyFrameTimes() : new Integer[0];
     
     // Reset KeyFrameList KeyFrames
+    System.out.println("SetItems: " + _keyFrames.length + ", " + _keyFrames);
     _keyFramesList.setItems(_keyFrames);
+    System.out.println("SetItems2: " + _keyFrames);
 
     // Get animator selected frame indices (start and end)
     //int frameStartIndex = _keyFrames.indexOf(animator.getScopeTime());
@@ -461,7 +464,8 @@ public static ViewAnim getAnim(ViewAnim theAnim, int aTime, boolean doCreate)
 public String getWindowTitle()  { return "Animation"; }
 
 /** Formats a number to 3 decimal places. */
-private String format(double aValue)  { return String.format("%.3f", aValue); }
+private String format(double aValue)  { return _fmt.format(aValue); }
+DecimalFormat _fmt = new DecimalFormat("0.000");
 
 private double getFrameRate(ViewAnim anAnim)  { return 25; }
 private int getInterval(ViewAnim anAnim)  { return 40; }

@@ -33,7 +33,12 @@ protected void initUI()
 public void resetUI()
 {
     // Get currently selected view
-    View shape = getSelectedView();
+    View view = getSelectedView();
+    
+    // Reset NameText, LockedCheckBox, UrlText
+    setViewValue("NameText", view.getName());
+    //setViewValue("LockedCheckBox", view.getName());
+    //setViewValue("UrlText", view.getURL());
 
     // Reset table model shape
     _bindingsTable.setItems(new String[] { "X", "Y", "Width", "Height" }); //shape.getPropNames());
@@ -42,7 +47,7 @@ public void resetUI()
     
     // Reset BindingsText
     String pname = _bindingsTable.getSelItem();
-    Binding binding = shape.getBinding(pname);
+    Binding binding = view.getBinding(pname);
     setViewValue("BindingsText", binding!=null? binding.getKey() : null);
 }
 
@@ -52,9 +57,14 @@ public void resetUI()
 public void respondUI(ViewEvent anEvent)
 {
     // Get the current editor and selected view (just return if null) and selected shapes
-    View shape = getSelectedView(); if(shape==null) return;
-    List <View> shapes = getEditor().getSelectedOrSuperSelectedViews();
+    View view = getSelectedView(); if(view==null) return;
+    List <View> views = getEditor().getSelectedOrSuperSelectedViews();
     
+    // Handle NameText, LockedCheckBox, UrlText
+    if(anEvent.equals("NameText")) view.setName(anEvent.getStringValue());
+    //if(anEvent.equals("LockedCheckBox")) view.setLocked(anEvent.getStringValue());
+    //if(anEvent.equals("UrlText")) view.setURL(anEvent.getStringValue());
+
     // Handle BindingsTable
     if(anEvent.equals("BindingsTable")) {
         
@@ -83,7 +93,7 @@ public void respondUI(ViewEvent anEvent)
         String key = getViewStringValue("BindingsText"); if(key!=null && key.length()==0) key = null;
         
         // Remove previous binding and add new one (if valid)
-        for(View shp : shapes)
+        for(View shp : views)
             if(key!=null) shp.addBinding(pname, key);
             else shp.removeBinding(pname);
     }

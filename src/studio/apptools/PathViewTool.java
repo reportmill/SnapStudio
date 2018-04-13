@@ -70,7 +70,7 @@ public void respondUI(ViewEvent anEvent)
     
     // Handle AddPointMenuItem
     if(anEvent.equals("AddPointMenuItem"))
-        addNewPoint();
+        addNewPointAt(_newPoint);
 }
 
 /**
@@ -219,8 +219,8 @@ public void mousePressed(T aPathView, ViewEvent anEvent)
         int hp = handleAtPoint(aPathView.getPathInBounds(), point, oldSelectedPt);
         _selectedPointIndex = hp;
     
-        if(anEvent.isPopupTrigger())
-            runContextMenu(aPathView, anEvent);
+        if(anEvent.isPopupTrigger()) {
+            runContextMenu(aPathView, anEvent); anEvent.consume(); }
     }
     
     // Consume event
@@ -309,7 +309,7 @@ public void paintHandles(T aView, Painter aPntr, boolean isSuperSelected)
 
     // Get plygon path
     Path pathInLocal = aView.getPathInBounds();
-    Shape shapeInEditor = aView.localToParent(pathInLocal);
+    Shape shapeInEditor = aView.localToParent(pathInLocal, getEditor());
     Path path = shapeInEditor instanceof Path? (Path)shapeInEditor : new Path(shapeInEditor);
     
     // Declare some path iteration variables
@@ -516,52 +516,63 @@ public void deleteSelectedPoint()
 /**
  * Add a point to the curve by subdividing the path segment at the hit point.
  */
-public void addNewPoint()
+public void addNewPointAt(Point aPoint)
 {
-    // Get all the segments as a list of subpaths
+    // Get old path and new path
     PathView pview = getSelectedView();
-    /*List <List<Line>> subpaths = (List)pview.getPath().getSubpathsSegments();
+    Path path = pview.getPathInBounds(), path2 = new Path();
     
-    // Find hitInfo of segment by intersecting with either horizontal or vertial line segment
-    Line hor = new Line(_newPoint.x-2, _newPoint.y, _newPoint.x+2, _newPoint.y);
-    Line vert = new Line(_newPoint.x, _newPoint.y-2, _newPoint.x, _newPoint.y+2);
+    // Create small horizontal and vertical lines around mouse point
+    Line hor = new Line(aPoint.x-3, aPoint.y, aPoint.x+3, aPoint.y);
+    Line vert = new Line(aPoint.x, aPoint.y-3, aPoint.x, aPoint.y+3);
     
-    // Iterate over subpaths
-    for(int i=0, iMax=subpaths.size(); i<iMax; i++) { List <Line> subpath = subpaths.get(i);
-    
-        // Iterate over subpath segments
-        for(int j=0, jMax=subpath.size(); j<jMax; j++) { Line segment = subpath.get(j);
+    // Iterate over path and if segment is hit by mouse point, split segment
+    PathIter piter = path.getPathIter(null); double pts[] = new double[6], mx = 0, my = 0, lx = 0, ly = 0;
+    while(piter.hasNext()) switch(piter.getNext(pts)) {
         
-            // Get hit info for segment
-            RMHitInfo hit = segment.getHitInfo(hor);
-            if (hit==null)
-                hit = segment.getHitInfo(vert);
+        // Handle MoveTo
+        case MoveTo: path2.moveTo(mx = lx = pts[0], my = ly = pts[1]); break;
+        
+        // Handle LineTo
+        case LineTo: {
+            Line seg = new Line(lx, ly, lx = pts[0], ly = pts[1]), seg2 = null;
+            double ix = seg.getHitPoint(hor), iy = seg.getHitPoint(vert);
+            if(.1<ix && ix<.9) seg2 = seg.split(ix);
+            else if(.1<iy && iy<.9) seg2 = seg.split(iy);
+            path2.append(seg); if(seg2!=null) path2.append(seg2);
+        } break;
+        
+        // Handle QuadTo
+        case QuadTo: {
+            Quad seg = new Quad(lx, ly, pts[0], pts[1], lx = pts[2], ly = pts[3]), seg2 = null;
+            double ix = seg.getHitPoint(hor), iy = seg.getHitPoint(vert);
+            if(.1<ix && ix<.9) seg2 = seg.split(ix);
+            else if(.1<iy && iy<.9) seg2 = seg.split(iy);
+            path2.append(seg); if(seg2!=null) path2.append(seg2);
+        } break;
             
-            // If hit found, subdivide segment at hit point and create new path
-            if(hit != null) {
-                
-                // get parametric hit point for segment
-                double hitPoint = hit.getR();
-                
-                // readjust the hit segment's endpoint
-                Line tailSeg = segment.clone();
-                segment.setEnd(hitPoint);
-                
-                // Set the start of the new tail to the hit point & insert into the list
-                tailSeg.setStart(hitPoint);
-                subpath.add(j+1, tailSeg);
-
-                // Create new path and add subpaths
-                Path newPath = new Path();
-                for(int k=0, kMax=subpaths.size(); k<kMax; k++)
-                    newPath.addSegments(subpaths.get(k));
-                
-                pview.repaint();
-                pview.resetPath(newPath); //p._mouseDownPointIndex = ??
-                return;
-            }
-        }
-    }*/
+        // Handle CubicTo
+        case CubicTo: {
+            Cubic seg = new Cubic(lx, ly, pts[0], pts[1], pts[2], pts[3], lx = pts[4], ly = pts[5]), seg2 = null;
+            double ix = seg.getHitPoint(hor), iy = seg.getHitPoint(vert);
+            if(.1<ix && ix<.9) seg2 = seg.split(ix);
+            else if(.1<iy && iy<.9) seg2 = seg.split(iy);
+            path2.append(seg); if(seg2!=null) path2.append(seg2);
+        } break;
+        
+        // Handle Close
+        case Close: {
+            Line seg = new Line(lx, ly, lx = mx, ly = my), seg2 = null;
+            double ix = seg.getHitPoint(hor), iy = seg.getHitPoint(vert);
+            if(.1<ix && ix<.9) seg2 = seg.split(ix);
+            else if(.1<iy && iy<.9) seg2 = seg.split(iy);
+            if(seg2!=null) path2.append(seg); path2.close();
+        } break;
+    }
+    
+    // If new path differs, set new path
+    if(!path2.equals(path))
+        pview.resetPath(path2);
 }
 
 /**

@@ -4,7 +4,6 @@
 package studio.apptools;
 import studio.app.*;
 import snap.gfx.*;
-import snap.gfx.PathIter.Seg;
 import snap.view.*;
 
 /**
@@ -147,7 +146,7 @@ public void mouseReleased(ViewEvent anEvent)
 
     // Check to see if point landed in first point
     if(_path.getPointCount() > 2) {
-        PathIter.Seg lastElmnt = _path.getSegLast();
+        Seg lastElmnt = _path.getSegLast();
         int lastPointIndex = _path.getPointCount() - (lastElmnt==Path.LineTo? 2 : 4);
         Point beginPoint = _path.getPoint(0);
         Point lastPoint = _path.getPoint(lastPointIndex);

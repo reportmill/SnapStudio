@@ -843,7 +843,7 @@ protected void processEvent(ViewEvent anEvent)
                 relayout();
             if(!getVisRect().contains(getSelectedViewsBounds()) &&
                 getSelectTool().getDragMode()==SelectTool.DragMode.Move)
-                setVisRect(getSelectedViewsBounds());
+                scrollToVisible(getSelectedViewsBounds());
         }
         
         // If zoom to fit, update zoom to fit factor (just returns if unchanged)

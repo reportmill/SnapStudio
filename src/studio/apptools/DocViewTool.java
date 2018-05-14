@@ -59,7 +59,7 @@ public void resetUI()
 {
     // Get currently selected document and its page size
     DocView doc = getSelectedView(); if(doc==null) return;
-    PageView page = doc.getSelectedPage();
+    PageView page = doc.getSelPage();
     
     // Make sure appropriate panel is set
     //setViewSelIndex(getUI(), _advanced? 1 : 0);
@@ -117,7 +117,7 @@ public void respondUI(ViewEvent anEvent)
 {
     // Get current document and page (just return if null)
     DocView doc = getSelectedView(); if(doc==null) return;
-    PageView page = doc.getSelectedPage();
+    PageView page = doc.getSelPage();
     
     // Set boolean for whether we need to resize window
     boolean resizeWindow = false;

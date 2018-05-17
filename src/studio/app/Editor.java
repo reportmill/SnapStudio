@@ -945,7 +945,7 @@ public void deepChange(Object aView, PropChange anEvent)
         if(file!=null) file.setUpdater(undoer.hasUndos()? _updr : null);
     }
     
-    // Forward DeepChanges to EditorPane. Should have add/removeDeepChagneLister methods for this.
+    // Reset EditorPane
     EditorPane ep = getEditorPane(); if(ep!=null) ep.resetLater();
 }
 
@@ -982,16 +982,25 @@ protected void saveUndoerChanges()
     // Save undo changes
     undoer.saveChanges();
     
-    // Re-enable animator
-    //View view = getSelectedOrSuperSelectedView();
-    //if(view.getAnimator()!=null) view.getAnimator().setEnabled(true);
+    // Reset EditorPane
+    EditorPane ep = getEditorPane(); if(ep!=null) ep.resetLater();
 }
 
 /**
  * Saves undo changes after a delay.
  */
-protected void saveUndoerChangesLater()  { getEnv().runLaterOnce("SaveChangesLater", _saveChangesRunnable); }
-private Runnable _saveChangesRunnable = () -> saveUndoerChanges();
+protected void saveUndoerChangesLater()
+{
+    // If runnable already set, just return
+    if(_saveChangesRun!=null) return; _saveChangesRun = _scrShared;
+    
+    // If MouseDown, run on mouse up, otherwise run later
+    if(ViewUtils.isMouseDown()) ViewUtils.runOnMouseUp(_saveChangesRun);
+    else getEnv().runLater(_saveChangesRun);
+}
+
+// A Runnable for runLater(saveUndoerChanges())
+private Runnable _saveChangesRun, _scrShared = () -> { saveUndoerChanges(); _saveChangesRun = null; };
 
 /** Override to make editor want to be 600x600. */
 protected double getPrefWidthImpl(double aH)  { return Math.max(super.getPrefWidthImpl(aH),500); }

@@ -880,15 +880,19 @@ private Point dropFile(T aView, File aFile, ViewEvent anEvent)
     
     // If image, add image to project
     if(ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("gif")) {
-        WebFile file = getEditor().getSourceURL().getFile();
-        WebFile dir = file.getParent(); if(dir.getFile("pkg.images")!=null) dir = dir.getFile("pkg.images");
-        WebFile ifile1 = WebURL.getURL(path).getFile();
-        WebFile ifile2 = dir.getSite().createFile(dir.getDirPath() + fname, false);
-        ifile2.setBytes(ifile1.getBytes());
-        ifile2.save();
+        
+        // Copy file to project
+        //WebFile file = getEditor().getSourceURL().getFile();
+        //WebFile dir = file.getParent(); if(dir.getFile("pkg.images")!=null) dir = dir.getFile("pkg.images");
+        //WebFile ifile1 = WebURL.getURL(path).getFile();
+        //WebFile ifile2 = dir.getSite().createFile(dir.getDirPath() + fname, false);
+        //ifile2.setBytes(ifile1.getBytes()); ifile2.save();
+        
+        // Get image file
+        WebFile ifile = WebURL.getURL(path).getFile();
         
         Point pnt = aView.parentToLocal(anEvent.getX(), anEvent.getY(), anEvent.getView());
-        ImageView iview = new ImageView(ifile2); iview.setImageName(fname); iview.setSize(iview.getPrefSize());
+        ImageView iview = new ImageView(ifile); iview.setImageName(fname); iview.setSize(iview.getPrefSize());
         double w = iview.getWidth(), h = iview.getHeight();
         double x = Math.round(pnt.getX() - w/2), y = Math.round(pnt.getY() - h/2);
         iview.setBounds(x,y,w,h);
@@ -1000,6 +1004,7 @@ public static ViewTool createTool(Class aClass)
     if(aClass==ArcView.class) return new ArcViewTool();
     if(aClass==Button.class) return new ButtonTool();
     if(aClass==DocView.class) return new DocViewTool();
+    if(aClass==ImageView.class) return new ImageViewTool();
     if(aClass==LineView.class) return new LineViewTool();
     if(aClass==PageView.class) return new PageViewTool();
     if(aClass==ParentView.class) return new ParentViewTool();

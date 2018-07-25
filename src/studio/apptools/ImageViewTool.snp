@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView PrefWidth="275" PrefHeight="325" Align="TOP_CENTER" Padding="18,0,0,0">
+  <TitleView Text="Frame Index">
+    <RowView PrefWidth="250" Padding="5,10,10,10">
+      <Slider Name="FrameSlider" PrefHeight="16" GrowWidth="true" />
+      <TextField Name="FrameText" PrefWidth="50" PrefHeight="20" Align="CENTER" ColCount="12" />
+    </RowView>
+  </TitleView>
+</ColView>

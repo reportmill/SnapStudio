@@ -184,24 +184,13 @@ protected void initUI()
     // Enable Mouse Events for editor
     enableEvents(getEditor(), MousePress, MouseRelease);
     
-    // This sucks - but needed to properly init InspectorPanel SelPathView
-    runLater(() -> runLater(() -> resetLater()));
-}
-
-/**
- * Override to configure Window.
- */
-protected void initRootView()
-{
-    // Set RootView MenuBar
-    //getRootView().setMenuBar(getMenuBar().getUI());
-
     // Configure Window ClassName, Image and enable window events
     WindowView win = getWindow();
-    win.setType(WindowView.TYPE_MAIN);
     win.setImage(getFrameIcon());
     enableEvents(win, WinClose);
-    win.setGrowWidth(true);
+    
+    // This sucks - but needed to properly init InspectorPanel SelPathView
+    runLater(() -> runLater(() -> resetLater()));
 }
 
 /**

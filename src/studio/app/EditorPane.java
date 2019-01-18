@@ -155,13 +155,22 @@ public void setEditing(boolean aValue)
  */
 protected View createUI()
 {
-    BorderView bpane = (BorderView)super.createUI(); //bpane.setGrowWidth(true);
+    // Get AttributesPanel and InspectorPanel
+    AttributesPanel attrPanel = getAttributesPanel(); attrPanel.getUI().setGrowHeight(true);
+    InspectorPanel inspPanel = getInspectorPanel();
+    
+    // Create ColView to hold them
     ColView vbox = new ColView(); vbox.setFillWidth(true); vbox.setPrefWidth(275);
-    vbox.setChildren(getAttributesPanel().getUI(), getInspectorPanel().getUI());
+    vbox.setChildren(attrPanel.getUI(), inspPanel.getUI());
     vbox.setBorder(Border.createLineBorder(Color.LIGHTGRAY, 1));
-    //HBox hbox = new HBox(); hbox.setAlignment(Pos.TOP_LEFT); hbox.setFillHeight(true); hbox.setChildren(bpane, vbox);
-    bpane.setRight(vbox);
-    return bpane;
+
+    // Create normal ViewerPane BorderView UI and panels to right side
+    BorderView bview = (BorderView)super.createUI();
+    bview.setRight(vbox); //return bview;
+    
+    // Create ColView holding MenuBar and EditorPane UI (with key listener so MenuBar catches shortcut keys)
+    View mbarView = MenuBar.createMenuBarView(getMenuBar().getUI(), bview);
+    return mbarView;
 }
 
 /**
@@ -185,7 +194,7 @@ protected void initUI()
 protected void initRootView()
 {
     // Set RootView MenuBar
-    getRootView().setMenuBar(getMenuBar().getUI());
+    //getRootView().setMenuBar(getMenuBar().getUI());
 
     // Configure Window ClassName, Image and enable window events
     WindowView win = getWindow();

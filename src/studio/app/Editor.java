@@ -8,7 +8,7 @@ import snap.web.WebFile;
 /**
  * This class subclasses Viewer to support snp file editing.
  */
-public class Editor extends Viewer implements DeepChangeListener, RootView.Listener {
+public class Editor extends Viewer implements DeepChangeListener {
 
     // Whether we're really editing
     boolean            _editing = true;
@@ -51,6 +51,9 @@ public class Editor extends Viewer implements DeepChangeListener, RootView.Liste
     
     // The current time
     int                   _time;
+    
+    // A ViewUpdater.Listener to expand repaint bounds
+    ViewUpdater.Listener  _updaterLsnr = (rv,r) -> rootViewWillPaint(rv,r);
 
     // Constants for PropertyChanges
     public static final String CurrentTool_Prop = "CurrentTool";
@@ -857,8 +860,8 @@ protected void processEvent(ViewEvent anEvent)
 protected void setShowing(boolean aValue)
 {
     if(aValue==isShowing()) return; super.setShowing(aValue);
-    if(aValue) getRootView().addRootViewListener(this);
-    else if(getRootView()!=null) getRootView().removeRootViewListener(this);
+    if(aValue) getUpdater().addListener(_updaterLsnr);
+    else if(getUpdater()!=null) getUpdater().removeListener(_updaterLsnr);
 }
 
 /**
@@ -953,7 +956,7 @@ public void deepChange(Object aView, PropChange anEvent)
 private WebFile.Updater _updr = file -> updateFile();
 
 /**
- * RootView.Listener method.
+ * ViewUpdater.Listener method.
  */
 public Rect rootViewWillPaint(RootView aRV, Rect aRect)
 {

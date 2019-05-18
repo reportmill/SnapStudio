@@ -36,6 +36,14 @@ protected void initUI()
     ComboBox fontSizeComboBox = getView("FontSizeComboBox", ComboBox.class);
     Object sizes[] = { 6, 8, 9, 10, 11, 12, 14, 16, 18, 22, 24, 36, 48, 64, 72, 96, 128, 144 };
     fontSizeComboBox.setItems(sizes);
+    
+    Button btn = new Button("LoadButton");
+    RowView row = (RowView)getView("UndoButton").getParent();
+    row.addChild(btn);
+    btn.addEventHandler(e -> {
+        View pupView = new PuppetView();
+        ((PageView)getEditor().getContentPage()).addChild(pupView);
+    }, Action);
 }
 
 /**

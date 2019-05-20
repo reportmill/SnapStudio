@@ -63,11 +63,11 @@ public PhysicsRunner(ParentView aView)
         createJoint(v);
     
     // Add sidewalls
-    double vw = _view.getWidth(), vh = _view.getHeight();
-    RectView r0 = new RectView(-1, -900, 1, vh+900); r0.getPhysics(true);  // Left
-    RectView r1 = new RectView(0, vh+1, vw, 1); r1.getPhysics(true);       // Bottom
-    RectView r2 = new RectView(vw, -900, 1, vh+900); r2.getPhysics(true);  // Right
-    createBody(r0); createBody(r1); createBody(r2);
+    //double vw = _view.getWidth(), vh = _view.getHeight();
+    //RectView r0 = new RectView(-1, -900, 1, vh+900); r0.getPhysics(true);  // Left
+    //RectView r1 = new RectView(0, vh+1, vw, 1); r1.getPhysics(true);       // Bottom
+    //RectView r2 = new RectView(vw, -900, 1, vh+900); r2.getPhysics(true);  // Right
+    //createBody(r0); createBody(r1); createBody(r2);
 }
 
 /**
@@ -266,6 +266,7 @@ public Body createBody(View aView)
     // Create FixtureDef
     for(org.jbox2d.collision.shapes.Shape pshp : pshapes) {
         FixtureDef fdef = new FixtureDef(); fdef.shape = pshp; fdef.restitution = .25f; fdef.density = 1;
+        fdef.filter.groupIndex = phys.getGroupIndex();
         body.createFixture(fdef);
     }
     
@@ -379,6 +380,9 @@ public void createJoint(View aView)
     jointDef.localAnchorB = viewToBoxLocal(jointPntB.x, jointPntB.y, viewB);
     RevoluteJoint joint = (RevoluteJoint)_world.createJoint(jointDef);
     aView.getPhysics(true).setNative(joint);
+    
+    // Remove view for joint
+    aView.getParent(ChildView.class).removeChild(aView);
 }
 
 Vec2 viewToBoxLocal(double aX, double aY, View aView)

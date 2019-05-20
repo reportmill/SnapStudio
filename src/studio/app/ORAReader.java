@@ -1,5 +1,6 @@
 package studio.app;
 import java.util.*;
+import snap.gfx.*;
 import snap.util.XMLElement;
 import snap.web.WebURL;
 
@@ -37,8 +38,10 @@ Stack readStack(XMLElement aXML)
     if(name!=null && name.equals("HeadBone")) return null;
     
     Stack stack = new Stack(name);
+    String visibility = aXML.getAttributeValue("visibility");
+    stack.visible = visibility!=null && visibility.equals("visible");
     
-    for(int i=0;i<_indent;i++) System.out.print("    "); System.out.println(stack);
+    //for(int i=0;i<_indent;i++) System.out.print("    "); System.out.println(stack);
     _indent++;
     
     for(XMLElement xml : aXML.getElements()) {
@@ -74,7 +77,7 @@ Layer readLayer(XMLElement aXML)
     double y = aXML.getAttributeDoubleValue("y");
     Layer layer = new Layer(name, src, isVis, x, y);
     
-    for(int i=0;i<_indent;i++) System.out.print("    "); System.out.println(layer);
+    //for(int i=0;i<_indent;i++) System.out.print("    "); System.out.println(layer);
     return layer;
 }
 
@@ -89,11 +92,13 @@ public static class Layer {
     
     public boolean visible;
     
-    public double x, y;
+    public double x = Float.MAX_VALUE, y = Float.MAX_VALUE;
     
     public Stack stack;
     
     public Object view;
+    
+    Image  _img;
     
     /** Creates an ORA Layer. */
     public Layer(String aName)  { name = aName; }
@@ -102,6 +107,13 @@ public static class Layer {
     public Layer(String aName, String aSrc, boolean isVis, double aX, double aY)
     {
         name = aName; src = aSrc; visible = isVis; x = aX; y = aY;
+    }
+    
+    /** Returns the image. */
+    public Image getImage()
+    {
+        if(_img!=null) return _img;
+        return _img = Image.get(src);
     }
     
     public String toString()
@@ -119,6 +131,58 @@ public static class Stack extends Layer {
     
     /** Creates an ORA Stack. */
     public Stack(String aName)  { super(aName); }
+    
+    /** Returns the image. */
+    public Image getImage()
+    {
+        // If already set, just return
+        if(_img!=null) return _img;
+        
+        // Iterate over entries and find x, y, maxX, maxY
+        double mx = 0, my = 0;
+        for(Layer entry : entries) {
+            if(!entry.visible) continue;
+            Image img = entry.getImage(); if(img==null) continue;
+            x = Math.min(x, entry.x);
+            y = Math.min(y, entry.y);
+            mx = Math.max(mx, entry.x + img.getPixWidth());
+            my = Math.max(my, entry.y + img.getPixHeight());
+        }
+        
+        // Get pixels wide/tall
+        int px = (int)Math.ceil(mx - x);
+        int py = (int)Math.ceil(my - y);
+        if(px<1 || py<1 || px>5000 || py>5000) {
+            System.out.println("Stack.getImage: No image for layer: " + name); return null; }
+        
+        // Create image and render layer images in it
+        Image img = Image.get(px, py, true);
+        Painter pntr = img.getPainter();
+        for(int i=entries.size()-1; i>=0; i--) { Layer entry = entries.get(i);
+            if(!entry.visible) continue;
+            Image im = entry.getImage(); if(im==null) continue;
+            pntr.drawImage(im, entry.x - x, entry.y - y);
+        }
+        
+        // Return image
+        return _img = img;
+    }
+    
+    /** Returns the layer with given name. */
+    public Layer getLayer(String aName)
+    {
+        if(aName.equals(name)) return this;
+        for(Layer entry : entries) {
+            if(aName.equals(entry.name))
+                return entry;
+            if(entry instanceof Stack) { Stack stack = (Stack)entry;
+                Layer match = stack.getLayer(aName);
+                if(match!=null)
+                    return match;
+            }
+        }
+        return null;
+    }
     
     public String toString()
     {

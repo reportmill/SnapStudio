@@ -56,9 +56,14 @@ View getSelView()  { return _selLayer!=null? (View)_selLayer.view : null; }
  */
 protected View createUI()
 {
+    // Create DollModeCheckBox
+    CheckBox dollCheckBox = new CheckBox("Doll Mode"); dollCheckBox.setName("DollModeCheckBox");
+    
+    // Create/configure TreeView
     _treeView = new TreeView(); _treeView.setGrowWidth(true); _treeView.setGrowHeight(true);
         
-    ColView colView = new ColView(); colView.setPadding(20,8,8,8); colView.setFillWidth(true);
+    ColView colView = new ColView(); colView.setPadding(20,8,8,8); colView.setSpacing(5); colView.setFillWidth(true);
+    colView.addChild(dollCheckBox);
     colView.addChild(_treeView);
     return colView;
 }
@@ -83,6 +88,9 @@ public void resetUI()
     PuppetView pview = getSelectedView(); if(pview==null) return;
     boolean pviewChanged = pview!=_pupView; _pupView = pview;
     
+    // Update DollModeCheckBox
+    setViewValue("DollModeCheckBox", pview.isDollMode());
+    
     // Update TreeView Items
     if(pviewChanged) {
         _treeView.setItems(_treeRes.getChildren(pview.getStack()));
@@ -96,6 +104,14 @@ public void resetUI()
  */
 public void respondUI(ViewEvent anEvent)
 {
+    // Get currently selected page (just return if null)
+    PuppetView pview = getSelectedView(); if(pview==null) return;
+    
+    // Handle DollModeCheckBox
+    if(anEvent.equals("DollModeCheckBox")) {
+        pview.setDollMode(anEvent.getBoolValue());
+    }
+
     // Handle TreeView
     if(anEvent.equals(_treeView)) {
         setSelLayer(_treeView.getSelItem());

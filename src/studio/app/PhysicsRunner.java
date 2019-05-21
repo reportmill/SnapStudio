@@ -33,8 +33,11 @@ public class PhysicsRunner {
     // Listener to handle drags
     EventListener  _dragFilter = e -> handleDrag(e);
     
-    // Drag vars
-    View _drag; double _dragX, _dragY;
+    // Ground Body
+    Body           _groundBody;
+    
+    // MouseJoint used for dragging
+    MouseJoint     _dragJoint;
 
 /**
  * Create new PhysicsRunner.
@@ -63,11 +66,11 @@ public PhysicsRunner(ParentView aView)
         createJoint(v);
     
     // Add sidewalls
-    //double vw = _view.getWidth(), vh = _view.getHeight();
-    //RectView r0 = new RectView(-1, -900, 1, vh+900); r0.getPhysics(true);  // Left
+    double vw = _view.getWidth(), vh = _view.getHeight();
+    RectView r0 = new RectView(-1, -900, 1, vh+900); r0.getPhysics(true);  // Left
     //RectView r1 = new RectView(0, vh+1, vw, 1); r1.getPhysics(true);       // Bottom
     //RectView r2 = new RectView(vw, -900, 1, vh+900); r2.getPhysics(true);  // Right
-    //createBody(r0); createBody(r1); createBody(r2);
+    _groundBody = createBody(r0); //createBody(r1); createBody(r2);
 }
 
 /**
@@ -111,9 +114,6 @@ void timerFired()
     for(int i=0,iMax=_view.getChildCount();i<iMax;i++)
         updateBody(_view.getChild(i));
         
-    // Update drag
-    if(_drag!=null) updateDrag();
-    
     // Update world  
     _world.step(.040f,20,20);
     
@@ -128,7 +128,7 @@ void timerFired()
 public void updateView(View aView)
 {
     // Get ViewPhysics and body
-    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null && aView!=_drag) return;
+    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null) return;
     Object ntv = phys.getNative();
     
     // Handle Body
@@ -153,8 +153,7 @@ public void updateView(View aView)
         aView.setXY(posV.x-aView.getWidth()/2, posV.y-aView.getHeight()/2);
         
         // Get set rotation
-        //float angle = joint.getAngle();
-        //aView.setRotate(-Math.toDegrees(angle));
+        //float angle = joint.getAngle(); aView.setRotate(-Math.toDegrees(angle));
     }
 }
 
@@ -164,7 +163,7 @@ public void updateView(View aView)
 public void updateBody(View aView)
 {
     // Get ViewPhysics and body
-    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null || phys.isDynamic() || aView==_drag) return;
+    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null || phys.isDynamic()) return;
     Body body = phys.getNative();
 
     // Get/set position
@@ -180,24 +179,6 @@ public void updateBody(View aView)
     double dr = rot1 - rot0;
     if(dr>Math.PI || dr<-Math.PI) dr = MathUtils.mod(dr + Math.PI, Math.PI*2) - Math.PI;
     body.setAngularVelocity((float)dr*25);
-}
-
-/**
- * Updates drag view's body.
- */
-void updateDrag()
-{
-    ViewPhysics <Body> phys = _drag.getPhysics();
-    Body body = phys.getNative();
-    
-    // Get positions
-    Vec2 pos0 = body.getPosition();
-    Vec2 pos1 = viewToBox(_dragX, _dragY);
-    double dx = pos1.x - pos0.x;
-    double dy = pos1.y - pos0.y;
-    double vx = (pos1.x - pos0.x)*25;
-    double vy = (pos1.y - pos0.y)*25;
-    body.setLinearVelocity(new Vec2((float)vx, (float)vy));
 }
 
 /**
@@ -410,31 +391,58 @@ void addDragger(View aView)
  */
 void handleDrag(ViewEvent anEvent)
 {
-    anEvent.consume();
-    
-    // Get View, ViewPhysics and Body
+    // Get View, ViewPhysics, Body and Event point in page view
     View view = anEvent.getView();
     ViewPhysics <Body> phys = view.getPhysics();
     Body body = phys.getNative();
+    Point pnt = anEvent.getPoint(view.getParent()); anEvent.consume();
     
-    // Get point and set drag x/y
-    Point pnt = anEvent.getPoint(anEvent.getView().getParent());
-    _dragX = pnt.x; _dragY = pnt.y;
+    // Handle MousePress: Create & install drag MouseJoint
+    if(anEvent.isMousePress()) {
+        MouseJointDef jdef = new MouseJointDef(); jdef.bodyA = _groundBody; jdef.bodyB = body;
+        jdef.collideConnected = true; jdef.maxForce = 1000f*body.getMass();
+        jdef.target.set(viewToBox(pnt.x, pnt.y));
+        _dragJoint = (MouseJoint)_world.createJoint(jdef);
+        body.setAwake(true);
+    }
+    
+    // Handle MouseDrag: Update drag MouseJoint
+    else if(anEvent.isMouseDrag()) {
+        Vec2 target = viewToBox(pnt.x, pnt.y);
+        _dragJoint.setTarget(target);
+    }
+    
+    // Handle MouseRelease: Remove drag MouseJoint
+    else if(anEvent.isMouseRelease()) {
+        _world.destroyJoint(_dragJoint); _dragJoint = null; }
+}
+
+/** Called when View gets drag event. */
+void handleDragOld(ViewEvent anEvent)
+{
+    // Get View, ViewPhysics, Body and Event point in page view
+    View view = anEvent.getView(); ViewPhysics <Body> phys = view.getPhysics();
+    Body body = phys.getNative();
+    Point pnt = anEvent.getPoint(view.getParent()); anEvent.consume();
     
     // Handle MousePress
-    if(anEvent.isMousePress()) {
-        body.setType(BodyType.KINEMATIC);
-        body.setAngularVelocity(0);
-        _drag = view;
-        return;
-    }
-    
-    // Handle MouseRelease
-    if(anEvent.isMouseRelease()) {
-        body.setType(phys.isDynamic()? BodyType.DYNAMIC : BodyType.KINEMATIC);
-        _drag = null;
-        return;
-    }
+    if(anEvent.isMousePress()) { body.setType(BodyType.KINEMATIC); body.setAngularVelocity(0); }
+    else if(anEvent.isMouseDrag()) updateDrag(view, pnt.x, pnt.y);
+    else if(anEvent.isMouseRelease()) body.setType(phys.isDynamic()? BodyType.DYNAMIC : BodyType.KINEMATIC);
+}
+
+/** Updates drag view's body. */
+void updateDrag(View aView, double dragX, double dragY)
+{
+    ViewPhysics <Body> phys = aView.getPhysics();
+    Body body = phys.getNative();
+    Vec2 pos0 = body.getPosition();
+    Vec2 pos1 = viewToBox(dragX, dragY);
+    double dx = pos1.x - pos0.x;
+    double dy = pos1.y - pos0.y;
+    double vx = (pos1.x - pos0.x)*25;
+    double vy = (pos1.y - pos0.y)*25;
+    body.setLinearVelocity(new Vec2((float)vx, (float)vy));
 }
 
 }

@@ -131,6 +131,7 @@ public void setEditing(boolean aValue)
         
         // Get rid of image names
         PageView page2 = (PageView)content.getChild(0);
+        page2.setFill(new Color(.95));
         for(View v : page2.getChildren())
             if(v instanceof PuppetView)
                 ((PuppetView)v).convertToPreview();

@@ -1,6 +1,6 @@
 package studio.app;
 import java.util.List;
-import snap.gfx.Rect;
+import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
 import studio.app.ORAReader.*;
@@ -89,32 +89,44 @@ void addAllLayers()
  */
 void addDollLayers()
 {
+    // Remove children
     removeChildren();
+    
+    // Add views for Hip, head, arms, hands, thighs, feet
     addImageViewForLayerName("+RArm").getPhysics(true).setGroupIndex(-1);
     addImageViewForLayerName("RHand").getPhysics(true).setGroupIndex(-1);
     addImageViewForLayerName("+RThigh").getPhysics(true).setGroupIndex(-1);
     addImageViewForLayerName("+RFoot").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+Hip").getPhysics(true).setGroupIndex(-1);
+    View hip = addImageViewForLayerName("+Hip"); hip.getPhysics(true).setGroupIndex(-1);
+    hip.getPhysics().setDensity(1000);
     addImageViewForLayerName("RL_TalkingHead").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+LArm").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("LHand").getPhysics(true).setGroupIndex(-1);
     addImageViewForLayerName("+LThigh").getPhysics(true).setGroupIndex(-1);
     addImageViewForLayerName("+LFoot").getPhysics(true).setGroupIndex(-1);
+    addImageViewForLayerName("+LArm").getPhysics(true).setGroupIndex(-1);
+    addImageViewForLayerName("LHand").getPhysics(true).setGroupIndex(-1);
 
-    addImageViewForLayerName("Head").setName("joint");
-    addImageViewForLayerName("RArm").setName("joint");
-    //addImageViewForLayerName("RForearm").setName("joint");
-    addImageViewForLayerName("RHand #1").setName("joint");
-    addImageViewForLayerName("LArm").setName("joint");
-    //addImageViewForLayerName("LForearm").setName("joint");
-    addImageViewForLayerName("LHand #1").setName("joint");
-    addImageViewForLayerName("RThigh").setName("joint");
-    //addImageViewForLayerName("RShank").setName("joint");
-    addImageViewForLayerName("RFoot").setName("joint");
-    addImageViewForLayerName("LThigh").setName("joint");
-    //addImageViewForLayerName("LShank").setName("joint");
-    addImageViewForLayerName("LFoot").setName("joint");
+    // Add joints for head, shoulders, elbows, hands, thighs, feet
+    addImageViewForLayerName("Head").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("RArm").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("RForearm").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("RHand #1").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("RThigh").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("RShank").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("RFoot").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("LArm").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("LForearm").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("LHand #1").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("LThigh").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("LShank").getPhysics(true).setJoint(true);
+    addImageViewForLayerName("LFoot").getPhysics(true).setJoint(true);
+    
+    // Split arms around elbow joint
+    splitViewAroundJoint("+RArm", "RForearm");
+    splitViewAroundJoint("+LArm", "LForearm");
+    splitViewAroundJoint("+RThigh", "RShank");
+    splitViewAroundJoint("+LThigh", "LShank");
 
+    // Resize children
     resizeChildren();
 }
 
@@ -178,6 +190,68 @@ void resizeChildren()
 {
     for(View c : getChildren())
         c.setBounds(c.getX()/4, c.getY()/4, c.getWidth()/4, c.getHeight()/4);
+}
+
+void splitViewAroundJoint(String aViewName, String aJointName)
+{
+    ImageView view = (ImageView)getChild(aViewName);
+    if(view==null) { System.err.println("PuppetView.splitView: View not found " + aViewName); return; }
+    View joint = getChild(aJointName);
+    if(joint==null) { System.err.println("PuppetView.splitView: Joint not found " + aJointName); return; }
+    
+    Rect v1bnds = getSplitBoundsForView(view, joint, true);
+    Rect v2bnds = getSplitBoundsForView(view, joint, false);
+    Rect i1bnds = new Rect(v1bnds.x - view.getX(), v1bnds.y - view.getY(), v1bnds.width, v1bnds.height);
+    Rect i2bnds = new Rect(v2bnds.x - view.getX(), v2bnds.y - view.getY(), v2bnds.width, v2bnds.height);
+    
+    Image img = view.getImage();
+    Image img1 = img.getSubimage(i1bnds.x, i1bnds.y, i1bnds.width, i1bnds.height);
+    Image img2 = img.getSubimage(i2bnds.x, i2bnds.y, i2bnds.width, i2bnds.height);
+    ImageView view1 = new ImageView(img1); view1.setBounds(v1bnds); view1.getPhysics(true).setGroupIndex(-1);
+    ImageView view2 = new ImageView(img2); view2.setBounds(v2bnds); view2.getPhysics(true).setGroupIndex(-1);
+    addChild(view1, view.indexInParent());
+    addChild(view2, view.indexInParent());
+    removeChild(view);
+}
+
+Rect getSplitBoundsForView(View aView, View aJoint, boolean doLeftTop)
+{
+    Rect vbnds = aView.getBounds();
+    Rect jbnds = aJoint.getBounds();
+    double asp = vbnds.width/vbnds.height;
+    double x = vbnds.x, y = vbnds.y, w = 0, h = 0;
+    
+    // Handle horizontal arm/let
+    if(asp<.3333) {
+        w = vbnds.width;
+        if(doLeftTop) h = jbnds.getMaxY() - y;
+        else { y = jbnds.y; h = vbnds.getMaxY() - y; }
+    }
+    
+    // Handle diagonal arm/leg
+    else if(asp<3) {
+        
+        // Handle Right arm/leg
+        if(aView.getName().startsWith("+R")) {
+            if(doLeftTop) { y = jbnds.y; w = jbnds.getMaxX() - x; h = vbnds.getMaxY() - y; }
+            else { x = jbnds.x; w = vbnds.getMaxX() - x; h = jbnds.getMaxY() - y; }
+        }
+        
+        // Handle Left arm/leg
+        else {
+            if(doLeftTop) { w = jbnds.getMaxX() - x; h = jbnds.getMaxY() - y; }
+            else { x = jbnds.x; y = jbnds.y; w = vbnds.getMaxX() - x; h = vbnds.getMaxY() - y; }
+        }
+    }
+    
+    // Handle vertial arm/leg
+    else {
+        h = vbnds.height;
+        if(doLeftTop) w = jbnds.getMaxX() - x;
+        else { x = jbnds.x; w = vbnds.getMaxX() - x; }
+    }
+    
+    return new Rect(x, y, w, h);
 }
 
 public void convertToPreview()

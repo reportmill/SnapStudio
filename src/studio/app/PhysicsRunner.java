@@ -52,10 +52,10 @@ public PhysicsRunner(ParentView aView)
     
     // Add bodies for view children
     List <View> joints = new ArrayList();
-    for(View child : _view.getChildren()) {
-        child.getPhysics(true).setDynamic(true);
-        if("joint".equals(child.getName())) joints.add(child);
+    for(View child : _view.getChildren()) { ViewPhysics phys = child.getPhysics(true);
+        if(phys.isJoint() || "joint".equals(child.getName())) joints.add(child);
         else { 
+            phys.setDynamic(true);
             createBody(child);
             addDragger(child);
         }
@@ -163,7 +163,7 @@ public void updateView(View aView)
 public void updateBody(View aView)
 {
     // Get ViewPhysics and body
-    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null || phys.isDynamic()) return;
+    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null || phys.isDynamic() || phys.isJoint()) return;
     Body body = phys.getNative();
 
     // Get/set position
@@ -246,8 +246,8 @@ public Body createBody(View aView)
     
     // Create FixtureDef
     for(org.jbox2d.collision.shapes.Shape pshp : pshapes) {
-        FixtureDef fdef = new FixtureDef(); fdef.shape = pshp; fdef.restitution = .25f; fdef.density = 1;
-        fdef.filter.groupIndex = phys.getGroupIndex();
+        FixtureDef fdef = new FixtureDef(); fdef.shape = pshp; fdef.restitution = .25f;
+        fdef.density = (float)phys.getDensity(); fdef.filter.groupIndex = phys.getGroupIndex();
         body.createFixture(fdef);
     }
     
@@ -343,7 +343,8 @@ public void createJoint(View aView)
     }
     
     // if less than two, bail
-    if(hits.size()<2) { ViewUtils.beep(); return; }
+    if(hits.size()<2) {
+        System.out.println("PhysicsRunner.createJoint: 2 Bodies not found for joint: " + aView.getName()); return; }
     View viewA = hits.get(0);
     View viewB = hits.get(1);
     

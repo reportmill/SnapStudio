@@ -919,6 +919,7 @@ public void deepChange(Object aView, PropChange anEvent)
     // Ignore properties: Showing, NeedsLayout
     if(pname==Showing_Prop) return;
     if(pname==NeedsLayout_Prop) return;
+    if(pname==Parent_Prop) return;
     
     // Ignore layout changes
     if(view instanceof ParentView && ((ParentView)view).isInLayout()) return;

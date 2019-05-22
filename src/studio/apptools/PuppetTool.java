@@ -152,6 +152,11 @@ public void mouseDragged(T aView, ViewEvent anEvent)  { }
 public void mouseReleased(T aView, ViewEvent anEvent)  { }
 
 /**
+ * Returns whether a given view can be ungrouped.
+ */
+public boolean isUngroupable(View aView)  { return true; }
+
+/**
  * Configures a TreeView cell.
  */
 void configureCell(ListCell <Layer> aCell)

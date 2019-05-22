@@ -10,25 +10,57 @@ import studio.app.ORAReader.*;
  */
 public class PuppetView extends ParentView {
     
+    // The path
+    String     _path;
+    
     // The stack of layers
     Stack      _stack;
     
+    // The stack of body part layers
+    Stack      _bodyStack;
+    
+    // The stack of layers
+    Stack      _jointStack;
+    
+    // The bounds of layer
     Rect       _layerBnds;
     
     // Whether puppet children are just doll parts
     boolean    _dollMode;
     
+    // The scale
+    double     _scale = 1;
 
 /**
  * Creates a PuppetView.
  */
-public PuppetView()
-{
-    ORAReader rdr = new ORAReader();
-    _stack = rdr.readFile();
-    addAllLayers();
+public PuppetView()  { }
 
-    setSize(_layerBnds.getMaxX()/4, _layerBnds.getMaxY()/4);
+/**
+ * Creates a PuppetView.
+ */
+public PuppetView(String aSource, double aScale)
+{
+    _scale = aScale;
+    setSource(aSource);
+}
+
+/**
+ * Sets the source.
+ */
+public void setSource(String aPath)
+{
+    _path = aPath;
+    ORAReader rdr = new ORAReader();
+    
+    // Get stack, body stack and joint stack
+    _stack = rdr.readFile(aPath);
+    _bodyStack = (Stack)getLayer("RL_Image");
+    _jointStack = (Stack)getLayer("RL_Bone_Human");
+    
+    // Add all layers and reset size
+    addAllLayers();
+    setSize(_layerBnds.getMaxX()*_scale, _layerBnds.getMaxY()*_scale);
 }
 
 /**
@@ -51,7 +83,6 @@ public void setDollMode(boolean aValue)
     _dollMode = aValue;
     if(aValue) addDollLayers();
     else addAllLayers();
-    
 }
 
 /**
@@ -93,38 +124,37 @@ void addDollLayers()
     removeChildren();
     
     // Add views for Hip, head, arms, hands, thighs, feet
-    addImageViewForLayerName("+RArm").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("RHand").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+RThigh").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+RFoot").getPhysics(true).setGroupIndex(-1);
-    View hip = addImageViewForLayerName("+Hip"); hip.getPhysics(true).setGroupIndex(-1);
-    hip.getPhysics().setDensity(1000);
-    addImageViewForLayerName("RL_TalkingHead").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+LThigh").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+LFoot").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("+LArm").getPhysics(true).setGroupIndex(-1);
-    addImageViewForLayerName("LHand").getPhysics(true).setGroupIndex(-1);
+    addBodyViewForLayerName("RArm"); //+
+    addBodyViewForLayerName("RHand");
+    addBodyViewForLayerName("RThigh"); //+
+    addBodyViewForLayerName("RFoot"); //+
+    addBodyViewForLayerName("Hip").getPhysics().setDensity(1000); //+
+    addBodyViewForLayerName("RL_TalkingHead");
+    addBodyViewForLayerName("LThigh"); //+
+    addBodyViewForLayerName("LFoot"); //+
+    addBodyViewForLayerName("LArm"); //+
+    addBodyViewForLayerName("LHand");
 
     // Add joints for head, shoulders, elbows, hands, thighs, feet
-    addImageViewForLayerName("Head").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("RArm").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("RForearm").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("RHand #1").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("RThigh").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("RShank").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("RFoot").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("LArm").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("LForearm").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("LHand #1").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("LThigh").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("LShank").getPhysics(true).setJoint(true);
-    addImageViewForLayerName("LFoot").getPhysics(true).setJoint(true);
+    addJointViewForLayerName("Head");
+    addJointViewForLayerName("RArm");
+    addJointViewForLayerName("RForearm");
+    addJointViewForLayerName("RHand"); //#1
+    addJointViewForLayerName("RThigh");
+    addJointViewForLayerName("RShank");
+    addJointViewForLayerName("RFoot");
+    addJointViewForLayerName("LArm");
+    addJointViewForLayerName("LForearm");
+    addJointViewForLayerName("LHand"); //#1
+    addJointViewForLayerName("LThigh");
+    addJointViewForLayerName("LShank");
+    addJointViewForLayerName("LFoot");
     
     // Split arms around elbow joint
-    splitViewAroundJoint("+RArm", "RForearm");
-    splitViewAroundJoint("+LArm", "LForearm");
-    splitViewAroundJoint("+RThigh", "RShank");
-    splitViewAroundJoint("+LThigh", "LShank");
+    splitViewAroundJoint("RArm", "RForearm"); //+
+    splitViewAroundJoint("LArm", "LForearm"); //+
+    splitViewAroundJoint("RThigh", "RShank"); //+
+    splitViewAroundJoint("LThigh", "LShank"); //+
 
     // Resize children
     resizeChildren();
@@ -173,6 +203,32 @@ ImageView addImageViewForLayerName(String aName)
 }
 
 /**
+ * Adds an image shape for given layer.
+ */
+ImageView addBodyViewForLayerName(String aName)
+{
+    Layer layer = aName.equals("RL_TalkingHead")? _stack.getLayer(aName) : _bodyStack.getLayer(aName);
+    if(layer==null) {
+        System.out.println("PuppetView.addBodyViewForLayerName: Layer not found: " + aName); return null; }
+    ImageView iview = addImageViewForLayer(layer);
+    iview.getPhysics(true).setGroupIndex(-1);
+    return iview;
+}
+
+/**
+ * Adds an image shape for given layer.
+ */
+ImageView addJointViewForLayerName(String aName)
+{
+    Layer layer = _jointStack.getLayer(aName);
+    if(layer==null) {
+        System.out.println("PuppetView.addJointViewForLayerName: Layer not found: " + aName); return null; }
+    ImageView iview = addImageViewForLayer(layer);
+    iview.getPhysics(true).setJoint(true);
+    return iview;
+}
+
+/**
  * Expands layer bounds.
  */
 void expandLayerBounds(double aX, double aY, double aW, double aH)
@@ -189,7 +245,7 @@ void expandLayerBounds(double aX, double aY, double aW, double aH)
 void resizeChildren()
 {
     for(View c : getChildren())
-        c.setBounds(c.getX()/4, c.getY()/4, c.getWidth()/4, c.getHeight()/4);
+        c.setBounds(c.getX()*_scale, c.getY()*_scale, c.getWidth()*_scale, c.getHeight()*_scale);
 }
 
 void splitViewAroundJoint(String aViewName, String aJointName)
@@ -232,7 +288,7 @@ Rect getSplitBoundsForView(View aView, View aJoint, boolean doLeftTop)
     else if(asp<3) {
         
         // Handle Right arm/leg
-        if(aView.getName().startsWith("+R")) {
+        if(aView.getName().startsWith("R")) {
             if(doLeftTop) { y = jbnds.y; w = jbnds.getMaxX() - x; h = vbnds.getMaxY() - y; }
             else { x = jbnds.x; w = vbnds.getMaxX() - x; h = jbnds.getMaxY() - y; }
         }
@@ -250,6 +306,9 @@ Rect getSplitBoundsForView(View aView, View aJoint, boolean doLeftTop)
         if(doLeftTop) w = jbnds.getMaxX() - x;
         else { x = jbnds.x; w = vbnds.getMaxX() - x; }
     }
+    
+    if(w<0)
+        w = 0;
     
     return new Rect(x, y, w, h);
 }
@@ -273,8 +332,31 @@ public void convertToPreview()
  */
 public XMLElement toXML(XMLArchiver anArchiver)
 {
+    // Do normal unarchive
     XMLElement xml = super.toXML(anArchiver); xml.setName("PuppetView");
+    
+    xml.add("Path", _path);
+    xml.add("Scale", _scale);
+    
+    // Return xml
     return xml;
+}
+
+/**
+ * XML unarchival.
+ */
+public ParentView fromXML(XMLArchiver anArchiver, XMLElement anElement)
+{
+    // Do normal version
+    ParentView obj = (ParentView)super.fromXML(anArchiver, anElement);
+    
+    // Unarchive Path, Scale
+    String path = anElement.getAttributeValue("Path");
+    _scale = anElement.getAttributeDoubleValue("Scale");
+    setSource(path);
+    
+    // Return
+    return obj;
 }
 
 }

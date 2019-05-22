@@ -17,7 +17,7 @@ public class EditorUtils {
  * If given view list is null, use editor selected views.
  * If given group view is null, create new generic group view.
  */
-public static void groupViews(Editor anEditor, List <? extends View> theViews, ChildView aGroupView)
+public static void groupViews(Editor anEditor, List <? extends View> theViews, ParentView aGroupView)
 {
     // If shapes not provided, use editor selected shapes
     if(theViews==null) theViews = anEditor.getSelectedViews();
@@ -32,7 +32,7 @@ public static void groupViews(Editor anEditor, List <? extends View> theViews, C
     List <? extends View> shapes = theViews; //Sort.sortedList(theShapes, "indexInParent");
     
     // Get parent
-    ChildView parent = (ChildView)shapes.get(0).getParent();
+    ParentView parent = shapes.get(0).getParent();
     
     // If no group shape, create one
     if(aGroupView==null) {
@@ -41,7 +41,7 @@ public static void groupViews(Editor anEditor, List <? extends View> theViews, C
     }
 
     // Add groupShape to the current parent (with no transform)
-    parent.addChild(aGroupView);
+    ViewUtils.addChild(parent, aGroupView);
 
     // Iterate over children and group to GroupShape
     for(View child : shapes)
@@ -54,16 +54,16 @@ public static void groupViews(Editor anEditor, List <? extends View> theViews, C
 /**
  * Adds child shape to group shape.
  */
-private static void groupView(View child, ChildView gshape)
+private static void groupView(View child, ParentView gshape)
 {
     // Get center point in parent coords and store as child x/y
-    ChildView parent = (ChildView)child.getParent();
+    ParentView parent = child.getParent();
     Point cp = child.localToParent(child.getWidth()/2, child.getHeight()/2);
     child.setXY(cp.x, cp.y);
     
     // Move child to GroupShape
-    parent.removeChild(child);
-    gshape.addChild(child);
+    ViewUtils.removeChild(parent, child);
+    ViewUtils.addChild(gshape, child);
         
     // Undo transforms of group shape
     child.setRotate(child.getRotate() - gshape.getRotate());
@@ -92,8 +92,8 @@ public static void ungroupViews(Editor anEditor)
         
         // If shape cann't be ungrouped, skip
         if(!anEditor.getTool(shape).isUngroupable(shape)) continue;
-        ChildView groupShape = (ChildView)shape;
-        ChildView parent = (ChildView)groupShape.getParent();
+        ParentView groupShape = (ParentView)shape;
+        ParentView parent = groupShape.getParent();
             
         // Iterate over children and ungroup from GroupShape
         for(View child : groupShape.getChildren().clone()) {
@@ -102,7 +102,7 @@ public static void ungroupViews(Editor anEditor)
         }
 
         // Remove groupShape from parent
-        parent.removeChild(groupShape);
+        ViewUtils.removeChild(parent, groupShape);
     }
 
     // If were some ungroupedShapes, select them (set selected objects for undo/redo)
@@ -119,7 +119,7 @@ public static void ungroupViews(Editor anEditor)
 private static void ungroupView(View child)
 {
     // Get center point in parent coords and store as child x/y
-    ChildView gshape = (ChildView)child.getParent(), parent = (ChildView)gshape.getParent();
+    ParentView gshape = child.getParent(), parent = gshape.getParent();
     Point cp = child.localToParent(child.getWidth()/2, child.getHeight()/2, parent);
     child.setXY(cp.x, cp.y);
     
@@ -129,8 +129,8 @@ private static void ungroupView(View child)
     //child.setSkewX(child.getSkewX() + gshape.getSkewX()); child.setSkewY(child.getSkewY() + gshape.getSkewY());
 
     // Remove from group shape & add to group shape parent
-    gshape.removeChild(child);
-    parent.addChild(child);
+    ViewUtils.removeChild(gshape, child);
+    ViewUtils.addChild(parent, child);
     
     // Reset center point: Get new center in parent coords and offset child by change
     Point cp2 = child.localToParent(child.getWidth()/2, child.getHeight()/2);

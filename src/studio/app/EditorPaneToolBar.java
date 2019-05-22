@@ -37,14 +37,20 @@ protected void initUI()
     Object sizes[] = { 6, 8, 9, 10, 11, 12, 14, 16, 18, 22, 24, 36, 48, 64, 72, 96, 128, 144 };
     fontSizeComboBox.setItems(sizes);
     
-    Button btn = new Button("LoadButton");
+    Button ladyBtn = new Button("Lady"); ladyBtn.setPrefSize(50,22);
+    ladyBtn.addEventHandler(e -> getPage().addChild(new PuppetView("/Temp/ComicLib/chars/CTLady",.25)), Action);
+    Button manBtn = new Button("Man"); manBtn.setPrefSize(50,22);
+    manBtn.addEventHandler(e -> getPage().addChild(new PuppetView("/Temp/ComicLib/chars/CTMan",.5)), Action);
+    Button tedBtn = new Button("Ted"); tedBtn.setPrefSize(50,22);
+    tedBtn.addEventHandler(e -> getPage().addChild(new PuppetView("/Temp/ComicLib/chars/Ted",.5)), Action);
+
     RowView row = (RowView)getView("UndoButton").getParent();
-    row.addChild(btn);
-    btn.addEventHandler(e -> {
-        View pupView = new PuppetView();
-        ((PageView)getEditor().getContentPage()).addChild(pupView);
-    }, Action);
+    row.addChild(ladyBtn);
+    row.addChild(manBtn);
+    row.addChild(tedBtn);
 }
+
+PageView getPage()  { return (PageView)getEditor().getContentPage(); }
 
 /**
  * Updates the UI panel controls.

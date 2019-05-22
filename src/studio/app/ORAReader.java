@@ -17,9 +17,9 @@ public class ORAReader {
 /**
  * Read file.
  */
-public Stack readFile()
+public Stack readFile(String aPath)
 {
-    _srcPath = "/tmp/CTLady";
+    _srcPath = aPath; //"/tmp/CTLady";
         
     WebURL url = WebURL.getURL(_srcPath + "/stack.xml");
 
@@ -101,12 +101,12 @@ public static class Layer {
     Image  _img;
     
     /** Creates an ORA Layer. */
-    public Layer(String aName)  { name = aName; }
+    public Layer(String aName)  { name = strip(aName); }
     
     /** Creates an ORA Layer. */
     public Layer(String aName, String aSrc, boolean isVis, double aX, double aY)
     {
-        name = aName; src = aSrc; visible = isVis; x = aX; y = aY;
+        name = strip(aName); src = aSrc; visible = isVis; x = aX; y = aY;
     }
     
     /** Returns the image. */
@@ -119,6 +119,12 @@ public static class Layer {
     public String toString()
     {
         return "Layer: name=" + name + ", src=" + src + ", x=" + x + ", y=" + y;
+    }
+    
+    String strip(String str)
+    {
+        if(str==null) return "";
+        return str.replace("+", "").replace(" #1", "").replace(" #2", "");
     }
 }
 
@@ -171,9 +177,9 @@ public static class Stack extends Layer {
     /** Returns the layer with given name. */
     public Layer getLayer(String aName)
     {
-        if(aName.equals(name)) return this;
+        if(name.equals(aName)) return this;
         for(Layer entry : entries) {
-            if(aName.equals(entry.name))
+            if(entry.name.equals(aName))
                 return entry;
             if(entry instanceof Stack) { Stack stack = (Stack)entry;
                 Layer match = stack.getLayer(aName);

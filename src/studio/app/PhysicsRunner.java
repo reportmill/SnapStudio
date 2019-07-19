@@ -4,6 +4,7 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.joints.*;
 import snap.gfx.*;
 import snap.util.MathUtils;
 import snap.view.*;
@@ -44,14 +45,22 @@ public PhysicsRunner(ParentView aView)
     _view = aView;
     
     // Create world
-    _world = new World(new Vec2(0, -9.8f));
+    _world = new World(new Vec2(0, 0));//-9.8f));
     
     // Add bodies for view children
+    List <View> joints = new ArrayList();
     for(View child : _view.getChildren()) {
         child.getPhysics(true).setDynamic(true);
-        createBody(child);
-        addDragger(child);
+        if("joint".equals(child.getName())) joints.add(child);
+        else { 
+            createBody(child);
+            addDragger(child);
+        }
     }
+    
+    // Add joints
+    for(View v : joints)
+        createJoint(v);
     
     // Add sidewalls
     double vw = _view.getWidth(), vh = _view.getHeight();
@@ -119,17 +128,34 @@ void timerFired()
 public void updateView(View aView)
 {
     // Get ViewPhysics and body
-    ViewPhysics <Body> phys = aView.getPhysics(); if((phys==null || !phys.isDynamic()) && aView!=_drag) return;
-    Body body = phys.getNative();
-
-    // Get/set position
-    Vec2 pos = body.getPosition();
-    Point posV = boxToView(pos.x, pos.y);
-    aView.setXY(posV.x-aView.getWidth()/2, posV.y-aView.getHeight()/2);
+    ViewPhysics <Body> phys = aView.getPhysics(); if(phys==null && aView!=_drag) return;
+    Object ntv = phys.getNative();
     
-    // Get set rotation
-    float angle = body.getAngle();
-    aView.setRotate(-Math.toDegrees(angle));
+    // Handle Body
+    if(ntv instanceof Body) { Body body = (Body)ntv; if(!phys.isDynamic()) return;
+    
+        // Get/set position
+        Vec2 pos = body.getPosition();
+        Point posV = boxToView(pos.x, pos.y);
+        aView.setXY(posV.x-aView.getWidth()/2, posV.y-aView.getHeight()/2);
+        
+        // Get set rotation
+        float angle = body.getAngle();
+        aView.setRotate(-Math.toDegrees(angle));
+    }
+    
+    // Handle Joint
+    else if(ntv instanceof RevoluteJoint) { RevoluteJoint joint = (RevoluteJoint)ntv;
+    
+        // Get/set position
+        Vec2 pos = new Vec2(0,0); joint.getAnchorA(pos);
+        Point posV = boxToView(pos.x, pos.y);
+        aView.setXY(posV.x-aView.getWidth()/2, posV.y-aView.getHeight()/2);
+        
+        // Get set rotation
+        //float angle = joint.getAngle();
+        //aView.setRotate(-Math.toDegrees(angle));
+    }
 }
 
 /**
@@ -316,6 +342,48 @@ public org.jbox2d.collision.shapes.Shape createShape(Polygon aPoly)
     Vec2 vecs[] = new Vec2[pc]; for(int i=0;i<pc;i++) vecs[i] = viewToBox(aPoly.getX(i), aPoly.getY(i));
     PolygonShape pshape = new PolygonShape(); pshape.set(vecs, vecs.length);
     return pshape;
+}
+
+/**
+ * Creates a Joint.
+ */
+public void createJoint(View aView)
+{
+    // Get shapes interesting joint view
+    ParentView editor = aView.getParent();
+    List <View> hits = new ArrayList();
+    Rect bnds = aView.getBoundsParent();
+    for(View v : editor.getChildren()) {
+        if(v!=aView && v.getBoundsLocal().intersects(v.parentToLocal(bnds)))
+            hits.add(v);
+    }
+    
+    // if less than two, bail
+    if(hits.size()<2) { ViewUtils.beep(); return; }
+    View viewA = hits.get(0);
+    View viewB = hits.get(1);
+    
+    // Create joint def and set body A/B
+    RevoluteJointDef jointDef = new RevoluteJointDef();
+    jointDef.bodyA = (Body)viewA.getPhysics().getNative();
+    jointDef.bodyB = (Body)viewB.getPhysics().getNative();
+    jointDef.collideConnected = false;
+    
+    // Set anchors
+    Point jointPnt = aView.localToParent(aView.getWidth()/2, aView.getHeight()/2);
+    Point jointPntA = viewA.parentToLocal(jointPnt.x, jointPnt.y);
+    Point jointPntB = viewB.parentToLocal(jointPnt.x, jointPnt.y);
+    jointDef.localAnchorA = viewToBoxLocal(jointPntA.x, jointPntA.y, viewA);
+    jointDef.localAnchorB = viewToBoxLocal(jointPntB.x, jointPntB.y, viewB);
+    RevoluteJoint joint = (RevoluteJoint)_world.createJoint(jointDef);
+    aView.getPhysics(true).setNative(joint);
+}
+
+Vec2 viewToBoxLocal(double aX, double aY, View aView)
+{
+    float x = viewToBox(aX - aView.getWidth()/2);
+    float y = viewToBox(aView.getHeight()/2 - aY);
+    return new Vec2(x,y);
 }
 
 /**

@@ -116,10 +116,17 @@ public void setEditing(boolean aValue)
         // Cache current editor and flush any current editing
         _realEditor = getEditor(); //_realEditor.flushEditingChanges();
         
+        // Get rid of image names
+        PageView page = (PageView)getContent().getChild(0);
+        for(View v : page.getChildren())
+            if(v instanceof ImageView)
+                ((ImageView)v).setImageName(null);
+        
         // Reload content
         //XMLElement xml = getEditor().getContentXML();
         //ParentView content = new ViewArchiver().getParentView(xml.getBytes());
-        ParentView content = new ViewArchiver().copy(getContent());
+        ViewArchiver va = new ViewArchiver();
+        ParentView content = va.copy(getContent());
         
         // Create new editor, set editing to false and set report document
         Editor editor = new Editor(); //editor.setEditing(false);

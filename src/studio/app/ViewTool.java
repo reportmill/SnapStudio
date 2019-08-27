@@ -1009,6 +1009,7 @@ public static ViewTool createTool(Class aClass)
     if(aClass==PageView.class) return new PageViewTool();
     if(aClass==ParentView.class) return new ParentViewTool();
     if(aClass==PathView.class) return new PathViewTool();
+    if(aClass==PuppetView.class) return new PuppetTool();
     if(aClass==RectView.class) return new RectViewTool();
     if(aClass==TextArea.class) return new TextAreaTool();
     System.err.println("Tool not found: " + aClass);

@@ -128,6 +128,13 @@ public void setEditing(boolean aValue)
         ViewArchiver va = new ViewArchiver();
         ParentView content = va.copy(getContent());
         
+        // Get rid of image names
+        PageView page2 = (PageView)content.getChild(0);
+        page2.setFill(new Color(.95));
+        for(View v : page2.getChildren())
+            if(v instanceof PuppetView)
+                ((PuppetView)v).convertToPreview();
+                
         // Create new editor, set editing to false and set report document
         Editor editor = new Editor(); //editor.setEditing(false);
         editor.getContentBox().removeDeepChangeListener(editor);

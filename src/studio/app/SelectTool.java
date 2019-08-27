@@ -421,7 +421,7 @@ private List <View> getHitShapes()
 
     // If selection rect is outside super selected shape, move up shape hierarchy
     while(superView!=content &&
-        !path.getBounds().intersectsEvenIfEmpty(getTool(superView).getBoundsSuperSelected(superView))) {
+        !path.getBounds().intersectsRect(getTool(superView).getBoundsSuperSelected(superView))) {
         ParentView parent = superView.getParent();
         editor.setSuperSelectedView(parent);
         path = superView.parentToLocal(path);

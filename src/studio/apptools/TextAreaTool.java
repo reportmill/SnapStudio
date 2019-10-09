@@ -117,7 +117,7 @@ public void resetUI()
     setViewValue("LineHeightMaxSpinner", lineHtMax);
     
     // Update PerformWrapCheckBox
-    setViewValue("PerformWrapCheckBox", text.isWrapText()); // Really was for old wrap text stuff
+    setViewValue("PerformWrapCheckBox", text.isWrapLines()); // Really was for old wrap text stuff
 }
 
 /**
@@ -214,7 +214,7 @@ public void respondUI(ViewEvent anEvent)
     if(anEvent.equals("MakeMinHeightMenuItem")) for(TextArea t : texts) t.setHeight(t.getBestHeight(-1));
     
     // Handle PerformWrapCheckBox
-    if(anEvent.equals("PerformWrapCheckBox")) text.setWrapText(anEvent.getBoolValue());
+    if(anEvent.equals("PerformWrapCheckBox")) text.setWrapLines(anEvent.getBoolValue());
 }
 
 /**
@@ -256,7 +256,10 @@ public void mousePressed(ViewEvent anEvent)
     _downPoint = getEditorEvents().getEventPointInShape(true);
     
     // Create default text instance and set initial bounds to reasonable value
-    _view = (T)new TextArea(); _view.setPlainText(false); _view.setWrapText(true); _view.setEditable(true);
+    _view = (T)new TextArea();
+    _view.setPlainText(false);
+    _view.setWrapLines(true);
+    _view.setEditable(true);
     _view.setBounds(getDefaultBounds((TextArea)_view, _downPoint)); // Was setFrame()
     
     // Add text to superSelectedView (within an undo grouping) and superSelect

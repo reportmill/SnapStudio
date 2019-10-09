@@ -934,7 +934,7 @@ public void deepChange(Object aView, PropChange anEvent)
             undoer.setUndoSelection(new ArrayList(getSelectedOrSuperSelectedViews()));
         
         // Add property change
-        undoer.addPropertyChange(anEvent);
+        undoer.addPropChange(anEvent);
         
         // If adding child, add to child animator newborns
         //String pname = anEvent.getPropertyName(); if(pname.equals("Child") && anEvent.getNewValue()!=null) {

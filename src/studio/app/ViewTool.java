@@ -276,7 +276,10 @@ public boolean childrenSuperSelectImmediately(View aView)  { return false; }
 /**
  * Returns whether a given view can be ungrouped.
  */
-public boolean isUngroupable(View aView)  { return aView instanceof HostView && ((HostView)aView).getChildCount()>0; }
+public boolean isUngroupable(View aView)
+{
+    return aView instanceof ViewHost && ((ViewHost)aView).getGuestCount()>0;
+}
 
 /**
  * Adds a child to given view.

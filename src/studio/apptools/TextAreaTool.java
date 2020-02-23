@@ -74,7 +74,7 @@ public void resetUI()
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
     
     // Reset TextView from (potentially) updated TextArea
-    _textView.getTextBox().setText(text.getRichText());
+    _textView.getTextBox().setRichText(text.getRichText());
     _textView.setSel(text.getSelStart(),text.getSelEnd());
     
     // Reset PaddingText

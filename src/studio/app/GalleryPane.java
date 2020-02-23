@@ -1,4 +1,7 @@
 package studio.app;
+import snap.geom.HPos;
+import snap.geom.Point;
+import snap.geom.Pos;
 import snap.gfx.*;
 import snap.util.ClassUtils;
 import snap.view.*;

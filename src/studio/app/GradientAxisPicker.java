@@ -1,4 +1,7 @@
 package studio.app;
+import snap.geom.Insets;
+import snap.geom.Point;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.gfx.GradientPaint.Stop;
 import snap.view.*;
@@ -9,7 +12,7 @@ import snap.view.*;
 public class GradientAxisPicker extends View {
 
     // Ivars
-    Point                   _startPoint = new Point(0.5,0.5);
+    Point _startPoint = new Point(0.5,0.5);
     Point                   _endPoint = new Point(1d, 0.5);
     Stop                    _stops[];
     boolean                 _dragging;

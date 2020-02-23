@@ -1,5 +1,8 @@
 package studio.app;
 import java.util.*;
+
+import snap.geom.Point;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.gfx.GradientPaint.Stop;
 import snap.util.*;
@@ -38,7 +41,7 @@ public class GradientStopPicker extends ParentView {
     static Cursor         _addStopCursor = Cursor.CROSSHAIR; //Tkit.createCustomCursor(_addStopImg,new Pnt(6,16),"add");
     
     // The drag point
-    Point                 _dragPoint;
+    Point _dragPoint;
     
     // Constants
     public static final int WELL_SIZE = 24;

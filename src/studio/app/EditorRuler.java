@@ -1,4 +1,6 @@
 package studio.app;
+import snap.geom.Point;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.util.MathUtils;
 import snap.view.View;
@@ -21,7 +23,7 @@ public class EditorRuler extends View {
     double                    _zoomFactor;
     
     // The mouse point
-    Point                     _mouse = new Point();
+    Point _mouse = new Point();
     
     // Ruler constants
     static final int          _rulerWidth = 20;

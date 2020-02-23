@@ -1,5 +1,9 @@
 package studio.app;
 import java.util.*;
+
+import snap.geom.Point;
+import snap.geom.Rect;
+import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
@@ -32,7 +36,7 @@ public class Editor extends Viewer implements DeepChangeListener {
     EditorDnD          _dragHelper = createDragHelper();
     
     // A shape to be drawn if set to drag-over shape during drag and drop
-    Shape              _dragView;
+    Shape _dragView;
     
     // Whether editor is in mouse loop
     boolean            _isMouseDown;

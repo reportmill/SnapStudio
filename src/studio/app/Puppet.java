@@ -1,5 +1,7 @@
 package studio.app;
 import java.util.*;
+
+import snap.geom.Rect;
 import snap.gfx.*;
 
 /**
@@ -17,7 +19,7 @@ public class Puppet {
     Map <String,Part>   _joints = new HashMap();
     
     // The bounds
-    Rect                _bounds;
+    Rect _bounds;
     
     // Constants for human parts
     public static final String Torso = "Torso";

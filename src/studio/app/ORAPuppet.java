@@ -1,5 +1,5 @@
 package studio.app;
-import studio.app.Puppet.Part;
+import snap.geom.Rect;
 import snap.gfx.*;
 import studio.app.ORAReader.*;
 

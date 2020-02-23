@@ -1,4 +1,5 @@
 package studio.app;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
 

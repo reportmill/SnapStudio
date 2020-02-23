@@ -1,6 +1,6 @@
 package studio.app;
 import java.util.*;
-import snap.gfx.Point;
+import snap.geom.Point;
 import snap.util.*;
 import snap.view.*;
 

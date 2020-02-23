@@ -1,4 +1,6 @@
 package studio.apptools;
+import snap.geom.Ellipse;
+import snap.geom.Polygon;
 import snap.gfx.*;
 import snap.view.*;
 

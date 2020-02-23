@@ -1,4 +1,5 @@
 package studio.apptools;
+import snap.geom.Point;
 import snap.gfx.*;
 import studio.app.*;
 import snap.view.*;

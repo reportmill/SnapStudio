@@ -1,5 +1,9 @@
 package studio.app;
 import java.util.*;
+
+import snap.geom.Point;
+import snap.geom.Rect;
+import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.ListUtils;
 import snap.view.*;
@@ -18,7 +22,7 @@ public class SelectTool extends ViewTool {
     DragMode      _dragMode = DragMode.None;
     
     // The point of last mouse
-    Point         _lastMousePoint;
+    Point _lastMousePoint;
     
     // A construct representing a view whose handle was hit and the handle
     ViewHandle    _viewHandle;
@@ -27,7 +31,7 @@ public class SelectTool extends ViewTool {
     View          _eventShape;
 
     // The current selection rect (during DragModeSelect)
-    Rect          _selectionRect = new Rect();
+    Rect _selectionRect = new Rect();
     
     // The list of shapes currently selected while selecting
     List <View>   _whileSelectingSelectedShapes = new ArrayList();

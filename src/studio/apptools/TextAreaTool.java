@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package studio.apptools;
+import snap.geom.*;
 import studio.app.*;
 import java.util.List;
 import snap.gfx.*;
@@ -68,7 +69,7 @@ public void resetUI()
     setViewValue("AlignCenterButton", lineAlign==HPos.CENTER && !isJustify);
     setViewValue("AlignRightButton", lineAlign==HPos.RIGHT && !isJustify);
     setViewValue("AlignFullButton", isJustify);
-    setViewValue("AlignTopButton", text.getTextBox().getAlignY()==VPos.TOP);
+    setViewValue("AlignTopButton", text.getTextBox().getAlignY()== VPos.TOP);
     setViewValue("AlignMiddleButton", text.getTextBox().getAlignY()==VPos.CENTER);
     setViewValue("AlignBottomButton", text.getTextBox().getAlignY()==VPos.BOTTOM); // Update AlignBottomButton
     

@@ -3,6 +3,9 @@
  */
 package studio.apptools;
 import java.util.List;
+
+import snap.geom.Point;
+import snap.geom.Pos;
 import studio.app.*;
 import snap.gfx.*;
 import snap.view.*;

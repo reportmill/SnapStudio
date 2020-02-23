@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package studio.apptools;
+import snap.geom.Size;
 import studio.app.*;
 import snap.gfx.*;
 import snap.util.*;
@@ -16,7 +17,7 @@ public class DocViewTool <T extends DocView> extends ViewTool <T> {
     boolean          _advanced;
 
     // The array of supported paper sizes
-    static Size      _paperSizes[];
+    static Size _paperSizes[];
     
     // The array of supported paper size names
     static String    _paperSizeNames[];

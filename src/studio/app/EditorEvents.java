@@ -1,4 +1,6 @@
 package studio.app;
+import snap.geom.Point;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.util.MathUtils;
 import snap.view.*;
@@ -15,7 +17,7 @@ public class EditorEvents {
     ViewEvent    _currentEvent;
     
     // The down point for any mouse loop handled by this editor events
-    Point        _downPoint;
+    Point _downPoint;
     
     // Whether to override editor preview mode
     boolean      _overridePreview;

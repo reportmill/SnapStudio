@@ -2,6 +2,10 @@ package studio.app;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import snap.geom.Point;
+import snap.geom.Pos;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
@@ -24,7 +28,7 @@ public class ViewTool <T extends View> extends ViewOwner {
     protected T           _view;
     
     // The mouse down point that initiated last tool mouse loop
-    protected Point       _downPoint;
+    protected Point _downPoint;
     
     // The image for a view handle
     static Image          _handle = Image.get(Editor.class, "Handle8x8.png");

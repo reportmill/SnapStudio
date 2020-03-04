@@ -39,7 +39,7 @@ public static void copy(Editor anEditor)
             !(anEditor.getSelectedOrSuperSelectedView()==anEditor.getContentPage())) {
         
         // Get xml for selected shapes, and get as string
-        XMLElement xml = new ViewArchiver().writeObject(anEditor.getSelectedOrSuperSelectedViews());
+        XMLElement xml = new ViewArchiver().writeToXML(anEditor.getSelectedOrSuperSelectedViews());
         String xmlStr = xml.toString();
         
         // Get clipboard and add data as XML string (RMData) and plain string
@@ -170,7 +170,7 @@ public static Object getViewsFromClipboard(Editor anEditor, Clipboard aCB)
     
     // Get unarchived object from clipboard bytes
     byte bytes[] = cboard.getDataBytes(SNAP_XML_TYPE);
-    Object obj = new ViewArchiver().readObject(bytes);
+    Object obj = new ViewArchiver().readFromXMLBytes(bytes);
 
     // A bit of a hack - remove any non-shapes (plugins for one)
     if(obj instanceof List) { List list = (List)obj;

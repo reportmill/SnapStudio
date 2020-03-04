@@ -3,6 +3,8 @@
  */
 package studio.apptools;
 import snap.geom.*;
+import snap.text.TextLineStyle;
+import snap.text.TextStyle;
 import studio.app.*;
 import java.util.List;
 import snap.gfx.*;

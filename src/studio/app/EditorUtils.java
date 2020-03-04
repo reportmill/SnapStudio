@@ -1,8 +1,8 @@
 package studio.app;
 import java.util.*;
-
 import snap.geom.*;
 import snap.gfx.*;
+import snap.text.TextFormat;
 import snap.util.ListUtils;
 import snap.view.*;
 

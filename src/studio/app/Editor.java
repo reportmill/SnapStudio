@@ -112,7 +112,7 @@ public void setContent(View aView)
 public XMLElement getContentXML()
 {
     ViewArchiver varch = new ViewArchiver();
-    return varch.writeObject(getContent());
+    return varch.writeToXML(getContent());
 }
 
 /**
